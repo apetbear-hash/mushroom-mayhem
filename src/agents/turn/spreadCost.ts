@@ -5,11 +5,9 @@ import { getDisruptionModifiers } from '../card/powers';
 
 // ── Base formula (§4.1 / §9.3) ───────────────────────────────────────────────
 
-export function baseSpreadCost(networkSize: number, habitat: Habitat): number {
+export function baseSpreadCost(networkSize: number, _habitat: Habitat): number {
   const tier = Math.floor(networkSize / 2);
-  const base = Math.min(tier + 1, 5);
-  const premium = habitat === 'wet' || habitat === 'shade' ? 1 : 0;
-  return Math.max(1, base + premium);
+  return Math.max(1, Math.min(tier, 4));
 }
 
 // ── Full cost with all modifiers ──────────────────────────────────────────────
