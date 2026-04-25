@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { PORTRAITS, COLOR_OPTIONS } from './playerSetupData';
 
 export interface PlayerDraft {
-  name: string;   // auto-set, not user-editable
+  name: string;
   portrait: string;
   color: string;
 }
 
-// onConfirm receives only the active players, in slot order.
 interface PlayerSetupProps {
   onConfirm: (players: PlayerDraft[]) => void;
 }
@@ -22,7 +21,7 @@ interface SlotState {
 
 function buildInitialSlots(): SlotState[] {
   return Array.from({ length: MAX_SLOTS }, (_, i) => ({
-    active: i < 2, // first two active by default
+    active: i < 2,
     portrait: PORTRAITS[i % PORTRAITS.length].id,
     color: COLOR_OPTIONS[i % COLOR_OPTIONS.length].hex,
   }));
@@ -38,11 +37,11 @@ interface SlotProps {
 
 function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: SlotProps) {
   const portrait = PORTRAITS.find(p => p.id === slot.portrait)!;
-  const borderColor = slot.active ? slot.color : '#333';
+  const borderColor = slot.active ? slot.color : '#3C3018';
 
   return (
     <div style={{
-      background: slot.active ? '#1e1e2e' : '#111',
+      background: slot.active ? '#2E2414' : '#1A1408',
       border: `2px solid ${borderColor}`,
       borderRadius: 12,
       padding: 20,
@@ -50,28 +49,29 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
       display: 'flex',
       flexDirection: 'column',
       gap: 12,
-      boxShadow: slot.active ? `0 0 16px ${slot.color}33` : 'none',
+      boxShadow: slot.active ? `0 0 20px ${slot.color}22` : 'none',
       transition: 'all 0.2s',
-      opacity: slot.active ? 1 : 0.45,
+      opacity: slot.active ? 1 : 0.5,
     }}>
 
-      {/* Header: slot label + toggle */}
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ color: slot.active ? slot.color : '#555', fontWeight: 700, fontSize: 12, letterSpacing: 1 }}>
+        <span style={{ color: slot.active ? slot.color : '#6A5830', fontWeight: 700, fontSize: 12, letterSpacing: 1, fontFamily: 'sans-serif' }}>
           PLAYER {index + 1}
         </span>
         <button
           onClick={() => onChange({ ...slot, active: !slot.active })}
           style={{
-            background: slot.active ? slot.color : '#222',
-            border: `1px solid ${slot.active ? slot.color : '#444'}`,
+            background: slot.active ? slot.color : '#231C10',
+            border: `1px solid ${slot.active ? slot.color : '#3C3018'}`,
             borderRadius: 20,
-            color: slot.active ? '#111' : '#555',
+            color: slot.active ? '#1A1408' : '#6A5830',
             fontSize: 10,
             fontWeight: 700,
             padding: '3px 10px',
             cursor: 'pointer',
             letterSpacing: 0.5,
+            fontFamily: 'sans-serif',
           }}
         >
           {slot.active ? 'ACTIVE' : 'OFF'}
@@ -82,17 +82,17 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
       <div style={{
         fontSize: 48,
         textAlign: 'center',
-        background: '#111',
+        background: '#1A1408',
         borderRadius: 10,
         padding: '10px 0',
-        border: `1px solid ${slot.active ? slot.color + '55' : '#222'}`,
+        border: `1px solid ${slot.active ? slot.color + '44' : '#3C3018'}`,
       }}>
         {portrait.emoji}
       </div>
 
-      {/* Portrait picker — only interactive when active */}
+      {/* Portrait picker */}
       <div>
-        <div style={{ color: '#666', fontSize: 10, marginBottom: 5, letterSpacing: 1 }}>PORTRAIT</div>
+        <div style={{ color: '#6A5830', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>PORTRAIT</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {PORTRAITS.map(p => {
             const taken = takenPortraits.has(p.id) && p.id !== slot.portrait;
@@ -103,8 +103,8 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
                 onClick={() => slot.active && !taken && onChange({ ...slot, portrait: p.id })}
                 style={{
                   fontSize: 17,
-                  background: slot.portrait === p.id ? slot.color + '44' : '#111',
-                  border: slot.portrait === p.id ? `2px solid ${slot.color}` : '2px solid #2a2a2a',
+                  background: slot.portrait === p.id ? slot.color + '33' : '#1A1408',
+                  border: slot.portrait === p.id ? `2px solid ${slot.color}` : '2px solid #3C3018',
                   borderRadius: 5,
                   cursor: !slot.active || taken ? 'not-allowed' : 'pointer',
                   opacity: taken ? 0.2 : 1,
@@ -121,7 +121,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
 
       {/* Colour picker */}
       <div>
-        <div style={{ color: '#666', fontSize: 10, marginBottom: 5, letterSpacing: 1 }}>COLOUR</div>
+        <div style={{ color: '#6A5830', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>COLOUR</div>
         <div style={{ display: 'flex', gap: 6 }}>
           {COLOR_OPTIONS.map(c => {
             const taken = takenColors.has(c.hex) && c.hex !== slot.color;
@@ -131,11 +131,10 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
                 title={c.name}
                 onClick={() => slot.active && !taken && onChange({ ...slot, color: c.hex })}
                 style={{
-                  width: 24,
-                  height: 24,
+                  width: 24, height: 24,
                   borderRadius: '50%',
                   background: c.hex,
-                  border: slot.color === c.hex ? '3px solid #fff' : '3px solid transparent',
+                  border: slot.color === c.hex ? `3px solid #EAE0C8` : '3px solid transparent',
                   cursor: !slot.active || taken ? 'not-allowed' : 'pointer',
                   opacity: taken ? 0.2 : 1,
                   outline: 'none',
@@ -175,19 +174,19 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0d0d1a',
+      background: '#1A1408',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       padding: 32,
-      fontFamily: 'sans-serif',
-      color: '#eee',
+      fontFamily: "'Cormorant Garamond', Georgia, serif",
+      color: '#EAE0C8',
     }}>
-      <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: 2, marginBottom: 6, color: '#c9a84c' }}>
+      <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: 3, marginBottom: 6, color: '#D4A820' }}>
         MUSHROOM MAYHEM
       </h1>
-      <p style={{ color: '#666', fontSize: 12, marginBottom: 32, letterSpacing: 1 }}>
+      <p style={{ color: '#B09848', fontSize: 14, marginBottom: 32, letterSpacing: 1, fontFamily: 'sans-serif' }}>
         Toggle players active, then pick a portrait and colour.
       </p>
 
@@ -204,7 +203,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
         ))}
       </div>
 
-      <div style={{ marginTop: 16, color: '#555', fontSize: 12 }}>
+      <div style={{ marginTop: 16, color: '#6A5830', fontSize: 13, fontFamily: 'sans-serif' }}>
         {activeSlots.length < 2
           ? 'Activate at least 2 players to start.'
           : activeSlots.length > 4
@@ -217,16 +216,18 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
         disabled={!canStart}
         style={{
           marginTop: 16,
-          background: canStart ? '#c9a84c' : '#2a2a2a',
-          color: canStart ? '#1a1a1a' : '#555',
-          border: 'none',
+          background: canStart ? '#C84820' : '#231C10',
+          color: canStart ? '#EAE0C8' : '#6A5830',
+          border: canStart ? 'none' : '1px solid #3C3018',
           borderRadius: 10,
           padding: '14px 48px',
-          fontSize: 16,
+          fontSize: 18,
           fontWeight: 700,
           cursor: canStart ? 'pointer' : 'not-allowed',
           letterSpacing: 1,
           transition: 'background 0.2s',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          boxShadow: canStart ? '0 4px 20px rgba(200,72,32,0.4)' : 'none',
         }}
       >
         Start Game

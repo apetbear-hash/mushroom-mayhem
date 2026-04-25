@@ -11,7 +11,6 @@ interface SeasonEffectModalProps {
   onSkip: () => void;
 }
 
-// Cards that are worth swapping (0 pts, 0 resources) — shown as "recommended"
 function isLowValue(cardId: number): boolean {
   const c = getCard(cardId);
   return c.pts === 0 && Object.keys(c.generates).length === 0;
@@ -63,30 +62,30 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
   return (
     <div style={{
       position: 'fixed', inset: 0,
-      background: 'rgba(0,0,0,0.82)',
+      background: 'rgba(14,9,4,0.88)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 150, fontFamily: 'sans-serif',
+      zIndex: 150, fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
       <div style={{
-        background: '#12121f',
-        border: '2px solid #5cb85c',
+        background: '#231C10',
+        border: '2px solid #6AA84A',
         borderRadius: 20, padding: '28px 32px',
         maxWidth: 580, width: '100%',
-        boxShadow: '0 0 40px #5cb85c22',
+        boxShadow: '0 0 48px rgba(106,168,74,0.2)',
       }}>
         {/* Header */}
         <div style={{ marginBottom: 20, textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: '#5cb85c', letterSpacing: 3, marginBottom: 6 }}>
+          <div style={{ fontSize: 10, color: '#6AA84A', letterSpacing: 3, marginBottom: 6, fontFamily: 'sans-serif' }}>
             🌿 SPRING EFFECT
           </div>
-          <div style={{ fontSize: 18, color: '#eee', fontWeight: 800, marginBottom: 6 }}>
+          <div style={{ fontSize: 22, color: '#EAE0C8', fontWeight: 800, marginBottom: 6 }}>
             Germination Gamble
           </div>
-          <div style={{ fontSize: 12, color: '#888', maxWidth: 380, margin: '0 auto' }}>
+          <div style={{ fontSize: 14, color: '#B09848', maxWidth: 380, margin: '0 auto', lineHeight: 1.5 }}>
             Swap unwanted cards for fresh draws. Select cards to replace,
             then draw the same number from the deck.
             {maxSwap === 0 && (
-              <span style={{ color: '#e05c5c', display: 'block', marginTop: 4 }}>
+              <span style={{ color: '#C84820', display: 'block', marginTop: 4, fontSize: 13 }}>
                 Deck is empty — no swaps available.
               </span>
             )}
@@ -115,18 +114,19 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
                     opacity: isSelected ? 0.55 : (!canSelect ? 0.35 : 1),
                     cursor: canSelect ? 'pointer' : 'default',
                     outline: isSelected
-                      ? '2px solid #e05c5c'
-                      : recommended && canSelect ? '1.5px dashed #5cb85c55' : 'none',
-                    borderRadius: 10,
+                      ? '2px solid #C84820'
+                      : recommended && canSelect ? '1.5px dashed #6AA84A55' : 'none',
+                    borderRadius: 14,
                   }}
                 >
                   <CardComponent card={getCard(cardId)} isPlayable={!isSelected} />
                   {isSelected && (
                     <div style={{
                       position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                      borderRadius: 10, background: 'rgba(0,0,0,0.55)',
+                      borderRadius: 14, background: 'rgba(14,9,4,0.6)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 10, color: '#e05c5c', fontWeight: 700, letterSpacing: 1,
+                      fontSize: 10, color: '#C84820', fontWeight: 700, letterSpacing: 1,
+                      fontFamily: 'sans-serif',
                     }}>
                       SWAP OUT
                     </div>
@@ -134,7 +134,8 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
                   {!isSelected && recommended && (
                     <div style={{
                       position: 'absolute', bottom: 4, left: 0, right: 0,
-                      textAlign: 'center', fontSize: 10, color: '#5cb85c', letterSpacing: 0.5,
+                      textAlign: 'center', fontSize: 10, color: '#6AA84A', letterSpacing: 0.5,
+                      fontFamily: 'sans-serif',
                     }}>
                       ↑ low value
                     </div>
@@ -146,7 +147,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
         )}
 
         {/* Status line */}
-        <div style={{ textAlign: 'center', fontSize: 11, color: '#666', marginBottom: 20, minHeight: 16 }}>
+        <div style={{ textAlign: 'center', fontSize: 13, color: '#6A5830', marginBottom: 20, minHeight: 16 }}>
           {swapCount === 0 && maxSwap > 0 && 'Click cards to swap them out — or skip to keep your hand'}
           {swapCount > 0 && `Swapping ${swapCount} card${swapCount > 1 ? 's' : ''} — draw ${swapCount} fresh`}
         </div>
@@ -156,9 +157,10 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
           <button
             onClick={onSkip}
             style={{
-              background: 'transparent', border: '1px solid #333',
-              color: '#666', borderRadius: 8, padding: '10px 22px',
-              cursor: 'pointer', fontSize: 13,
+              background: 'transparent', border: '1px solid #3C3018',
+              color: '#B09848', borderRadius: 8, padding: '10px 22px',
+              cursor: 'pointer', fontSize: 14,
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
             }}
           >
             Skip
@@ -167,12 +169,14 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
             onClick={handleConfirm}
             disabled={maxSwap === 0}
             style={{
-              background: swapCount > 0 ? '#5cb85c' : '#1a1a2e',
-              color: swapCount > 0 ? '#111' : '#555',
-              border: `1px solid ${swapCount > 0 ? '#5cb85c' : '#333'}`,
+              background: swapCount > 0 ? '#C84820' : '#1A1408',
+              color: swapCount > 0 ? '#EAE0C8' : '#6A5830',
+              border: `1px solid ${swapCount > 0 ? '#C84820' : '#3C3018'}`,
               borderRadius: 8, padding: '10px 28px',
               cursor: swapCount > 0 ? 'pointer' : 'default',
-              fontWeight: 700, fontSize: 13,
+              fontWeight: 700, fontSize: 15,
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              boxShadow: swapCount > 0 ? '0 4px 16px rgba(200,72,32,0.35)' : 'none',
             }}
           >
             {swapCount > 0 ? `Swap ${swapCount} card${swapCount > 1 ? 's' : ''} →` : 'Keep hand →'}

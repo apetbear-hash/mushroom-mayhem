@@ -26,21 +26,16 @@ export function ActionBar({
   const isDeepFreeze = season === 'winter' && effect === 'deep_freeze';
   const isDrought = effect === 'drought';
 
-  // Escalating draw cost: nth card this turn costs n sunlight (1st=1, 2nd=2, …)
   const drawn = state.turnState.cardsDrawnThisTurn;
   const nextDrawCost = drawn + 1;
   const deckOrDiscard = state.deck.length > 0 || state.discard.length > 0;
 
-  // Buttons for draw/spread/plant are freely switchable BEFORE any action is confirmed
-  // (actionType === null). Once an action is confirmed, only that same action type
-  // can be repeated — mixing action types in one turn is not allowed.
   const confirmedAction = state.turnState.actionType;
 
   const canDraw    = !state.turnState.restUsed &&
     (confirmedAction === null || confirmedAction === 'draw') &&
     player.resources.sunlight >= nextDrawCost && deckOrDiscard;
 
-  // Hen's Egg Stinkhorn free spreads bypass moisture and drought checks
   const pendingFreeSpread = state.pendingFreeSpreads.find(ps => ps.playerId === playerId);
   const freeSpreadCount = pendingFreeSpread?.spreadsRemaining ?? 0;
   const hasFreeSpread = freeSpreadCount > 0;
@@ -53,7 +48,6 @@ export function ActionBar({
     (confirmedAction === null || confirmedAction === 'plant') &&
     player.hand.length > 0;
 
-  // Rest is only possible before any other action has been taken this turn.
   const canRest    = !state.turnState.restUsed && confirmedAction === null;
 
   const drawHint = drawn === 0 ? `${nextDrawCost}☀️` : `${nextDrawCost}☀️ (↑ each draw)`;
@@ -65,10 +59,12 @@ export function ActionBar({
     { type: 'rest',   label: 'Rest',   icon: '💤', enabled: canRest,   hint: '+1🍄💧☀️' },
   ];
 
+  const actionTaken = state.turnState.actionType !== null || state.turnState.restUsed;
+
   return (
     <div style={{
-      background: '#0d0d1a',
-      borderTop: '1px solid #1e1e2e',
+      background: '#231C10',
+      borderTop: '1px solid #3C3018',
       padding: '10px 16px',
       display: 'flex', flexDirection: 'column', gap: 8,
       fontFamily: 'sans-serif',
@@ -78,25 +74,23 @@ export function ActionBar({
         {(['spore', 'moisture', 'sunlight'] as const).map(res => (
           <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span style={{ fontSize: 14 }}>{RESOURCE_ICONS[res]}</span>
-            <span style={{ color: '#eee', fontWeight: 700, fontSize: 15 }}>
+            <span style={{ color: '#EAE0C8', fontWeight: 700, fontSize: 15 }}>
               {player.resources[res]}
             </span>
           </div>
         ))}
 
-        {/* Message */}
         {message && (
-          <span style={{ color: '#c9a84c', fontSize: 11, marginLeft: 8 }}>{message}</span>
+          <span style={{ color: '#D4A820', fontSize: 11, marginLeft: 8 }}>{message}</span>
         )}
 
-        {/* Undo */}
         {undoState && (
           <button
             onClick={onUndo}
             style={{
               marginLeft: 'auto',
-              background: 'transparent', border: '1px solid #444',
-              color: '#aaa', borderRadius: 8,
+              background: 'transparent', border: '1px solid #4E4020',
+              color: '#B09848', borderRadius: 8,
               padding: '8px 14px', fontWeight: 600, fontSize: 12,
               cursor: 'pointer',
             }}
@@ -105,17 +99,17 @@ export function ActionBar({
           </button>
         )}
 
-        {/* End Turn */}
         <button
           onClick={onEndTurn}
-          disabled={state.turnState.actionType === null && !state.turnState.restUsed}
+          disabled={!actionTaken}
           style={{
             marginLeft: undoState ? 8 : 'auto',
-            background: state.turnState.actionType !== null || state.turnState.restUsed ? '#5cb85c' : '#222',
-            color: state.turnState.actionType !== null || state.turnState.restUsed ? '#111' : '#444',
-            border: 'none', borderRadius: 8,
+            background: actionTaken ? '#C84820' : '#231C10',
+            color: actionTaken ? '#EAE0C8' : '#6A5830',
+            border: actionTaken ? 'none' : '1px solid #3C3018',
+            borderRadius: 8,
             padding: '8px 20px', fontWeight: 700, fontSize: 13,
-            cursor: state.turnState.actionType !== null || state.turnState.restUsed ? 'pointer' : 'not-allowed',
+            cursor: actionTaken ? 'pointer' : 'not-allowed',
           }}
         >
           End Turn →
@@ -134,10 +128,10 @@ export function ActionBar({
               title={a.hint}
               style={{
                 flex: 1,
-                background: isSelected ? player.color + '33' : '#1a1a2e',
-                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#1a1a2e' : '#333'}`,
+                background: isSelected ? player.color + '33' : '#1A1408',
+                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#231C10' : '#3C3018'}`,
                 borderRadius: 8, padding: '8px 4px',
-                color: isSelected ? player.color : !a.enabled ? '#333' : '#aaa',
+                color: isSelected ? player.color : !a.enabled ? '#3C3018' : '#B09848',
                 fontWeight: isSelected ? 700 : 500,
                 fontSize: 12, cursor: a.enabled ? 'pointer' : 'not-allowed',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
@@ -154,17 +148,17 @@ export function ActionBar({
 
       {/* Context hint */}
       {selectedAction === 'spread' && (
-        <div style={{ color: '#5c9ee0', fontSize: 11 }}>
+        <div style={{ color: '#6AAAC8', fontSize: 11 }}>
           Tap a highlighted tile to spread your network.
         </div>
       )}
       {selectedAction === 'plant' && (
-        <div style={{ color: '#5cb85c', fontSize: 11 }}>
+        <div style={{ color: '#C87820', fontSize: 11 }}>
           Select a card below, then tap a highlighted tile to spawn it.
         </div>
       )}
       {selectedAction === 'draw' && (
-        <div style={{ color: '#e0a030', fontSize: 11 }}>
+        <div style={{ color: '#D4A820', fontSize: 11 }}>
           Click Draw again to draw another card (costs 1☀️ each).
         </div>
       )}

@@ -11,7 +11,6 @@ export interface AISummary {
   lines: string[];
 }
 
-// Diffs two states to produce a human-readable list of what the AI player did.
 export function generateAISummary(
   before: GameState,
   after: GameState,
@@ -21,28 +20,24 @@ export function generateAISummary(
   const pAfter  = after.players.find(p => p.id === playerId)!;
   const lines: string[] = [];
 
-  // Mushrooms planted (new entries that weren't in before)
   const newMushrooms = after.placedMushrooms.filter(m =>
     m.playerId === playerId &&
     !before.placedMushrooms.some(mb => mb.tileId === m.tileId),
   );
   for (const m of newMushrooms) {
-    lines.push(`🍄 Planted ${getCard(m.cardId).name}`);
+    lines.push(`🍄 Spawned ${getCard(m.cardId).name}`);
   }
 
-  // Network tiles gained
   const networkGain = pAfter.networkTileIds.length - pBefore.networkTileIds.length;
   if (networkGain > 0) {
     lines.push(`🌐 Spread to ${networkGain} new tile${networkGain > 1 ? 's' : ''}`);
   }
 
-  // Cards drawn: net hand size change + cards spent planting
   const handDelta = (pAfter.hand.length - pBefore.hand.length) + newMushrooms.length;
   if (handDelta > 0) {
     lines.push(`🃏 Drew ${handDelta} card${handDelta > 1 ? 's' : ''}`);
   }
 
-  // Points scored this turn
   const scoreGain = pAfter.score - pBefore.score;
   if (scoreGain > 0) {
     lines.push(`⭐ +${scoreGain} point${scoreGain > 1 ? 's' : ''}`);
@@ -83,7 +78,7 @@ export function AISummaryOverlay({
       onClick={onDismiss}
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.55)',
+        background: 'rgba(14,9,4,0.55)',
         display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
         zIndex: 140, fontFamily: 'sans-serif',
         paddingBottom: 80,
@@ -92,19 +87,18 @@ export function AISummaryOverlay({
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          background: '#12121f',
-          border: `1.5px solid ${summary.playerColor}55`,
+          background: '#231C10',
+          border: `1.5px solid ${summary.playerColor}44`,
           borderRadius: 14, padding: '16px 20px',
           minWidth: 260, maxWidth: 340,
           boxShadow: `0 4px 32px ${summary.playerColor}22`,
         }}
       >
-        {/* Player row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
           <div style={{
             width: 36, height: 36, borderRadius: '50%',
-            background: summary.playerColor + '22',
-            border: `1.5px solid ${summary.playerColor}66`,
+            background: summary.playerColor + '1A',
+            border: `1.5px solid ${summary.playerColor}55`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 18, flexShrink: 0,
           }}>
@@ -114,18 +108,17 @@ export function AISummaryOverlay({
             <div style={{ color: summary.playerColor, fontWeight: 700, fontSize: 13 }}>
               {summary.playerName}
             </div>
-            <div style={{ color: '#444', fontSize: 10 }}>
+            <div style={{ color: '#6A5830', fontSize: 10 }}>
               {SEASON_ICON[season]} Turn {currentTurn} · tap to dismiss
             </div>
           </div>
         </div>
 
-        {/* Action lines */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
           {summary.lines.map((line, i) => (
             <div key={i} style={{
-              background: '#1a1a2e', borderRadius: 6,
-              padding: '5px 10px', fontSize: 12, color: '#ccc',
+              background: '#1A1408', borderRadius: 6,
+              padding: '5px 10px', fontSize: 12, color: '#C8B890',
             }}>
               {line}
             </div>
