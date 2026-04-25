@@ -98,6 +98,12 @@ export interface GeneratedBoard {
   spawnTileIds: string[];    // one per player, in player order
 }
 
+// Minimum guaranteed tiles per restricted habitat (wet-only / shade-only cards exist).
+const HABITAT_MINIMUMS: Partial<Record<Habitat, number>> = {
+  wet:   3,
+  shade: 3,
+};
+
 export function generateBoard(playerCount: number): GeneratedBoard {
   const tileCount = BOARD_SIZES[playerCount];
   if (!tileCount) throw new Error(`Unsupported player count: ${playerCount}`);
@@ -120,6 +126,29 @@ export function generateBoard(playerCount: number): GeneratedBoard {
       isSpawn,
       isBlight: false,
     };
+  }
+
+  // Guarantee minimums for restricted habitats by overwriting excess 'tree' tiles.
+  for (const [habitat, min] of Object.entries(HABITAT_MINIMUMS) as [Habitat, number][]) {
+    const current = Object.values(tiles).filter(t => t.habitat === habitat).length;
+    if (current >= min) continue;
+
+    // Candidates: non-spawn tree tiles not already at target habitat.
+    const candidates = Object.values(tiles).filter(
+      t => !t.isSpawn && t.habitat === 'tree'
+    );
+    // Shuffle candidates so placement is random each game.
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+
+    let added = current;
+    for (const tile of candidates) {
+      if (added >= min) break;
+      tiles[tile.id] = { ...tiles[tile.id], habitat };
+      added++;
+    }
   }
 
   return {
