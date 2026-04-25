@@ -322,7 +322,7 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
 
         {/* Power text */}
         <div style={{
-          fontSize: 13, lineHeight: 1.5, fontStyle: 'italic',
+          fontSize: 16, lineHeight: 1.5, fontStyle: 'italic',
           color: card.isOngoing ? '#90C8B8' : '#C8C0A8',
           flex: 1, overflow: 'hidden',
         }}>
