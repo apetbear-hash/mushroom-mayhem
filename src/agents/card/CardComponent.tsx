@@ -288,53 +288,41 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
       {/* ── Info section ─────────────────────────────────────────── */}
       <div style={{ padding: '10px 12px 10px', display: 'flex', flexDirection: 'column', flex: 1, gap: 0, minHeight: 0 }}>
 
-        {/* Name + scientific */}
-        <div style={{ marginBottom: 7 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, lineHeight: 1.15, color: '#F2EAD8', letterSpacing: 0.2 }}>
-            {card.name}
-          </div>
-          <div style={{ fontSize: 10, fontStyle: 'italic', color: '#8A7858', marginTop: 2 }}>
-            {card.scientificName}
-          </div>
+        {/* Name */}
+        <div style={{ fontWeight: 700, fontSize: 16, lineHeight: 1.15, color: '#F2EAD8', letterSpacing: 0.2, marginBottom: 7 }}>
+          {card.name}
         </div>
 
-        {/* Type row + card number */}
+        {/* Type row */}
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          display: 'flex', alignItems: 'center', gap: 5,
           paddingBottom: 7, borderBottom: `1px solid ${typeColor}44`,
           marginBottom: 7,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ color: typeColor, fontSize: 13 }}>{TYPE_ICON[card.type] ?? '◈'}</span>
-            <span style={{
-              color: typeColor, fontFamily: 'sans-serif', fontSize: 10,
-              fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
-            }}>
-              {card.type}
-            </span>
-            {card.isOngoing && (
-              <span style={{ color: typeColor, fontFamily: 'sans-serif', fontSize: 10, opacity: 0.7 }}>· Ongoing</span>
-            )}
-          </div>
+          <span style={{ color: typeColor, fontSize: 13 }}>{TYPE_ICON[card.type] ?? '◈'}</span>
           <span style={{
-            fontFamily: 'sans-serif', fontSize: 10, color: '#5A4838', letterSpacing: 0.5,
+            color: typeColor, fontFamily: 'sans-serif', fontSize: 10,
+            fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
           }}>
-            № {String(card.id).padStart(3, '0')}
+            {card.type}
           </span>
+          {card.isOngoing && (
+            <span style={{ color: typeColor, fontFamily: 'sans-serif', fontSize: 10, opacity: 0.7 }}>· Ongoing</span>
+          )}
         </div>
 
         {/* Ability label */}
         <div style={{
           fontFamily: 'sans-serif', fontSize: 10, fontWeight: 700,
           letterSpacing: 2, textTransform: 'uppercase',
-          color: '#C8A030', marginBottom: 4,
+          color: '#C8A030', marginBottom: 5,
         }}>
           Ability
         </div>
 
         {/* Power text */}
         <div style={{
-          fontSize: 11, lineHeight: 1.5, fontStyle: 'italic',
+          fontSize: 13, lineHeight: 1.5, fontStyle: 'italic',
           color: card.isOngoing ? '#90C8B8' : '#C8C0A8',
           flex: 1, overflow: 'hidden',
         }}>
