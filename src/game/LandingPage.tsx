@@ -752,7 +752,7 @@ function BigCTA({ vp, onPlay }: { vp: ReturnType<typeof useViewport>; onPlay: ()
       <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <div style={{ ...txt.eyebrow, color: PALETTE.amber, marginBottom: 16, opacity: 0.85 }}>◈ ⌘ Sporewell Open ⌘ ◈</div>
         <h2 style={{ ...txt.display, fontSize: titleSize, margin: 0, maxWidth: 1200, textShadow: '0 4px 24px rgba(0,0,0,0.7)' }}>
-          Plant a spore.<br/>
+          Spawn a spore.<br/>
           <span style={{ fontStyle: 'italic', color: PALETTE.amber }}>Reshape the forest.</span>
         </h2>
         <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: isNarrow ? 18 : 22, marginTop: 26, maxWidth: 640, lineHeight: 1.5, color: 'rgba(242,234,216,0.82)' }}>

@@ -12,7 +12,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] +1 bonus point per 3 tiles in your network (rounded down).',
+    power: '[When Spawned] +1 bonus point per 3 tiles in your network (rounded down).',
   },
   {
     id: 8,
@@ -36,7 +36,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] Immediately gain 2 spores.',
+    power: '[When Spawned] Immediately gain 2 spores.',
   },
   {
     id: 11,
@@ -48,7 +48,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'tree'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] +1 bonus point if planted on an Open tile.',
+    power: '[When Spawned] +1 bonus point if spawned on an Open tile.',
   },
   {
     id: 12,
@@ -60,7 +60,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] All adjacent friendly mushrooms each score +1 point.',
+    power: '[When Spawned] All adjacent friendly mushrooms each score +1 point.',
   },
   {
     id: 13,
@@ -84,7 +84,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'shade'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] +3 bonus points if you own no other mushroom of the same type.',
+    power: '[When Spawned] +3 bonus points if you own no other mushroom of the same type.',
   },
   {
     id: 15,
@@ -96,7 +96,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'shade'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] +2 points per other Chanterelle variant you own.',
+    power: '[When Spawned] +2 points per other Chanterelle variant you own.',
   },
   {
     id: 17,
@@ -108,7 +108,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'shade'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] +3 bonus points if no opponent has mushrooms on adjacent tiles.',
+    power: '[When Spawned] +3 bonus points if no opponent has mushrooms on adjacent tiles.',
   },
   {
     id: 20,
@@ -120,7 +120,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] +1 point per 5 tiles in your network (rounded down).',
+    power: '[When Spawned] +1 point per 5 tiles in your network (rounded down).',
   },
   {
     id: 38,
@@ -132,7 +132,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'shade'],
     type: 'mycorrhizal',
     isOngoing: false,
-    power: '[When Planted] Permanently reduce the spread cost of all adjacent tiles to 1.',
+    power: '[When Spawned] Permanently reduce the spread cost of all adjacent tiles to 1.',
   },
   {
     id: 41,
@@ -182,7 +182,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['wet'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[When Planted] Place up to 2 free copies on adjacent network tiles.',
+    power: '[When Spawned] Place up to 2 free copies on adjacent network tiles.',
   },
   {
     id: 3,
@@ -242,7 +242,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'wet'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[When Planted] Your network expands to 1 random adjacent unoccupied tile.',
+    power: '[When Spawned] Your network expands to 1 random adjacent unoccupied tile.',
   },
   {
     id: 32,
@@ -278,7 +278,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'decay'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[When Planted] Immediately gain 2 moisture.',
+    power: '[When Spawned] Immediately gain 2 moisture.',
   },
   {
     id: 37,
@@ -290,7 +290,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['wet'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[When Planted] +3 pts each for this and one adjacent friendly mushroom.',
+    power: '[When Spawned] +3 pts each for this and one adjacent friendly mushroom.',
   },
   {
     id: 40,
@@ -338,7 +338,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'decay'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[When Planted] Gain 2 spores immediately.',
+    power: '[When Spawned] Gain 2 spores immediately.',
   },
 
   // ── Symbiotic (7) ───────────────────────────────────────────────────────────
@@ -450,7 +450,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Opponents must pay +2 spores to plant on tiles adjacent to this mushroom.',
+    power: '[Ongoing] Opponents must pay +2 spores to spawn on tiles adjacent to this mushroom.',
   },
   {
     id: 23,
@@ -498,7 +498,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Opponents can\'t plant on adjacent tiles.',
+    power: '[Ongoing] Opponents can\'t spawn on adjacent tiles.',
   },
   {
     id: 28,
@@ -522,7 +522,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'parasitic',
     isOngoing: false,
-    power: '[When Planted] Blocks opponent spreading into adjacent tiles this season.',
+    power: '[When Spawned] Blocks opponent spreading into adjacent tiles this season.',
   },
 
   // ── Opportunistic (7) ───────────────────────────────────────────────────────
@@ -536,7 +536,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'opportunistic',
     isOngoing: false,
-    power: '[When Planted] Immediately score 2 bonus points.',
+    power: '[When Spawned] Immediately score 2 bonus points.',
   },
   {
     id: 24,
@@ -548,7 +548,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'tree'],
     type: 'opportunistic',
     isOngoing: true,
-    power: '[Ongoing] Opponents must pay +1 spore to plant on tiles adjacent to this mushroom.',
+    power: '[Ongoing] Opponents must pay +1 spore to spawn on tiles adjacent to this mushroom.',
   },
   {
     id: 29,
@@ -584,7 +584,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay'],
     type: 'opportunistic',
     isOngoing: false,
-    power: '[When Planted] On the following turn, choose 2 adjacent tiles to spread to for free.',
+    power: '[When Spawned] On the following turn, choose 2 adjacent tiles to spread to for free.',
   },
   {
     id: 46,

@@ -348,11 +348,11 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       setPlantSecondary(null);
       setSelectedCardId(null);
       setHighlightedTiles(new Set());
-      setFeedback(canUndo ? 'Mushroom planted!' : 'Mushroom planted! (cannot undo)');
+      setFeedback(canUndo ? 'Mushroom spawned!' : 'Mushroom spawned! (cannot undo)');
     } catch (e: unknown) {
       setUndoState(null);
       setPlantSecondary(null);
-      setFeedback(e instanceof Error ? e.message : 'Error planting.');
+      setFeedback(e instanceof Error ? e.message : 'Error spawning.');
     }
   }, [plantSecondary, state, currentPlayer]);
 
@@ -400,8 +400,8 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           if (canUndo) setUndoState(state);
           setState(prev => resolvePlantAction(prev, currentPlayer.id, cardId, primaryTileId, { oysterCopyTileId: tileId }));
           setPlantSecondary(null); setSelectedCardId(null); setHighlightedTiles(new Set());
-          setFeedback(canUndo ? 'Mushroom planted!' : 'Mushroom planted! (cannot undo)');
-        } catch (e: unknown) { setUndoState(null); setFeedback(e instanceof Error ? e.message : 'Cannot plant here.'); }
+          setFeedback(canUndo ? 'Mushroom spawned!' : 'Mushroom spawned! (cannot undo)');
+        } catch (e: unknown) { setUndoState(null); setFeedback(e instanceof Error ? e.message : 'Cannot spawn here.'); }
         return;
       }
 
@@ -415,10 +415,10 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
         setPlantSecondary(null);
         setSelectedCardId(null);
         setHighlightedTiles(new Set());
-        setFeedback(canUndo ? 'Mushroom planted!' : 'Mushroom planted! (cannot undo)');
+        setFeedback(canUndo ? 'Mushroom spawned!' : 'Mushroom spawned! (cannot undo)');
       } catch (e: unknown) {
         setUndoState(null);
-        setFeedback(e instanceof Error ? e.message : 'Cannot plant here.');
+        setFeedback(e instanceof Error ? e.message : 'Cannot spawn here.');
       }
       return;
     }
@@ -467,10 +467,10 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
         setState(prev => resolvePlantAction(prev, currentPlayer.id, selectedCardId, tileId));
         setSelectedCardId(null);
         setHighlightedTiles(new Set());
-        setFeedback(canUndo ? 'Mushroom planted!' : 'Mushroom planted! (cannot undo)');
+        setFeedback(canUndo ? 'Mushroom spawned!' : 'Mushroom spawned! (cannot undo)');
       } catch (e: unknown) {
         setUndoState(null);
-        setFeedback(e instanceof Error ? e.message : 'Cannot plant here.');
+        setFeedback(e instanceof Error ? e.message : 'Cannot spawn here.');
       }
       return;
     }

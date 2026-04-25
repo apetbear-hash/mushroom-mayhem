@@ -61,7 +61,7 @@ export function ActionBar({
   const actions: { type: ActionType; label: string; icon: string; enabled: boolean; hint: string }[] = [
     { type: 'draw',   label: 'Draw',   icon: '🃏', enabled: canDraw,   hint: drawHint },
     { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : `${isDrought ? '✕ Drought' : isDeepFreeze ? '✕ Frozen' : '💧 scaled'}` },
-    { type: 'plant',  label: 'Plant',  icon: '🍄', enabled: canPlant,  hint: 'costs spores' },
+    { type: 'plant',  label: 'Spawn',  icon: '🍄', enabled: canPlant,  hint: 'costs spores' },
     { type: 'rest',   label: 'Rest',   icon: '💤', enabled: canRest,   hint: '+1🍄💧☀️' },
   ];
 
@@ -160,7 +160,7 @@ export function ActionBar({
       )}
       {selectedAction === 'plant' && (
         <div style={{ color: '#5cb85c', fontSize: 11 }}>
-          Select a card below, then tap a highlighted tile to plant it.
+          Select a card below, then tap a highlighted tile to spawn it.
         </div>
       )}
       {selectedAction === 'draw' && (
