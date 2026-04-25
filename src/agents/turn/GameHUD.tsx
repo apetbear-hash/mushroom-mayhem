@@ -4,10 +4,10 @@ import { portraitEmoji } from './playerSetupData';
 import { SEASON_TURNS } from '../../shared/constants';
 
 const SEASON_META: Record<string, { icon: string; color: string; label: string }> = {
-  spring: { icon: '🌿', color: '#5cb85c', label: 'Spring' },
-  summer: { icon: '☀️',  color: '#e0a030', label: 'Summer' },
-  autumn: { icon: '🍂', color: '#b8623c', label: 'Autumn' },
-  winter: { icon: '❄️',  color: '#90caf9', label: 'Winter' },
+  spring: { icon: '🌿', color: '#4A8030', label: 'Spring' },
+  summer: { icon: '☀️',  color: '#A07010', label: 'Summer' },
+  autumn: { icon: '🍂', color: '#C84820', label: 'Autumn' },
+  winter: { icon: '❄️',  color: '#3A78A8', label: 'Winter' },
 };
 
 const EFFECT_LABELS: Record<string, string> = {
@@ -36,8 +36,8 @@ export function GameHUD({ state }: GameHUDProps) {
 
   return (
     <div style={{
-      background: '#1A100A',
-      borderBottom: `2px solid ${meta.color}66`,
+      background: '#DDD0B0',
+      borderBottom: `2px solid ${meta.color}88`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -54,7 +54,7 @@ export function GameHUD({ state }: GameHUDProps) {
           <div style={{ color: meta.color, fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
             {meta.label}
           </div>
-          <div style={{ color: '#8A7848', fontSize: 10, fontStyle: 'italic' }}>
+          <div style={{ color: '#6A5030', fontSize: 10, fontStyle: 'italic' }}>
             {effectLabel}
           </div>
         </div>
@@ -62,11 +62,11 @@ export function GameHUD({ state }: GameHUDProps) {
 
       {/* Turn counter */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#F2EAD8', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>
+        <div style={{ color: '#1A1408', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>
           {state.currentTurn}
-          <span style={{ color: '#6A5838', fontWeight: 400, fontSize: 13 }}> / 20</span>
+          <span style={{ color: '#8A7848', fontWeight: 400, fontSize: 13 }}> / 20</span>
         </div>
-        <div style={{ color: '#8A7848', fontSize: 10 }}>
+        <div style={{ color: '#6A5030', fontSize: 10 }}>
           Turn {turnInSeason} of {seasonEnd - seasonStart + 1} in {meta.label}
         </div>
       </div>
@@ -75,14 +75,11 @@ export function GameHUD({ state }: GameHUDProps) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{
           fontSize: 22,
-          background: currentPlayer.color + '33',
-          border: `1px solid ${currentPlayer.color}88`,
+          background: currentPlayer.color + '22',
+          border: `1px solid ${currentPlayer.color}99`,
           borderRadius: '50%',
-          width: 36,
-          height: 36,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          width: 36, height: 36,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {portraitEmoji(currentPlayer.portrait)}
         </div>
@@ -90,7 +87,7 @@ export function GameHUD({ state }: GameHUDProps) {
           <div style={{ color: currentPlayer.color, fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>
             {currentPlayer.name}
           </div>
-          <div style={{ color: '#8A7848', fontSize: 10 }}>Active player</div>
+          <div style={{ color: '#6A5030', fontSize: 10 }}>Active player</div>
         </div>
       </div>
 
@@ -104,10 +101,8 @@ export function GameHUD({ state }: GameHUDProps) {
               key={s}
               title={`${sm.label}: ${EFFECT_LABELS[state.forecast[s]] ?? state.forecast[s]}`}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                opacity: isActive ? 1 : 0.35,
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                opacity: isActive ? 1 : 0.4,
                 borderBottom: isActive ? `2px solid ${sm.color}` : '2px solid transparent',
                 paddingBottom: 2,
               }}

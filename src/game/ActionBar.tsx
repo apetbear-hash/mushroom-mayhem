@@ -29,7 +29,6 @@ export function ActionBar({
   const drawn = state.turnState.cardsDrawnThisTurn;
   const nextDrawCost = drawn + 1;
   const deckOrDiscard = state.deck.length > 0 || state.discard.length > 0;
-
   const confirmedAction = state.turnState.actionType;
 
   const canDraw    = !state.turnState.restUsed &&
@@ -63,8 +62,8 @@ export function ActionBar({
 
   return (
     <div style={{
-      background: '#231C10',
-      borderTop: '1px solid #3C3018',
+      background: '#DDD0B0',
+      borderTop: '1px solid #C8B88A',
       padding: '10px 16px',
       display: 'flex', flexDirection: 'column', gap: 8,
       fontFamily: 'sans-serif',
@@ -74,14 +73,14 @@ export function ActionBar({
         {(['spore', 'moisture', 'sunlight'] as const).map(res => (
           <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span style={{ fontSize: 14 }}>{RESOURCE_ICONS[res]}</span>
-            <span style={{ color: '#EAE0C8', fontWeight: 700, fontSize: 15 }}>
+            <span style={{ color: '#1A1408', fontWeight: 700, fontSize: 15 }}>
               {player.resources[res]}
             </span>
           </div>
         ))}
 
         {message && (
-          <span style={{ color: '#D4A820', fontSize: 11, marginLeft: 8 }}>{message}</span>
+          <span style={{ color: '#C84820', fontSize: 11, marginLeft: 8 }}>{message}</span>
         )}
 
         {undoState && (
@@ -89,8 +88,8 @@ export function ActionBar({
             onClick={onUndo}
             style={{
               marginLeft: 'auto',
-              background: 'transparent', border: '1px solid #4E4020',
-              color: '#B09848', borderRadius: 8,
+              background: 'transparent', border: '1px solid #B0A070',
+              color: '#4A3820', borderRadius: 8,
               padding: '8px 14px', fontWeight: 600, fontSize: 12,
               cursor: 'pointer',
             }}
@@ -104,9 +103,9 @@ export function ActionBar({
           disabled={!actionTaken}
           style={{
             marginLeft: undoState ? 8 : 'auto',
-            background: actionTaken ? '#C84820' : '#231C10',
-            color: actionTaken ? '#EAE0C8' : '#6A5830',
-            border: actionTaken ? 'none' : '1px solid #3C3018',
+            background: actionTaken ? '#C84820' : '#C8B88A',
+            color: actionTaken ? '#EAE0C8' : '#8A7848',
+            border: 'none',
             borderRadius: 8,
             padding: '8px 20px', fontWeight: 700, fontSize: 13,
             cursor: actionTaken ? 'pointer' : 'not-allowed',
@@ -128,10 +127,10 @@ export function ActionBar({
               title={a.hint}
               style={{
                 flex: 1,
-                background: isSelected ? player.color + '33' : '#1A1408',
-                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#231C10' : '#3C3018'}`,
+                background: isSelected ? player.color + '22' : '#EAE0C8',
+                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#C8B88A' : '#B0A070'}`,
                 borderRadius: 8, padding: '8px 4px',
-                color: isSelected ? player.color : !a.enabled ? '#3C3018' : '#B09848',
+                color: isSelected ? player.color : !a.enabled ? '#C8B88A' : '#4A3820',
                 fontWeight: isSelected ? 700 : 500,
                 fontSize: 12, cursor: a.enabled ? 'pointer' : 'not-allowed',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
@@ -148,17 +147,17 @@ export function ActionBar({
 
       {/* Context hint */}
       {selectedAction === 'spread' && (
-        <div style={{ color: '#6AAAC8', fontSize: 11 }}>
+        <div style={{ color: '#2A6888', fontSize: 11 }}>
           Tap a highlighted tile to spread your network.
         </div>
       )}
       {selectedAction === 'plant' && (
-        <div style={{ color: '#C87820', fontSize: 11 }}>
+        <div style={{ color: '#C84820', fontSize: 11 }}>
           Select a card below, then tap a highlighted tile to spawn it.
         </div>
       )}
       {selectedAction === 'draw' && (
-        <div style={{ color: '#D4A820', fontSize: 11 }}>
+        <div style={{ color: '#A07010', fontSize: 11 }}>
           Click Draw again to draw another card (costs 1☀️ each).
         </div>
       )}

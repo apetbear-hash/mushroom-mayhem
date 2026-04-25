@@ -542,7 +542,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      height: '100vh', background: '#0E0907',
+      height: '100vh', background: '#EAE0C8',
       overflow: 'hidden', fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
       <GameHUD state={state} />
@@ -556,7 +556,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           />
         </div>
         <div style={{
-          width: 200, borderLeft: '1px solid #3A2818',
+          width: 200, borderLeft: '1px solid #C8B88A',
           overflowY: 'auto', flexShrink: 0,
         }}>
           <SeasonalEffectPanel state={state} />
@@ -564,7 +564,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       </div>
 
       {isHumanTurn && !state.isOver && (
-        <div style={{ borderTop: '1px solid #3A2818' }}>
+        <div style={{ borderTop: '1px solid #C8B88A' }}>
           <ActionBar
             state={state}
             playerId={currentPlayer.id}
@@ -577,16 +577,16 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           />
           {plantSecondary && (
             <div style={{
-              background: '#1A2A0E', borderTop: '1px solid #3A5820',
+              background: '#F2ECD8', borderTop: '1px solid #C8B88A',
               padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 12,
             }}>
-              <span style={{ color: '#90C870', fontSize: 12, flex: 1 }}>
+              <span style={{ color: '#4A8030', fontSize: 12, flex: 1 }}>
                 {secondaryPrompt(plantSecondary.type)}
               </span>
               <button
                 onClick={handleSkipSecondary}
                 style={{
-                  background: '#2A1A0A', border: '1px solid #6A5030', color: '#C8A878',
+                  background: '#EAE0C8', border: '1px solid #C8B88A', color: '#6A5030',
                   borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
                 }}
               >
@@ -596,16 +596,16 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           )}
           {inkyCapPendingTileId && (
             <div style={{
-              background: '#2A1A0A', borderTop: '1px solid #6A4820',
+              background: '#F2ECD8', borderTop: '1px solid #C8B88A',
               padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 12,
             }}>
-              <span style={{ color: '#D4A855', fontSize: 12, flex: 1 }}>
+              <span style={{ color: '#A07010', fontSize: 12, flex: 1 }}>
                 Inky Cap: discard this mushroom to gain +3 spores?
               </span>
               <button
                 onClick={handleInkyCapConfirm}
                 style={{
-                  background: '#6A4010', border: '1px solid #D4A855', color: '#D4A855',
+                  background: '#C84820', border: 'none', color: '#F2ECD8',
                   borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer', fontWeight: 700,
                 }}
               >
@@ -614,7 +614,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
               <button
                 onClick={() => setInkyCapPendingTileId(null)}
                 style={{
-                  background: '#1A0A00', border: '1px solid #5A4030', color: '#9A8060',
+                  background: 'transparent', border: '1px solid #C8B88A', color: '#6A5030',
                   borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
                 }}
               >
@@ -624,16 +624,16 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           )}
           {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
             <div style={{
-              background: '#0A1828', borderTop: '1px solid #2A4858',
+              background: '#F2ECD8', borderTop: '1px solid #C8B88A',
               padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 12,
             }}>
-              <span style={{ color: '#78B8D8', fontSize: 12, flex: 1 }}>
+              <span style={{ color: '#2A6888', fontSize: 12, flex: 1 }}>
                 Shiitake: sacrifice 1💧 to gain 1☀️
               </span>
               <button
                 onClick={handleShiitakeSwap}
                 style={{
-                  background: '#1A3A58', border: '1px solid #78B8D8', color: '#78B8D8',
+                  background: '#2A6888', border: 'none', color: '#F2ECD8',
                   borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer', fontWeight: 700,
                 }}
               >
@@ -641,7 +641,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
               </button>
             </div>
           )}
-          <div style={{ background: '#0E0907', padding: '0 16px 12px' }}>
+          <div style={{ background: '#EAE0C8', padding: '0 16px 12px' }}>
             <HandDisplay
               state={state}
               playerId={currentPlayer.id}
@@ -655,7 +655,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
 
       {!isHumanTurn && !state.isOver && !showAnnouncement && !aiSummary && (
         <div style={{
-          borderTop: '1px solid #3A2818',
+          borderTop: '1px solid #C8B88A',
           padding: '16px', textAlign: 'center',
           color: currentPlayer.color, fontSize: 13, fontWeight: 600,
         }}>

@@ -78,7 +78,7 @@ export function AISummaryOverlay({
       onClick={onDismiss}
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(14,9,4,0.55)',
+        background: 'rgba(26,20,8,0.4)',
         display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
         zIndex: 140, fontFamily: 'sans-serif',
         paddingBottom: 80,
@@ -87,18 +87,18 @@ export function AISummaryOverlay({
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          background: '#231C10',
-          border: `1.5px solid ${summary.playerColor}44`,
+          background: '#F2ECD8',
+          border: `1.5px solid ${summary.playerColor}66`,
           borderRadius: 14, padding: '16px 20px',
           minWidth: 260, maxWidth: 340,
-          boxShadow: `0 4px 32px ${summary.playerColor}22`,
+          boxShadow: `0 4px 24px rgba(26,20,8,0.2)`,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
           <div style={{
             width: 36, height: 36, borderRadius: '50%',
-            background: summary.playerColor + '1A',
-            border: `1.5px solid ${summary.playerColor}55`,
+            background: summary.playerColor + '18',
+            border: `1.5px solid ${summary.playerColor}88`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 18, flexShrink: 0,
           }}>
@@ -108,7 +108,7 @@ export function AISummaryOverlay({
             <div style={{ color: summary.playerColor, fontWeight: 700, fontSize: 13 }}>
               {summary.playerName}
             </div>
-            <div style={{ color: '#6A5830', fontSize: 10 }}>
+            <div style={{ color: '#8A7848', fontSize: 10 }}>
               {SEASON_ICON[season]} Turn {currentTurn} · tap to dismiss
             </div>
           </div>
@@ -117,8 +117,8 @@ export function AISummaryOverlay({
         <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
           {summary.lines.map((line, i) => (
             <div key={i} style={{
-              background: '#1A1408', borderRadius: 6,
-              padding: '5px 10px', fontSize: 12, color: '#C8B890',
+              background: '#EAE0C8', borderRadius: 6,
+              padding: '5px 10px', fontSize: 12, color: '#1A1408',
             }}>
               {line}
             </div>

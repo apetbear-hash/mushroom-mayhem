@@ -10,14 +10,12 @@ interface DraftPhaseScreenProps {
 }
 
 const MAX_DISCARD = 2;
-
 const HUMAN_PLAYER_ID = 'player_0';
 
-// Auto-draft for AI players: discard 0-pt/0-resource cards (up to 2) for spores.
 function applyAIDraft(state: GameState): GameState {
   let s = state;
   for (const p of s.players) {
-    if (p.id === HUMAN_PLAYER_ID) continue; // human drafts manually
+    if (p.id === HUMAN_PLAYER_ID) continue;
     const toDiscard = p.hand
       .filter(id => {
         const c = getCard(id);
@@ -51,11 +49,8 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
   function toggleCard(cardId: number) {
     setMarkedForDiscard(prev => {
       const next = new Set(prev);
-      if (next.has(cardId)) {
-        next.delete(cardId);
-      } else if (next.size < MAX_DISCARD) {
-        next.add(cardId);
-      }
+      if (next.has(cardId)) next.delete(cardId);
+      else if (next.size < MAX_DISCARD) next.add(cardId);
       return next;
     });
   }
@@ -80,7 +75,7 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#0E0907',
+      minHeight: '100vh', background: '#EAE0C8',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: "'Cormorant Garamond', Georgia, serif", padding: 24,
     }}>
@@ -93,10 +88,10 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
           }}>
             Starting Draft
           </div>
-          <div style={{ fontSize: 28, color: '#F2EAD8', fontWeight: 700, marginBottom: 10, lineHeight: 1.1 }}>
+          <div style={{ fontSize: 28, color: '#1A1408', fontWeight: 700, marginBottom: 10, lineHeight: 1.1 }}>
             Choose your starting hand
           </div>
-          <div style={{ fontSize: 15, color: '#8A7848', fontStyle: 'italic', maxWidth: 460, margin: '0 auto', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 15, color: '#6A5030', fontStyle: 'italic', maxWidth: 460, margin: '0 auto', lineHeight: 1.5 }}>
             Trade up to {MAX_DISCARD} cards for spores. Traded cards go to the discard pile —
             you will not draw them again.
           </div>
@@ -109,8 +104,8 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
         }}>
           <div style={{
             width: 44, height: 44, borderRadius: '50%',
-            background: humanPlayer.color + '33',
-            border: `2px solid ${humanPlayer.color}88`,
+            background: humanPlayer.color + '22',
+            border: `2px solid ${humanPlayer.color}99`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 22,
           }}>
@@ -120,10 +115,10 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
             <div style={{ color: humanPlayer.color, fontWeight: 700, fontSize: 16 }}>
               {humanPlayer.name}
             </div>
-            <div style={{ color: '#8A7848', fontSize: 12, marginTop: 2, fontFamily: 'sans-serif' }}>
+            <div style={{ color: '#6A5030', fontSize: 12, marginTop: 2, fontFamily: 'sans-serif' }}>
               Starting with {startingSpores} 🍄 spore{startingSpores !== 1 ? 's' : ''}
               {sporesGained > 0 && (
-                <span style={{ color: '#D4A04A' }}> (+{sporesGained} from trade)</span>
+                <span style={{ color: '#C84820' }}> (+{sporesGained} from trade)</span>
               )}
             </div>
           </div>
@@ -149,7 +144,7 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
                   transition: 'transform 0.15s, opacity 0.15s',
                   opacity: isMarked ? 0.55 : (!canMark ? 0.35 : 1),
                   cursor: canMark ? 'pointer' : 'default',
-                  outline: isMarked ? '2px solid #D4A04A' : 'none',
+                  outline: isMarked ? '2px solid #C84820' : 'none',
                   borderRadius: 14,
                 }}
               >
@@ -158,9 +153,9 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
                   <div style={{
                     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                     borderRadius: 14,
-                    background: 'rgba(14,9,7,0.6)',
+                    background: 'rgba(26,20,8,0.55)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, color: '#D4A04A', fontWeight: 700, letterSpacing: 1,
+                    fontSize: 11, color: '#F2ECD8', fontWeight: 700, letterSpacing: 1,
                     fontFamily: 'sans-serif',
                   }}>
                     TRADE +1🍄
@@ -174,17 +169,17 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
         {/* Hint */}
         <div style={{ textAlign: 'center', marginBottom: 22, minHeight: 18 }}>
           {markedForDiscard.size === 0 && (
-            <span style={{ color: '#5A4830', fontSize: 13, fontStyle: 'italic' }}>
+            <span style={{ color: '#8A7848', fontSize: 13, fontStyle: 'italic' }}>
               Click a card to trade it for 1 spore
             </span>
           )}
           {markedForDiscard.size > 0 && markedForDiscard.size < MAX_DISCARD && (
-            <span style={{ color: '#8A7848', fontSize: 13, fontStyle: 'italic' }}>
+            <span style={{ color: '#6A5030', fontSize: 13, fontStyle: 'italic' }}>
               Trading {markedForDiscard.size} card{markedForDiscard.size > 1 ? 's' : ''} — you can trade {MAX_DISCARD - markedForDiscard.size} more
             </span>
           )}
           {markedForDiscard.size === MAX_DISCARD && (
-            <span style={{ color: '#D4A04A', fontSize: 13 }}>
+            <span style={{ color: '#C84820', fontSize: 13 }}>
               Maximum {MAX_DISCARD} cards selected
             </span>
           )}
@@ -196,8 +191,8 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
             <button
               onClick={() => setMarkedForDiscard(new Set())}
               style={{
-                background: 'transparent', border: '1px solid #5A4830',
-                color: '#8A7848', borderRadius: 4, padding: '12px 24px',
+                background: 'transparent', border: '1px solid #C8B88A',
+                color: '#6A5030', borderRadius: 4, padding: '12px 24px',
                 cursor: 'pointer', fontSize: 14,
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
               }}
@@ -208,12 +203,12 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
           <button
             onClick={handleConfirm}
             style={{
-              background: '#D4A04A', color: '#1A0A00',
+              background: '#C84820', color: '#F2ECD8',
               border: 'none', borderRadius: 4,
               padding: '14px 40px', fontSize: 16, fontWeight: 700,
               cursor: 'pointer', letterSpacing: 0.3,
               fontFamily: "'Cormorant Garamond', Georgia, serif",
-              boxShadow: '0 4px 14px -2px rgba(212,160,74,0.5)',
+              boxShadow: '0 4px 16px rgba(200,72,32,0.35)',
             }}
           >
             {markedForDiscard.size === 0 ? 'Keep all cards →' : `Trade ${markedForDiscard.size} card${markedForDiscard.size > 1 ? 's' : ''} & start →`}

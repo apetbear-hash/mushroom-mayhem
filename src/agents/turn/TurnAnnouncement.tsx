@@ -4,10 +4,10 @@ import { portraitEmoji } from './playerSetupData';
 import { getSeason } from '../seasonal';
 
 const SEASON_META: Record<string, { icon: string; color: string; label: string }> = {
-  spring: { icon: '🌿', color: '#6AA84A', label: 'Spring' },
-  summer: { icon: '☀️',  color: '#D4A820', label: 'Summer' },
+  spring: { icon: '🌿', color: '#4A8030', label: 'Spring' },
+  summer: { icon: '☀️',  color: '#A07010', label: 'Summer' },
   autumn: { icon: '🍂', color: '#C84820', label: 'Autumn' },
-  winter: { icon: '❄️',  color: '#7AAAC8', label: 'Winter' },
+  winter: { icon: '❄️',  color: '#3A78A8', label: 'Winter' },
 };
 
 const EFFECT_LABELS: Record<string, string> = {
@@ -42,11 +42,7 @@ interface TurnAnnouncementProps {
 }
 
 export function TurnAnnouncement({
-  player,
-  currentTurn,
-  forecast,
-  onDismiss,
-  autoDismissMs = 2800,
+  player, currentTurn, forecast, onDismiss, autoDismissMs = 2800,
 }: TurnAnnouncementProps) {
   const [visible, setVisible] = useState(true);
 
@@ -74,19 +70,15 @@ export function TurnAnnouncement({
           from { opacity: 1; transform: scale(1); }
           to   { opacity: 0; transform: scale(0.92); }
         }
-        .mm-announcement-card {
-          animation: mm-fade-in 0.25s ease forwards;
-        }
-        .mm-announcement-card.hiding {
-          animation: mm-fade-out 0.25s ease forwards;
-        }
+        .mm-announcement-card { animation: mm-fade-in 0.25s ease forwards; }
+        .mm-announcement-card.hiding { animation: mm-fade-out 0.25s ease forwards; }
       `}</style>
 
       <div
         onClick={() => { setVisible(false); setTimeout(onDismiss, 300); }}
         style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(14,9,4,0.78)',
+          background: 'rgba(26,20,8,0.65)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 100,
         }}
@@ -95,28 +87,24 @@ export function TurnAnnouncement({
           className={`mm-announcement-card${!visible ? ' hiding' : ''}`}
           onClick={e => e.stopPropagation()}
           style={{
-            background: '#231C10',
+            background: '#F2ECD8',
             border: `3px solid ${player.color}`,
             borderRadius: 20,
             padding: '32px 40px',
             minWidth: 300,
             textAlign: 'center',
             fontFamily: "'Cormorant Garamond', Georgia, serif",
-            boxShadow: `0 0 48px ${player.color}44`,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 12,
+            boxShadow: `0 8px 48px rgba(26,20,8,0.35), 0 0 32px ${player.color}33`,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
           }}
         >
-          {/* Portrait */}
           <div style={{
             fontSize: 72,
-            background: player.color + '1A',
+            background: player.color + '18',
             borderRadius: '50%',
             width: 100, height: 100,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: `2px solid ${player.color}55`,
+            border: `2px solid ${player.color}66`,
           }}>
             {portraitEmoji(player.portrait)}
           </div>
@@ -124,36 +112,35 @@ export function TurnAnnouncement({
           <div style={{ color: player.color, fontSize: 24, fontWeight: 800, letterSpacing: 1 }}>
             {player.name}
           </div>
-          <div style={{ color: '#B09848', fontSize: 11, letterSpacing: 3, marginTop: -8, fontFamily: 'sans-serif' }}>
+          <div style={{ color: '#8A7848', fontSize: 11, letterSpacing: 3, marginTop: -8, fontFamily: 'sans-serif' }}>
             YOUR TURN
           </div>
 
-          <div style={{ width: '100%', height: 1, background: player.color + '33', margin: '4px 0' }} />
+          <div style={{ width: '100%', height: 1, background: '#C8B88A', margin: '4px 0' }} />
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 22 }}>{seasonMeta.icon}</span>
             <span style={{ color: seasonMeta.color, fontWeight: 700, fontSize: 17 }}>
               {seasonMeta.label}
             </span>
-            <span style={{ color: '#6A5830', fontSize: 14 }}>·</span>
-            <span style={{ color: '#EAE0C8', fontSize: 14 }}>
-              Turn {currentTurn} <span style={{ color: '#6A5830' }}>/ 20</span>
+            <span style={{ color: '#C8B88A', fontSize: 14 }}>·</span>
+            <span style={{ color: '#1A1408', fontSize: 14 }}>
+              Turn {currentTurn} <span style={{ color: '#8A7848' }}>/ 20</span>
             </span>
           </div>
 
           <div style={{
-            background: '#1A1408',
-            border: `1px solid ${seasonMeta.color}44`,
+            background: '#EAE0C8',
+            border: `1px solid ${seasonMeta.color}55`,
             borderRadius: 8,
             padding: '6px 16px',
             color: seasonMeta.color,
-            fontSize: 13,
-            fontWeight: 600,
+            fontSize: 13, fontWeight: 700,
           }}>
             {seasonMeta.icon} {effectLabel}
           </div>
 
-          <div style={{ color: '#6A5830', fontSize: 11, marginTop: 4, fontFamily: 'sans-serif' }}>
+          <div style={{ color: '#8A7848', fontSize: 11, marginTop: 4, fontFamily: 'sans-serif' }}>
             Tap anywhere to continue
           </div>
         </div>
