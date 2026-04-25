@@ -94,21 +94,21 @@ export function applyOnPlant(
     result.scoreBonus += 2;
   }
 
-  // Matsutake (14): +2 if only Matsutake owned
+  // Matsutake (14): +3 if no other mushroom of the same type owned
   if (card.id === 14) {
-    const ownMatsutake = state.placedMushrooms.filter(
-      m => m.playerId === player.id && m.cardId === 14 && m.tileId !== chosenTileId
+    const ownSameType = state.placedMushrooms.filter(
+      m => m.playerId === player.id && m.tileId !== chosenTileId && getCard(m.cardId).type === card.type
     );
-    if (ownMatsutake.length === 0) result.scoreBonus += 2;
+    if (ownSameType.length === 0) result.scoreBonus += 3;
   }
 
-  // Golden Chanterelle (15): +1 per other Chanterelle variant owned (max +2)
+  // Golden Chanterelle (15): +2 per other Chanterelle variant owned (no max)
   if (card.id === 15) {
     const chanterelleIds = new Set([1, 15, 46]); // Chanterelle, Golden, Cinnabar
     const others = state.placedMushrooms.filter(
       m => m.playerId === player.id && chanterelleIds.has(m.cardId) && m.cardId !== 15
     );
-    result.scoreBonus += Math.min(2, others.length);
+    result.scoreBonus += others.length * 2;
   }
 
   // Hedgehog (17): +3 if no opponent mushrooms on adjacent tiles
@@ -161,9 +161,10 @@ export function applyOnPlant(
     if (opts.oysterCopyTileId2) result.extraPlacements.push({ cardId: 2, tileId: opts.oysterCopyTileId2 });
   }
 
-  // Indigo Milky Cap (38): reduce one adjacent owned tile's spread cost to 1 permanently
-  if (card.id === 38 && opts.indigoReduceTileId) {
-    result.reducedCostTileIds.push(opts.indigoReduceTileId);
+  // Indigo Milky Cap (38): reduce all adjacent tiles' spread cost to 1 permanently
+  if (card.id === 38) {
+    const adjIds = getAdjacentTileIds(chosenTileId, state);
+    result.reducedCostTileIds.push(...adjIds);
   }
 
   // Hen's Egg Stinkhorn (42): free spread next turn (player picks 2 tiles)

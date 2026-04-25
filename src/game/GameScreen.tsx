@@ -40,7 +40,7 @@ const HUMAN_PLAYER_ID = 'player_0';
 // Planting this card cannot be undone (immediately blocks other players from spreading).
 const NON_UNDOABLE_PLANT_CARDS = new Set([30]); // Pigskin Puffball
 
-type PlantSecondaryType = 'oyster_copy' | 'oyster_copy_2' | 'shaggy_mane_adj' | 'indigo_reduce';
+type PlantSecondaryType = 'oyster_copy' | 'oyster_copy_2' | 'shaggy_mane_adj';
 interface PlantSecondaryInfo {
   type: PlantSecondaryType;
   cardId: number;
@@ -51,7 +51,6 @@ interface PlantSecondaryInfo {
 function needsSecondary(cardId: number): PlantSecondaryType | null {
   if (cardId === 2) return 'oyster_copy';
   if (cardId === 37) return 'shaggy_mane_adj';
-  if (cardId === 38) return 'indigo_reduce';
   return null;
 }
 
@@ -73,9 +72,6 @@ function computeSecondaryTiles(
       state.placedMushrooms.some(m => m.tileId === id && m.playerId === playerId),
     ));
   }
-  if (type === 'indigo_reduce') {
-    return new Set(adjIds.filter(id => player.networkTileIds.includes(id)));
-  }
   return new Set();
 }
 
@@ -83,7 +79,6 @@ function secondaryPrompt(type: PlantSecondaryType): string {
   if (type === 'oyster_copy') return 'Choose an adjacent network tile for the first free Oyster copy, or Skip.';
   if (type === 'oyster_copy_2') return 'Choose an adjacent network tile for the second free Oyster copy, or Skip.';
   if (type === 'shaggy_mane_adj') return 'Choose an adjacent friendly mushroom to grant +3 pts, or Skip.';
-  if (type === 'indigo_reduce') return 'Choose an adjacent owned tile to permanently reduce spread cost, or Skip.';
   return '';
 }
 
@@ -413,7 +408,6 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       const opts: PlantOpts = { ...accumulatedOpts };
       if (type === 'oyster_copy_2') opts.oysterCopyTileId2 = tileId;
       if (type === 'shaggy_mane_adj') opts.adjacentFriendlyTileId = tileId;
-      if (type === 'indigo_reduce') opts.indigoReduceTileId = tileId;
       const canUndo = !NON_UNDOABLE_PLANT_CARDS.has(cardId);
       try {
         if (canUndo) setUndoState(state);
