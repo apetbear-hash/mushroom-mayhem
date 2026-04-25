@@ -322,8 +322,8 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
 
         {/* Power text */}
         <div style={{
-          fontSize: 16, lineHeight: 1.5, fontStyle: 'italic',
-          color: card.isOngoing ? '#90C8B8' : '#C8C0A8',
+          fontSize: 16, lineHeight: 1.5,
+          color: '#FFFFFF',
           flex: 1, overflow: 'hidden',
         }}>
           {card.power}
