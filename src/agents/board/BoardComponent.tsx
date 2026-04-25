@@ -4,7 +4,7 @@ import { TYPE_COLORS, RESOURCE_COLORS, HABITAT_COLORS } from '../../shared/const
 import { getCard } from '../card/cards';
 import { hexToPixel, hexPolygonPoints } from './hexMath';
 
-const EMPTY_STROKE = '#555';
+const EMPTY_STROKE = '#7A6040';
 const TILE_SIZE = 54; // 50% bigger than original 36
 
 const RESOURCE_ICONS: Record<string, string> = {
@@ -36,30 +36,31 @@ function safeId(tileId: string): string {
 function HabitatDefs({ prefix }: { prefix: string }) {
   return (
     <defs>
+      {/* Warm illustrated palette — matches splash image art style */}
       <linearGradient id={`${prefix}-tree`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stopColor="#050e08" />
-        <stop offset="55%"  stopColor="#102214" />
-        <stop offset="100%" stopColor="#0a1a0e" />
+        <stop offset="0%"   stopColor="#2A4018" />
+        <stop offset="55%"  stopColor="#4A6028" />
+        <stop offset="100%" stopColor="#2A3A18" />
       </linearGradient>
       <linearGradient id={`${prefix}-decay`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stopColor="#1c0a04" />
-        <stop offset="50%"  stopColor="#3c1a0a" />
-        <stop offset="100%" stopColor="#281006" />
+        <stop offset="0%"   stopColor="#5A2808" />
+        <stop offset="50%"  stopColor="#8A4820" />
+        <stop offset="100%" stopColor="#5A3010" />
       </linearGradient>
       <linearGradient id={`${prefix}-shade`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stopColor="#05041a" />
-        <stop offset="50%"  stopColor="#100c2e" />
-        <stop offset="100%" stopColor="#0a081e" />
+        <stop offset="0%"   stopColor="#2A1848" />
+        <stop offset="50%"  stopColor="#3A2858" />
+        <stop offset="100%" stopColor="#2A1838" />
       </linearGradient>
       <linearGradient id={`${prefix}-wet`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stopColor="#041614" />
-        <stop offset="40%"  stopColor="#083030" />
-        <stop offset="100%" stopColor="#042424" />
+        <stop offset="0%"   stopColor="#1A4840" />
+        <stop offset="40%"  stopColor="#2A6858" />
+        <stop offset="100%" stopColor="#1A3838" />
       </linearGradient>
       <linearGradient id={`${prefix}-open`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stopColor="#0c1c38" />
-        <stop offset="45%"  stopColor="#1e4e78" />
-        <stop offset="100%" stopColor="#0e2810" />
+        <stop offset="0%"   stopColor="#C8A840" />
+        <stop offset="45%"  stopColor="#E0C058" />
+        <stop offset="100%" stopColor="#6A8828" />
       </linearGradient>
     </defs>
   );
@@ -78,19 +79,22 @@ function HabitatArt({
     return (
       <g>
         <rect x={cx-hw} y={cy-s} width={hw*2} height={s*2} fill={`url(#${gp}-tree)`} />
-        <ellipse cx={cx} cy={cy+s*0.65} rx={hw*0.9} ry={s*0.2} fill="#0a1c0e" />
-        <rect x={cx-s*0.465} y={cy+s*0.14} width={s*0.075} height={s*0.22} fill="#4a3018" />
-        <polygon points={`${cx-s*0.52},${cy+s*0.2} ${cx-s*0.41},${cy+s*0.2} ${cx-s*0.465},${cy-s*0.1}`} fill="#1e4a14" />
-        <polygon points={`${cx-s*0.5},${cy+s*0.02} ${cx-s*0.43},${cy+s*0.02} ${cx-s*0.465},${cy-s*0.3}`} fill="#2a6a1e" />
-        <rect x={cx-s*0.055} y={cy+s*0.25} width={s*0.11} height={s*0.32} fill="#4a3018" />
-        <polygon points={`${cx-s*0.3},${cy+s*0.32} ${cx+s*0.3},${cy+s*0.32} ${cx},${cy+s*0.0}`} fill="#1a4a12" />
-        <polygon points={`${cx-s*0.24},${cy+s*0.05} ${cx+s*0.24},${cy+s*0.05} ${cx},${cy-s*0.3}`} fill="#228020" />
-        <polygon points={`${cx-s*0.17},${cy-s*0.24} ${cx+s*0.17},${cy-s*0.24} ${cx},${cy-s*0.62}`} fill="#30a030" />
-        <polygon points={`${cx-s*0.06},${cy-s*0.55} ${cx+s*0.06},${cy-s*0.55} ${cx},${cy-s*0.65}`} fill="#e8f4ff" fillOpacity={0.6} />
-        <circle cx={cx-s*0.3}  cy={cy-s*0.72} r={1.4} fill="#fffbe0" fillOpacity={0.9} />
-        <circle cx={cx+s*0.42} cy={cy-s*0.65} r={1.0} fill="#fffbe0" fillOpacity={0.75} />
-        <circle cx={cx+s*0.1}  cy={cy-s*0.82} r={1.7} fill="#fffbe0" fillOpacity={1.0} />
-        <circle cx={cx-s*0.15} cy={cy-s*0.87} r={0.9} fill="#fffbe0" fillOpacity={0.7} />
+        <ellipse cx={cx} cy={cy+s*0.65} rx={hw*0.9} ry={s*0.2} fill="#1A2C0A" />
+        {/* Left pine tree */}
+        <rect x={cx-s*0.465} y={cy+s*0.14} width={s*0.075} height={s*0.22} fill="#6A4828" />
+        <polygon points={`${cx-s*0.52},${cy+s*0.2} ${cx-s*0.41},${cy+s*0.2} ${cx-s*0.465},${cy-s*0.1}`} fill="#4A6820" />
+        <polygon points={`${cx-s*0.5},${cy+s*0.02} ${cx-s*0.43},${cy+s*0.02} ${cx-s*0.465},${cy-s*0.3}`} fill="#6A8828" />
+        {/* Central golden autumn tree (like splash) */}
+        <rect x={cx-s*0.055} y={cy+s*0.25} width={s*0.11} height={s*0.32} fill="#6A4828" />
+        <polygon points={`${cx-s*0.3},${cy+s*0.32} ${cx+s*0.3},${cy+s*0.32} ${cx},${cy+s*0.0}`} fill="#7A9830" />
+        <polygon points={`${cx-s*0.24},${cy+s*0.05} ${cx+s*0.24},${cy+s*0.05} ${cx},${cy-s*0.3}`} fill="#C89018" />
+        <polygon points={`${cx-s*0.17},${cy-s*0.24} ${cx+s*0.17},${cy-s*0.24} ${cx},${cy-s*0.62}`} fill="#D4A020" />
+        <polygon points={`${cx-s*0.06},${cy-s*0.55} ${cx+s*0.06},${cy-s*0.55} ${cx},${cy-s*0.65}`} fill="#F8D870" fillOpacity={0.7} />
+        {/* Warm spore specks */}
+        <circle cx={cx-s*0.3}  cy={cy-s*0.72} r={1.4} fill="#FFE870" fillOpacity={0.9} />
+        <circle cx={cx+s*0.42} cy={cy-s*0.65} r={1.0} fill="#FFE870" fillOpacity={0.75} />
+        <circle cx={cx+s*0.1}  cy={cy-s*0.82} r={1.7} fill="#FFE870" fillOpacity={1.0} />
+        <circle cx={cx-s*0.15} cy={cy-s*0.87} r={0.9} fill="#FFE870" fillOpacity={0.7} />
       </g>
     );
   }
@@ -99,17 +103,20 @@ function HabitatArt({
     return (
       <g>
         <rect x={cx-hw} y={cy-s} width={hw*2} height={s*2} fill={`url(#${gp}-decay)`} />
-        <ellipse cx={cx+s*0.04} cy={cy+s*0.22} rx={hw*0.72} ry={s*0.2} fill="#200a04" fillOpacity={0.55} />
-        <ellipse cx={cx}        cy={cy+s*0.14} rx={hw*0.72} ry={s*0.19} fill="#52240e" />
-        <ellipse cx={cx}        cy={cy+s*0.11} rx={hw*0.72} ry={s*0.16} fill="#742e18" />
-        <ellipse cx={cx+hw*0.65} cy={cy+s*0.11} rx={s*0.14} ry={s*0.16} fill="#38140a" fillOpacity={0.75} />
-        <rect x={cx-s*0.34} y={cy-s*0.44} width={s*0.085} height={s*0.3} fill="#c8a070" />
-        <ellipse cx={cx-s*0.3} cy={cy-s*0.44} rx={s*0.21}  ry={s*0.115} fill="#c84018" />
-        <ellipse cx={cx-s*0.3} cy={cy-s*0.46} rx={s*0.17}  ry={s*0.085} fill="#e85e28" />
-        <circle cx={cx-s*0.3}  cy={cy-s*0.5}   r={s*0.032} fill="#fff" fillOpacity={0.88} />
-        <circle cx={cx-s*0.19} cy={cy-s*0.445} r={s*0.026} fill="#fff" fillOpacity={0.82} />
-        <ellipse cx={cx-s*0.08} cy={cy+s*0.42} rx={s*0.075} ry={s*0.04} fill="#7a3e10" fillOpacity={0.72} transform={`rotate(-12 ${cx-s*0.08} ${cy+s*0.42})`} />
-        <ellipse cx={cx+s*0.22} cy={cy+s*0.46} rx={s*0.06}  ry={s*0.035} fill="#9a5220" fillOpacity={0.68} transform={`rotate(20 ${cx+s*0.22} ${cy+s*0.46})`} />
+        <ellipse cx={cx+s*0.04} cy={cy+s*0.22} rx={hw*0.72} ry={s*0.2} fill="#3A1208" fillOpacity={0.55} />
+        {/* Rotting log — warm earthy amber */}
+        <ellipse cx={cx}        cy={cy+s*0.14} rx={hw*0.72} ry={s*0.19} fill="#7A3818" />
+        <ellipse cx={cx}        cy={cy+s*0.11} rx={hw*0.72} ry={s*0.16} fill="#A85030" />
+        <ellipse cx={cx+hw*0.65} cy={cy+s*0.11} rx={s*0.14} ry={s*0.16} fill="#582010" fillOpacity={0.75} />
+        {/* Orange-red mushroom — matches splash image cap color */}
+        <rect x={cx-s*0.34} y={cy-s*0.44} width={s*0.085} height={s*0.3} fill="#D8B880" />
+        <ellipse cx={cx-s*0.3} cy={cy-s*0.44} rx={s*0.21}  ry={s*0.115} fill="#C84820" />
+        <ellipse cx={cx-s*0.3} cy={cy-s*0.46} rx={s*0.17}  ry={s*0.085} fill="#E86038" />
+        <circle cx={cx-s*0.3}  cy={cy-s*0.5}   r={s*0.032} fill="#FFF8E8" fillOpacity={0.88} />
+        <circle cx={cx-s*0.19} cy={cy-s*0.445} r={s*0.026} fill="#FFF8E8" fillOpacity={0.82} />
+        {/* Ground fungi details — warm */}
+        <ellipse cx={cx-s*0.08} cy={cy+s*0.42} rx={s*0.075} ry={s*0.04} fill="#9A5828" fillOpacity={0.72} transform={`rotate(-12 ${cx-s*0.08} ${cy+s*0.42})`} />
+        <ellipse cx={cx+s*0.22} cy={cy+s*0.46} rx={s*0.06}  ry={s*0.035} fill="#C07038" fillOpacity={0.68} transform={`rotate(20 ${cx+s*0.22} ${cy+s*0.46})`} />
       </g>
     );
   }
@@ -118,17 +125,21 @@ function HabitatArt({
     return (
       <g>
         <rect x={cx-hw} y={cy-s} width={hw*2} height={s*2} fill={`url(#${gp}-shade)`} />
-        <circle cx={cx-s*0.14} cy={cy+s*0.18} r={s*0.24} fill="#7055b8" fillOpacity={0.13} />
-        <circle cx={cx+s*0.3}  cy={cy-s*0.02} r={s*0.17} fill="#a888e8" fillOpacity={0.11} />
+        {/* Warm purple ambient pools */}
+        <circle cx={cx-s*0.14} cy={cy+s*0.18} r={s*0.24} fill="#9060C0" fillOpacity={0.18} />
+        <circle cx={cx+s*0.3}  cy={cy-s*0.02} r={s*0.17} fill="#C09AE0" fillOpacity={0.15} />
+        {/* Fern/vine stems — warm purple-brown */}
         <path d={`M ${cx-hw} ${cy-s*0.08} Q ${cx-s*0.12} ${cy-s*0.6} ${cx+s*0.22} ${cy-s*0.88}`}
-          stroke="#28104c" strokeWidth={s*0.1} fill="none" strokeLinecap="round" />
+          stroke="#4A2868" strokeWidth={s*0.1} fill="none" strokeLinecap="round" />
         <path d={`M ${cx-s*0.12} ${cy-s*0.28} Q ${cx+s*0.12} ${cy-s*0.04} ${cx+s*0.42} ${cy+s*0.12}`}
-          stroke="#200c3e" strokeWidth={s*0.07} fill="none" strokeLinecap="round" />
-        <circle cx={cx+s*0.14} cy={cy+s*0.38} r={s*0.16} fill="#a870ff" fillOpacity={0.26} />
-        <circle cx={cx+s*0.14} cy={cy+s*0.38} r={s*0.09} fill="#cc9cff" fillOpacity={0.48} />
-        <circle cx={cx+s*0.14} cy={cy+s*0.38} r={s*0.04} fill="#eedcff" fillOpacity={0.72} />
-        <ellipse cx={cx-s*0.14} cy={cy+s*0.6} rx={s*0.1}   ry={s*0.046} fill="#240c4e" fillOpacity={0.78} transform={`rotate(-16 ${cx-s*0.14} ${cy+s*0.6})`} />
-        <ellipse cx={cx+s*0.3}  cy={cy+s*0.62} rx={s*0.086} ry={s*0.04}  fill="#1c0838" fillOpacity={0.72} transform={`rotate(14 ${cx+s*0.3} ${cy+s*0.62})`} />
+          stroke="#3A1858" strokeWidth={s*0.07} fill="none" strokeLinecap="round" />
+        {/* Bioluminescent mushroom orb — warmer glow */}
+        <circle cx={cx+s*0.14} cy={cy+s*0.38} r={s*0.16} fill="#C870E0" fillOpacity={0.3} />
+        <circle cx={cx+s*0.14} cy={cy+s*0.38} r={s*0.09} fill="#E0A0F0" fillOpacity={0.52} />
+        <circle cx={cx+s*0.14} cy={cy+s*0.38} r={s*0.04} fill="#F8D8FF" fillOpacity={0.78} />
+        {/* Ground spore caps */}
+        <ellipse cx={cx-s*0.14} cy={cy+s*0.6} rx={s*0.1}   ry={s*0.046} fill="#3A1858" fillOpacity={0.78} transform={`rotate(-16 ${cx-s*0.14} ${cy+s*0.6})`} />
+        <ellipse cx={cx+s*0.3}  cy={cy+s*0.62} rx={s*0.086} ry={s*0.04}  fill="#2A0C48" fillOpacity={0.72} transform={`rotate(14 ${cx+s*0.3} ${cy+s*0.62})`} />
       </g>
     );
   }
@@ -137,17 +148,22 @@ function HabitatArt({
     return (
       <g>
         <rect x={cx-hw} y={cy-s} width={hw*2} height={s*2} fill={`url(#${gp}-wet)`} />
-        <ellipse cx={cx} cy={cy+s*0.28} rx={hw*0.66} ry={s*0.115} fill="none" stroke="#38c8c4" strokeWidth={0.95} strokeOpacity={0.42} />
-        <ellipse cx={cx} cy={cy+s*0.28} rx={hw*0.43} ry={s*0.075} fill="none" stroke="#38c8c4" strokeWidth={0.72} strokeOpacity={0.32} />
-        <ellipse cx={cx-s*0.2} cy={cy+s*0.1} rx={s*0.23} ry={s*0.13} fill="#186828" />
+        {/* Water rings — teal like splash rocks */}
+        <ellipse cx={cx} cy={cy+s*0.28} rx={hw*0.66} ry={s*0.115} fill="none" stroke="#40C8B8" strokeWidth={0.95} strokeOpacity={0.5} />
+        <ellipse cx={cx} cy={cy+s*0.28} rx={hw*0.43} ry={s*0.075} fill="none" stroke="#40C8B8" strokeWidth={0.72} strokeOpacity={0.38} />
+        {/* Lily pad — warm green */}
+        <ellipse cx={cx-s*0.2} cy={cy+s*0.1} rx={s*0.23} ry={s*0.13} fill="#2A7838" />
         <polygon points={`${cx-s*0.2},${cy+s*0.1} ${cx-s*0.26},${cy-s*0.02} ${cx-s*0.14},${cy-s*0.02}`} fill={`url(#${gp}-wet)`} />
-        <circle cx={cx-s*0.2} cy={cy+s*0.04} r={s*0.075} fill="#fff5b8" fillOpacity={0.95} />
-        <circle cx={cx-s*0.2} cy={cy+s*0.04} r={s*0.042} fill="#ffe070" />
-        <line x1={cx+s*0.28} y1={cy+s*0.7}  x2={cx+s*0.3}  y2={cy-s*0.88} stroke="#604808" strokeWidth={1.9} />
-        <ellipse cx={cx+s*0.29} cy={cy-s*0.74} rx={s*0.047} ry={s*0.17} fill="#7a4218" />
-        <line x1={cx+s*0.43} y1={cy+s*0.7}  x2={cx+s*0.45} y2={cy-s*0.65} stroke="#604808" strokeWidth={1.5} />
-        <ellipse cx={cx+s*0.44} cy={cy-s*0.54} rx={s*0.04}  ry={s*0.13} fill="#7a4218" />
-        <ellipse cx={cx+s*0.08} cy={cy+s*0.48} rx={s*0.13}  ry={s*0.036} fill="#70e8e4" fillOpacity={0.2} />
+        {/* Warm cream-yellow lily flower */}
+        <circle cx={cx-s*0.2} cy={cy+s*0.04} r={s*0.075} fill="#FFF8D8" fillOpacity={0.95} />
+        <circle cx={cx-s*0.2} cy={cy+s*0.04} r={s*0.042} fill="#FFE870" />
+        {/* Reed stalks — warm brown */}
+        <line x1={cx+s*0.28} y1={cy+s*0.7}  x2={cx+s*0.3}  y2={cy-s*0.88} stroke="#7A5820" strokeWidth={1.9} />
+        <ellipse cx={cx+s*0.29} cy={cy-s*0.74} rx={s*0.047} ry={s*0.17} fill="#9A5828" />
+        <line x1={cx+s*0.43} y1={cy+s*0.7}  x2={cx+s*0.45} y2={cy-s*0.65} stroke="#7A5820" strokeWidth={1.5} />
+        <ellipse cx={cx+s*0.44} cy={cy-s*0.54} rx={s*0.04}  ry={s*0.13} fill="#9A5828" />
+        {/* Water surface shimmer */}
+        <ellipse cx={cx+s*0.08} cy={cy+s*0.48} rx={s*0.13}  ry={s*0.036} fill="#60D8C8" fillOpacity={0.25} />
       </g>
     );
   }
@@ -159,21 +175,24 @@ function HabitatArt({
     return (
       <g>
         <rect x={cx-hw} y={cy-s} width={hw*2} height={s*2} fill={`url(#${gp}-open)`} />
-        <path d={`M ${cx-hw} ${cy+s*0.12} Q ${cx-s*0.22} ${cy-s*0.22} ${cx+s*0.12} ${cy+s*0.08} Q ${cx+s*0.42} ${cy+s*0.32} ${cx+hw} ${cy+s*0.06} L ${cx+hw} ${cy+s} L ${cx-hw} ${cy+s} Z`} fill="#2a6016" fillOpacity={0.9} />
-        <path d={`M ${cx-hw} ${cy+s*0.44} Q ${cx-s*0.08} ${cy+s*0.18} ${cx+s*0.26} ${cy+s*0.4} Q ${cx+s*0.54} ${cy+s*0.56} ${cx+hw} ${cy+s*0.36} L ${cx+hw} ${cy+s} L ${cx-hw} ${cy+s} Z`} fill="#225210" fillOpacity={0.92} />
-        <circle cx={sunX} cy={sunY} r={s*0.26} fill="#ffe890" fillOpacity={0.22} />
-        <circle cx={sunX} cy={sunY} r={s*0.17} fill="#ffe050" fillOpacity={0.92} />
-        <circle cx={sunX} cy={sunY} r={s*0.11} fill="#ffcc28" />
+        {/* Warm olive-green meadow layers */}
+        <path d={`M ${cx-hw} ${cy+s*0.12} Q ${cx-s*0.22} ${cy-s*0.22} ${cx+s*0.12} ${cy+s*0.08} Q ${cx+s*0.42} ${cy+s*0.32} ${cx+hw} ${cy+s*0.06} L ${cx+hw} ${cy+s} L ${cx-hw} ${cy+s} Z`} fill="#6A9028" fillOpacity={0.9} />
+        <path d={`M ${cx-hw} ${cy+s*0.44} Q ${cx-s*0.08} ${cy+s*0.18} ${cx+s*0.26} ${cy+s*0.4} Q ${cx+s*0.54} ${cy+s*0.56} ${cx+hw} ${cy+s*0.36} L ${cx+hw} ${cy+s} L ${cx-hw} ${cy+s} Z`} fill="#4A7018" fillOpacity={0.92} />
+        {/* Bright golden sun */}
+        <circle cx={sunX} cy={sunY} r={s*0.26} fill="#FFE870" fillOpacity={0.28} />
+        <circle cx={sunX} cy={sunY} r={s*0.17} fill="#FFE050" fillOpacity={0.95} />
+        <circle cx={sunX} cy={sunY} r={s*0.11} fill="#FFD028" />
         {rays.map((deg, i) => {
           const rad = (deg * Math.PI) / 180;
-          return <line key={i} x1={sunX+Math.cos(rad)*s*0.22} y1={sunY+Math.sin(rad)*s*0.22} x2={sunX+Math.cos(rad)*s*0.31} y2={sunY+Math.sin(rad)*s*0.31} stroke="#ffe070" strokeWidth={1.15} strokeOpacity={0.72} />;
+          return <line key={i} x1={sunX+Math.cos(rad)*s*0.22} y1={sunY+Math.sin(rad)*s*0.22} x2={sunX+Math.cos(rad)*s*0.31} y2={sunY+Math.sin(rad)*s*0.31} stroke="#FFE070" strokeWidth={1.15} strokeOpacity={0.8} />;
         })}
-        <circle cx={cx-s*0.33} cy={cy+s*0.17} r={s*0.068} fill="#ff78a8" />
-        <line x1={cx-s*0.33} y1={cy+s*0.24} x2={cx-s*0.33} y2={cy+s*0.46} stroke="#285e12" strokeWidth={1.25} />
-        <circle cx={cx-s*0.06} cy={cy+s*0.21} r={s*0.057} fill="#ffaa30" />
-        <line x1={cx-s*0.06} y1={cy+s*0.27} x2={cx-s*0.07} y2={cy+s*0.46} stroke="#285e12" strokeWidth={1.05} />
-        <circle cx={cx+s*0.09} cy={cy+s*0.13} r={s*0.052} fill="#a07cff" />
-        <line x1={cx+s*0.09} y1={cy+s*0.19} x2={cx+s*0.08} y2={cy+s*0.43} stroke="#285e12" strokeWidth={1.05} />
+        {/* Wildflowers — warm palette, no cold purple */}
+        <circle cx={cx-s*0.33} cy={cy+s*0.17} r={s*0.068} fill="#FF9070" />
+        <line x1={cx-s*0.33} y1={cy+s*0.24} x2={cx-s*0.33} y2={cy+s*0.46} stroke="#4A7018" strokeWidth={1.25} />
+        <circle cx={cx-s*0.06} cy={cy+s*0.21} r={s*0.057} fill="#FFB830" />
+        <line x1={cx-s*0.06} y1={cy+s*0.27} x2={cx-s*0.07} y2={cy+s*0.46} stroke="#4A7018" strokeWidth={1.05} />
+        <circle cx={cx+s*0.09} cy={cy+s*0.13} r={s*0.052} fill="#D4A040" />
+        <line x1={cx+s*0.09} y1={cy+s*0.19} x2={cx+s*0.08} y2={cy+s*0.43} stroke="#4A7018" strokeWidth={1.05} />
       </g>
     );
   }
@@ -413,18 +432,18 @@ function TileTooltip({
     <div style={{
       position: 'fixed', left: tx, top: ty, width: TW,
       zIndex: 300, pointerEvents: 'none',
-      borderRadius: 12, overflow: 'hidden',
-      border: `1.5px solid ${typeColor}88`,
-      background: '#0e0e1c',
-      boxShadow: `0 6px 32px rgba(0,0,0,0.7), 0 0 0 1px ${typeColor}22`,
-      fontFamily: 'sans-serif', fontSize: 11, color: '#ddd',
+      borderRadius: 6, overflow: 'hidden',
+      border: `1.5px solid ${typeColor}99`,
+      background: '#F2EAD8',
+      boxShadow: `0 8px 32px rgba(14,9,7,0.55), 0 0 0 1px ${typeColor}22`,
+      fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 11, color: '#1A140F',
     }}>
-      <div style={{ background: typeColor, padding: '5px 10px', fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff' }}>
+      <div style={{ background: typeColor, padding: '5px 10px', fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
         {card.type}{card.isOngoing && <span style={{ marginLeft: 6, opacity: 0.85 }}>· Ongoing</span>}
       </div>
 
       {/* Habitat art */}
-      <div style={{ background: '#07080f', overflow: 'hidden', height: 90 }}>
+      <div style={{ overflow: 'hidden', height: 90 }}>
         <svg width="100%" height="90" viewBox={artVB} preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
           <HabitatDefs prefix="tt" />
           <HabitatArt habitat={habitat} cx={0} cy={0} s={artS} gp="tt" />
@@ -432,13 +451,13 @@ function TileTooltip({
       </div>
 
       {/* Name + pts */}
-      <div style={{ padding: '8px 10px 4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
+      <div style={{ padding: '8px 10px 4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6, background: '#F2EAD8' }}>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 13, color: '#eee', lineHeight: 1.3 }}>{card.name}</div>
-          <div style={{ color: '#666', fontSize: 9, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
+          <div style={{ fontWeight: 700, fontSize: 13, color: '#1A140F', lineHeight: 1.3 }}>{card.name}</div>
+          <div style={{ color: '#8A7848', fontSize: 9, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
         </div>
         {card.pts > 0 && (
-          <div style={{ background: '#c9a84c', color: '#111', borderRadius: 5, padding: '2px 7px', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
+          <div style={{ background: '#D4A04A', color: '#1A0A00', borderRadius: 4, padding: '2px 7px', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
             {card.pts}
           </div>
         )}
@@ -447,24 +466,24 @@ function TileTooltip({
       {/* Habitats */}
       <div style={{ padding: '2px 10px', display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         {card.habitats.map(h => (
-          <span key={h} style={{ background: HABITAT_COLORS[h]+'55', border: `1px solid ${HABITAT_COLORS[h]}88`, color: '#ccc', borderRadius: 4, padding: '1px 5px', fontSize: 9, fontWeight: 600 }}>
+          <span key={h} style={{ background: HABITAT_COLORS[h]+'33', border: `1px solid ${HABITAT_COLORS[h]}88`, color: '#2A1810', borderRadius: 4, padding: '1px 5px', fontSize: 9, fontWeight: 600 }}>
             {HABITAT_LABELS[h]}
           </span>
         ))}
       </div>
 
       {/* Cost + generates */}
-      <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #1e1e30', borderBottom: '1px solid #1e1e30', marginTop: 4 }}>
-        <span style={{ color: RESOURCE_COLORS.spore, fontWeight: 700 }}>{card.cost}🍄 cost</span>
-        {resourceEntries.length > 0 && <span style={{ color: '#888', fontSize: 9 }}>·</span>}
+      <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #D8C8A0', borderBottom: '1px solid #D8C8A0', marginTop: 4 }}>
+        <span style={{ color: '#8B6F47', fontWeight: 700 }}>{card.cost}🍄 cost</span>
+        {resourceEntries.length > 0 && <span style={{ color: '#A89060', fontSize: 9 }}>·</span>}
         {resourceEntries.map(([res, amt]) => (
           <span key={res} style={{ color: RESOURCE_COLORS[res], fontWeight: 600 }}>+{amt}{RESOURCE_ICONS[res]}</span>
         ))}
-        {resourceEntries.length === 0 && <span style={{ color: '#555', fontSize: 9 }}>no generation</span>}
+        {resourceEntries.length === 0 && <span style={{ color: '#A89060', fontSize: 9 }}>no generation</span>}
       </div>
 
       {/* Power */}
-      <div style={{ padding: '7px 10px 9px', color: card.isOngoing ? '#a8d8c8' : '#bbb', fontSize: 10, lineHeight: 1.5 }}>
+      <div style={{ padding: '7px 10px 9px', color: card.isOngoing ? '#2A6858' : '#3A2810', fontSize: 10, lineHeight: 1.5, fontStyle: 'italic' }}>
         {card.power}
       </div>
     </div>
@@ -542,7 +561,7 @@ export function BoardComponent({
 
                 {/* Unowned dim overlay */}
                 {!tile.ownerId && (
-                  <polygon points={artPoints} fill="#000" fillOpacity={0.3} />
+                  <polygon points={artPoints} fill="#1A0A00" fillOpacity={0.25} />
                 )}
 
                 {/* Highlight overlay */}
@@ -593,12 +612,12 @@ export function BoardComponent({
                 <>
                   <circle
                     cx={center.x - TILE_SIZE * 0.42} cy={center.y + TILE_SIZE * 0.6}
-                    r={TILE_SIZE * 0.18} fill="#c9a84c" stroke="#0a0a16" strokeWidth={1.5}
+                    r={TILE_SIZE * 0.18} fill="#D4A04A" stroke="#1A0A00" strokeWidth={1.5}
                   />
                   <text
                     x={center.x - TILE_SIZE * 0.42} y={center.y + TILE_SIZE * 0.65}
                     textAnchor="middle" fontSize={TILE_SIZE * 0.18}
-                    fill="#111" fontFamily="sans-serif" fontWeight={800}
+                    fill="#1A0A00" fontFamily="sans-serif" fontWeight={800}
                     style={{ pointerEvents: 'none' }}
                   >
                     {card.pts}

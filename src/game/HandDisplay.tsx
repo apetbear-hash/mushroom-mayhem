@@ -23,7 +23,7 @@ export function HandDisplay({
 
   if (player.hand.length === 0) {
     return (
-      <div style={{ color: '#444', fontSize: 12, padding: '8px 0', fontFamily: 'sans-serif' }}>
+      <div style={{ color: '#5A4830', fontSize: 12, padding: '8px 0', fontStyle: 'italic', fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
         Hand is empty
       </div>
     );

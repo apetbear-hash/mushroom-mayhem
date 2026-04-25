@@ -40,10 +40,95 @@ function useViewport() {
 // ── SVG backdrop ──────────────────────────────────────────────────────────────
 
 function PaintedForestBackdrop({ id = 'bg', variant = 'deep' }: { id?: string; variant?: 'deep' | 'warm' }) {
-  const p = variant === 'deep'
-    ? { sky: '#1A2516', mist: '#3F5234', floor: '#0A0F08', trunks: '#0A0604', glow: '#D4A04A', canopy: '#2C3A22' }
-    : { sky: '#3A2812', mist: '#6B4520', floor: '#1F0F08', trunks: '#0E0604', glow: '#F0BC6C', canopy: '#5A3A18' };
+  // "warm" uses the illustrated splash art style: cream bg, orange-red caps, teal rocks, golden tree
+  if (variant === 'warm') {
+    return (
+      <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"
+           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
+        <defs>
+          <linearGradient id={`${id}-sky`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#D8CEB0"/>
+            <stop offset="60%" stopColor="#C8B888"/>
+            <stop offset="100%" stopColor="#A89860"/>
+          </linearGradient>
+          <radialGradient id={`${id}-glow`} cx="0.4" cy="0.3" r="0.7">
+            <stop offset="0%" stopColor="#E8A830" stopOpacity={0.4}/>
+            <stop offset="100%" stopColor="#E8A830" stopOpacity={0}/>
+          </radialGradient>
+          <radialGradient id={`${id}-vignette`} cx="0.5" cy="0.5" r="0.8">
+            <stop offset="50%" stopColor="#1A100A" stopOpacity={0}/>
+            <stop offset="100%" stopColor="#1A100A" stopOpacity={0.7}/>
+          </radialGradient>
+          <filter id={`${id}-blur`}><feGaussianBlur stdDeviation="4"/></filter>
+        </defs>
+        <rect width="1200" height="800" fill={`url(#${id}-sky)`}/>
+        <ellipse cx="500" cy="300" rx="600" ry="280" fill={`url(#${id}-glow)`}/>
 
+        {/* Distant rock formation (teal, like the splash) */}
+        <path d="M 550 520 Q 600 380 680 340 Q 750 300 820 360 Q 880 400 900 480 Q 860 500 750 510 Z"
+              fill="#2A5850" opacity={0.9}/>
+        <path d="M 560 520 Q 610 400 670 370 Q 720 340 760 380"
+              fill="none" stroke="#1A3830" strokeWidth="3" opacity={0.6}/>
+
+        {/* Golden autumn tree (right side) */}
+        <path d="M 980 800 L 990 500 Q 995 480 1005 500 L 1010 800 Z" fill="#5A3818"/>
+        <path d="M 1000 480 Q 960 380 920 320 Q 960 340 980 300 Q 1000 260 1020 300 Q 1040 340 1080 320 Q 1060 380 1020 480 Z"
+              fill="#C89018" opacity={0.95}/>
+        <path d="M 1000 480 Q 970 400 940 360 Q 970 370 990 340"
+              fill="none" stroke="#E8A820" strokeWidth="2" opacity={0.5}/>
+        <ellipse cx="1000" cy="340" rx="80" ry="60" fill="#D4A020" opacity={0.5}/>
+
+        {/* Large orange-red mushroom cluster (center-left) */}
+        <g transform="translate(300 680)">
+          {/* Big cap */}
+          <ellipse cx="0" cy="8" rx="130" ry="14" fill="#1A0A06" opacity={0.5}/>
+          <rect x="-16" y="-120" width="32" height="130" fill="#C8C0A0" rx="4"/>
+          <path d="M -160 -100 C -165 -200 -100 -260 0 -270 C 100 -260 165 -200 160 -100 C 120 -120 80 -124 0 -120 C -80 -124 -120 -120 -160 -100 Z"
+                fill="#C84820"/>
+          <path d="M -158 -108 C -162 -198 -98 -256 0 -266" fill="none" stroke="#E87040" strokeWidth="3" opacity={0.7}/>
+          <ellipse cx="-60" cy="-200" rx="30" ry="8" fill="#fff" opacity={0.25}/>
+        </g>
+
+        {/* White mushroom group (left) */}
+        <g transform="translate(120 680)">
+          <ellipse cx="0" cy="6" rx="55" ry="6" fill="#1A0A06" opacity={0.4}/>
+          <rect x="-8" y="-90" width="16" height="96" fill="#D8D0B0" rx="3"/>
+          <path d="M -70 -80 C -72 -140 -44 -168 0 -172 C 44 -168 72 -140 70 -80 C 52 -92 28 -94 0 -92 C -28 -94 -52 -92 -70 -80 Z"
+                fill="#EDE8D8"/>
+          <path d="M -68 -86 C -70 -138 -42 -164 0 -168" fill="none" stroke="#fff" strokeWidth="2" opacity={0.6}/>
+        </g>
+        <g transform="translate(180 700)">
+          <rect x="-6" y="-60" width="12" height="64" fill="#D0C8A8" rx="2"/>
+          <path d="M -45 -52 C -46 -92 -28 -108 0 -110 C 28 -108 46 -92 44 -52 C 32 -60 18 -62 0 -60 C -18 -62 -32 -60 -45 -52 Z"
+                fill="#E8E2D0"/>
+        </g>
+
+        {/* Red accent plants */}
+        <g opacity={0.9}>
+          <path d="M 440 680 Q 430 640 438 600 Q 446 560 440 520" fill="none" stroke="#C83818" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M 440 600 Q 420 580 410 560" fill="none" stroke="#C83818" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M 440 570 Q 456 548 462 528" fill="none" stroke="#C83818" strokeWidth="3" strokeLinecap="round"/>
+        </g>
+
+        {/* Ground */}
+        <path d="M 0 700 Q 400 680 700 695 Q 900 688 1200 700 L 1200 800 L 0 800 Z" fill="#8A7040"/>
+        <path d="M 0 730 Q 300 718 600 725 Q 900 718 1200 730 L 1200 800 L 0 800 Z" fill="#7A6030" opacity={0.6}/>
+
+        {/* Spore particles */}
+        {Array.from({ length: 20 }).map((_, i) => {
+          const x = (i * 67 + 30) % 1180;
+          const y = ((i * 83 + 20) % 600) + 50;
+          const r = 1 + (i % 3) * 0.8;
+          return <circle key={i} cx={x} cy={y} r={r} fill="#E8A030" opacity={0.2 + (i % 4) * 0.1}/>;
+        })}
+
+        <rect width="1200" height="800" fill={`url(#${id}-vignette)`}/>
+      </svg>
+    );
+  }
+
+  // "deep" — original dark forest (used for hero fallback)
+  const p = { sky: '#1A2516', mist: '#3F5234', floor: '#0A0F08', trunks: '#0A0604', glow: '#D4A04A', canopy: '#2C3A22' };
   return (
     <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"
          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
@@ -73,35 +158,21 @@ function PaintedForestBackdrop({ id = 'bg', variant = 'deep' }: { id?: string; v
       <g filter={`url(#${id}-blur)`}>
         <ellipse cx="240" cy="180" rx="320" ry="120" fill={p.canopy} opacity={0.55}/>
         <ellipse cx="900" cy="140" rx="380" ry="140" fill={p.canopy} opacity={0.45}/>
-        <ellipse cx="600" cy="220" rx="500" ry="100" fill={p.mist} opacity={0.4}/>
       </g>
       <polygon points="300,0 580,0 700,520 380,520" fill={`url(#${id}-godray)`} opacity={0.7}/>
       <polygon points="620,0 780,0 820,440 640,440" fill={`url(#${id}-godray)`} opacity={0.5}/>
       <g opacity={0.85}>
         <path d="M 100 800 L 110 350 Q 130 320 150 360 L 165 800 Z" fill={p.trunks}/>
         <path d="M 980 800 L 992 280 Q 1015 260 1038 290 L 1050 800 Z" fill={p.trunks}/>
-        <path d="M 250 800 L 258 480 L 275 800 Z" fill={p.trunks} opacity={0.7}/>
-        <path d="M 870 800 L 876 460 L 894 800 Z" fill={p.trunks} opacity={0.7}/>
       </g>
-      <g>
-        <path d="M -20 800 L 0 200 Q 30 140 70 200 L 90 800 Z" fill="#070403"/>
-        <path d="M 20 240 L 25 380" stroke="#1F140C" strokeWidth="2" fill="none" opacity={0.6}/>
-        <path d="M 45 280 L 52 480" stroke="#1F140C" strokeWidth="2" fill="none" opacity={0.5}/>
-        <ellipse cx="40" cy="500" rx="22" ry="12" fill="#3A4A22" opacity={0.5}/>
-        <path d="M 1110 800 L 1140 180 Q 1170 130 1210 200 L 1230 800 Z" fill="#070403"/>
-        <path d="M 1160 240 L 1168 420" stroke="#1F140C" strokeWidth="2" fill="none" opacity={0.55}/>
-        <ellipse cx="1175" cy="560" rx="20" ry="10" fill="#3A4A22" opacity={0.45}/>
-      </g>
-      <g>
-        {Array.from({ length: 28 }).map((_, i) => {
-          const x = (i * 73 + 40) % 1180;
-          const y = ((i * 91 + 30) % 700) + 30;
-          const r = 0.8 + (i % 4) * 0.6;
-          return <circle key={i} cx={x} cy={y} r={r} fill={p.glow} opacity={0.18 + (i % 3) * 0.18}/>;
-        })}
-      </g>
+      <path d="M -20 800 L 0 200 Q 30 140 70 200 L 90 800 Z" fill="#070403"/>
+      <path d="M 1110 800 L 1140 180 Q 1170 130 1210 200 L 1230 800 Z" fill="#070403"/>
+      {Array.from({ length: 28 }).map((_, i) => {
+        const x = (i * 73 + 40) % 1180;
+        const y = ((i * 91 + 30) % 700) + 30;
+        return <circle key={i} cx={x} cy={y} r={0.8 + (i % 4) * 0.6} fill={p.glow} opacity={0.18 + (i % 3) * 0.18}/>;
+      })}
       <path d="M 0 700 Q 300 670 600 695 Q 900 680 1200 700 L 1200 800 L 0 800 Z" fill={p.floor}/>
-      <ellipse cx="600" cy="780" rx="500" ry="40" fill="#000" opacity={0.5}/>
       <rect width="1200" height="800" fill={`url(#${id}-vignette)`}/>
       <rect width="1200" height="800" filter={`url(#${id}-noise)`} opacity={0.5}/>
     </svg>
@@ -111,42 +182,43 @@ function PaintedForestBackdrop({ id = 'bg', variant = 'deep' }: { id?: string; v
 
 function FeatureIllustration({ kind }: { kind: 'hex' | 'cards' }) {
   if (kind === 'hex') {
+    // warm illustrated hex map — cream sky, warm habitat tiles, orange-red & white mushroom tokens
     return (
       <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice"
            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
         <defs>
           <linearGradient id="fhx-bg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1A2516"/><stop offset="100%" stopColor="#0A0F08"/>
+            <stop offset="0%" stopColor="#D8CEB0"/><stop offset="100%" stopColor="#A89860"/>
           </linearGradient>
-          <radialGradient id="fhx-glow" cx="0.5" cy="0.4" r="0.7">
-            <stop offset="0%" stopColor="#D4A04A" stopOpacity={0.5}/><stop offset="100%" stopColor="#D4A04A" stopOpacity={0}/>
+          <radialGradient id="fhx-glow" cx="0.5" cy="0.35" r="0.65">
+            <stop offset="0%" stopColor="#E8A030" stopOpacity={0.35}/><stop offset="100%" stopColor="#E8A030" stopOpacity={0}/>
           </radialGradient>
-          <filter id="fhx-noise">
-            <feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="2" seed="7"/>
-            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.12 0"/>
-            <feComposite in2="SourceGraphic" operator="in"/>
-          </filter>
         </defs>
         <rect width="400" height="280" fill="url(#fhx-bg)"/>
-        <ellipse cx="200" cy="140" rx="220" ry="120" fill="url(#fhx-glow)"/>
-        <g transform="translate(200 140)">
+        <ellipse cx="200" cy="120" rx="220" ry="130" fill="url(#fhx-glow)"/>
+        {/* Ground strip */}
+        <path d="M 0 230 Q 200 218 400 230 L 400 280 L 0 280 Z" fill="#8A7040"/>
+        <path d="M 0 248 Q 200 238 400 248 L 400 280 L 0 280 Z" fill="#7A6030" opacity={0.7}/>
+        <g transform="translate(200 138)">
           {(() => {
             const hexes: React.ReactElement[] = [];
-            const r = 32, w = r * Math.sqrt(3);
-            const colors = ['#3A5025','#5A3018','#2D4068','#4A4A60'];
+            const r = 30, w = r * Math.sqrt(3);
+            // warm habitat colors: meadow, forest, wet, shade
+            const colors = ['#9AAE50','#5A7828','#3A7060','#7A6030'];
+            const strokes = ['#78883A','#3A5818','#2A5050','#5A4020'];
             for (let row = -2; row <= 2; row++) {
               for (let col = -3; col <= 3; col++) {
                 const x = col * w + (row % 2 ? w / 2 : 0);
                 const y = row * r * 1.5;
-                const c = colors[(row + col + 5) % colors.length];
+                const idx = (row + col + 6) % colors.length;
                 const pts = [0,60,120,180,240,300].map(a => {
                   const rad = (a * Math.PI) / 180;
                   return `${x + r*Math.cos(rad)},${y + r*Math.sin(rad)}`;
                 }).join(' ');
                 hexes.push(
                   <g key={`${row}-${col}`}>
-                    <polygon points={pts} fill={c} opacity={0.85} stroke="#0A0F08" strokeWidth="2"/>
-                    <polygon points={pts} fill="none" stroke="#D4A04A" strokeWidth="0.5" opacity={0.3}/>
+                    <polygon points={pts} fill={colors[idx]} opacity={0.9} stroke={strokes[idx]} strokeWidth="1.5"/>
+                    <polygon points={pts} fill="none" stroke="#E8D8A0" strokeWidth="0.4" opacity={0.35}/>
                   </g>
                 );
               }
@@ -154,75 +226,108 @@ function FeatureIllustration({ kind }: { kind: 'hex' | 'cards' }) {
             return hexes;
           })()}
         </g>
-        {([[140,100,'#C8281A'],[230,120,'#D4A04A'],[180,160,'#5C3A60'],[280,180,'#8E2820'],[110,170,'#D4A04A']] as [number,number,string][]).map(([x,y,col],i) => (
+        {/* Mushroom tokens — orange-red, white, golden */}
+        {([[145,108,'#C84820'],[234,125,'#EDE8D8'],[182,165,'#C89018'],[284,182,'#C84820'],[112,172,'#EDE8D8']] as [number,number,string][]).map(([x,y,col],i) => (
           <g key={i} transform={`translate(${x} ${y})`}>
-            <ellipse cx="0" cy="6" rx="10" ry="2" fill="#000" opacity={0.5}/>
-            <rect x="-3" y="-2" width="6" height="10" fill="#F2E8C8" rx="1"/>
-            <ellipse cx="0" cy="-5" rx="11" ry="6" fill={col}/>
-            <circle cx="-3" cy="-7" r="1.5" fill="#fff" opacity={0.8}/>
+            <ellipse cx="0" cy="7" rx="10" ry="2" fill="#5A3810" opacity={0.35}/>
+            <rect x="-3" y="-3" width="6" height="11" fill="#D8CEB0" rx="1"/>
+            <ellipse cx="0" cy="-6" rx="12" ry="7" fill={col}/>
+            <ellipse cx="-4" cy="-9" rx="3" ry="1.2" fill="#fff" opacity={0.6}/>
           </g>
         ))}
-        <rect width="400" height="280" filter="url(#fhx-noise)" opacity={0.5}/>
+        {/* Spore particles */}
+        {Array.from({ length: 16 }).map((_, i) => {
+          const x = (i * 67 + 15) % 395;
+          const y = ((i * 53 + 10) % 200) + 10;
+          return <circle key={i} cx={x} cy={y} r={1 + (i%3)*0.6} fill="#E8A030" opacity={0.18 + (i%4)*0.09}/>;
+        })}
       </svg>
     );
   }
+  // cards variant — warm parchment bg, illustrated card fan
   return (
     <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice"
          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <defs>
         <linearGradient id="fcd-bg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3A2818"/><stop offset="100%" stopColor="#0F0805"/>
+          <stop offset="0%" stopColor="#D0C4A0"/><stop offset="100%" stopColor="#8A7848"/>
         </linearGradient>
-        <radialGradient id="fcd-glow" cx="0.5" cy="0.5" r="0.6">
-          <stop offset="0%" stopColor="#F0BC6C" stopOpacity={0.45}/><stop offset="100%" stopColor="#F0BC6C" stopOpacity={0}/>
+        <radialGradient id="fcd-glow" cx="0.5" cy="0.5" r="0.65">
+          <stop offset="0%" stopColor="#E8A830" stopOpacity={0.4}/><stop offset="100%" stopColor="#E8A830" stopOpacity={0}/>
         </radialGradient>
-        <filter id="fcd-noise">
-          <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="11"/>
-          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.14 0"/>
-          <feComposite in2="SourceGraphic" operator="in"/>
-        </filter>
       </defs>
       <rect width="400" height="280" fill="url(#fcd-bg)"/>
-      <ellipse cx="200" cy="160" rx="200" ry="100" fill="url(#fcd-glow)"/>
+      {/* Ground */}
+      <path d="M 0 230 Q 200 218 400 230 L 400 280 L 0 280 Z" fill="#7A6030"/>
+      <ellipse cx="200" cy="180" rx="200" ry="90" fill="url(#fcd-glow)"/>
+      {/* Small teal rock formation, like splash image */}
+      <path d="M 310 230 Q 340 170 370 160 Q 395 148 400 185 Q 400 210 380 225 Z" fill="#2A5850" opacity={0.85}/>
       {([
-        { rot: -16, x: 100, y: 70,  cap: '#D4A04A', capDk: '#5A3210' },
-        { rot: -4,  x: 170, y: 50,  cap: '#C8281A', capDk: '#3A0805' },
-        { rot: 8,   x: 240, y: 60,  cap: '#5C3A60', capDk: '#1F0E22' },
-        { rot: 18,  x: 300, y: 80,  cap: '#2A1810', capDk: '#0A0605' },
+        { rot: -18, x: 86,  y: 55,  cap: '#C84820', capScene: '#9AAE50', stem: '#D8CEB0' },
+        { rot: -5,  x: 158, y: 38,  cap: '#EDE8D8', capScene: '#3A7060', stem: '#D0C898' },
+        { rot: 6,   x: 228, y: 45,  cap: '#C89018', capScene: '#5A7828', stem: '#D8CEB0' },
+        { rot: 19,  x: 295, y: 60,  cap: '#C84820', capScene: '#7A6030', stem: '#D0C898' },
       ]).map((c, i) => (
         <g key={i} transform={`translate(${c.x} ${c.y}) rotate(${c.rot})`}>
-          <rect x="0" y="0" width="80" height="120" rx="6" fill="#0A0907" stroke={c.cap} strokeWidth="1" opacity={0.95}/>
-          <rect x="3" y="3" width="74" height="62" rx="4" fill={c.capDk}/>
-          <g transform="translate(40 50)">
-            <ellipse cx="0" cy="8" rx="14" ry="2" fill="#000" opacity={0.5}/>
-            <rect x="-3" y="-4" width="6" height="14" fill="#F2E8C8" rx="1"/>
-            <ellipse cx="0" cy="-8" rx="18" ry="11" fill={c.cap}/>
-            <ellipse cx="-5" cy="-12" rx="3" ry="1.2" fill="#fff" opacity={0.55}/>
+          {/* Card body — parchment */}
+          <rect x="0" y="0" width="82" height="124" rx="5" fill="#F2EAD8" stroke="#C8A860" strokeWidth="1.2" opacity={0.97}/>
+          {/* Illustrated scene area */}
+          <rect x="4" y="4" width="74" height="64" rx="3" fill={c.capScene} opacity={0.8}/>
+          {/* Mushroom in scene */}
+          <g transform="translate(41 52)">
+            <ellipse cx="0" cy="8" rx="13" ry="2" fill="#1A0A06" opacity={0.3}/>
+            <rect x="-3" y="-5" width="6" height="14" fill={c.stem} rx="1"/>
+            <ellipse cx="0" cy="-10" rx="18" ry="11" fill={c.cap}/>
+            <ellipse cx="-5" cy="-14" rx="4" ry="1.5" fill="#fff" opacity={0.5}/>
           </g>
-          <rect x="3" y="68" width="74" height="14" fill="#1A1208"/>
-          <rect x="6" y="73" width="42" height="3" fill="#F2EAD8" opacity={0.85}/>
-          <rect x="3" y="84" width="74" height="33" fill="#1A1208" opacity={0.7}/>
-          <rect x="6" y="89" width="60" height="1.5" fill={c.cap} opacity={0.7}/>
-          <rect x="6" y="94" width="64" height="1.2" fill="#F2EAD8" opacity={0.4}/>
-          <rect x="6" y="99" width="58" height="1.2" fill="#F2EAD8" opacity={0.4}/>
-          <rect x="6" y="104" width="40" height="1.2" fill="#F2EAD8" opacity={0.4}/>
+          {/* Card name bar */}
+          <rect x="4" y="70" width="74" height="12" fill="#E8E0C8"/>
+          <rect x="7" y="74" width="44" height="2.5" fill="#5A3810" opacity={0.6}/>
+          {/* Card text lines */}
+          <rect x="4" y="84" width="74" height="36" fill="#EDE6D4" opacity={0.8}/>
+          <rect x="7" y="89" width="60" height="1.5" fill={c.cap} opacity={0.55}/>
+          <rect x="7" y="95" width="64" height="1.2" fill="#7A6030" opacity={0.35}/>
+          <rect x="7" y="100" width="54" height="1.2" fill="#7A6030" opacity={0.35}/>
+          <rect x="7" y="105" width="38" height="1.2" fill="#7A6030" opacity={0.35}/>
+          {/* Cost pip */}
+          <circle cx="68" cy="73" r="5" fill={c.cap} opacity={0.9}/>
+          <text x="68" y="76" textAnchor="middle" fill="#fff" fontSize="6" fontWeight="700">{i + 2}</text>
         </g>
       ))}
+      {/* Spore particles */}
       {Array.from({ length: 14 }).map((_, i) => {
-        const x = (i * 31 + 20) % 400;
-        const y = (i * 53 + 10) % 280;
-        return <circle key={i} cx={x} cy={y} r={1 + (i%3)*0.5} fill="#F0BC6C" opacity={0.3 + (i%3)*0.18}/>;
+        const x = (i * 41 + 12) % 396;
+        const y = (i * 57 + 8) % 270;
+        return <circle key={i} cx={x} cy={y} r={1 + (i%3)*0.5} fill="#E8A030" opacity={0.2 + (i%3)*0.15}/>;
       })}
-      <rect width="400" height="280" filter="url(#fcd-noise)" opacity={0.5}/>
     </svg>
   );
 }
 
 function NewsPaintedThumb({ scheme }: { scheme: 'devlog' | 'lore' | 'community' }) {
+  // All three use warm illustrated palette, each with a distinct accent
   const schemes = {
-    devlog:    { sky: '#3A1610', floor: '#0E0403', glow: '#F05A42', trunks: '#0A0202', canopy: '#5A1810' },
-    lore:      { sky: '#1A1F3A', floor: '#06080F', glow: '#A488B8', trunks: '#03030A', canopy: '#2A2050' },
-    community: { sky: '#1A2516', floor: '#0A0F08', glow: '#D4A04A', trunks: '#0A0604', canopy: '#2C3A22' },
+    devlog: {
+      sky1: '#D4B880', sky2: '#A07830',
+      ground: '#7A5020', ground2: '#5A3810',
+      glow: '#E8A030', glowOp: 0.45,
+      cap: '#C84820', rock: '#2A5850',
+      treeCanopy: '#C89018', treeTrunk: '#5A3818',
+    },
+    lore: {
+      sky1: '#C8C0D8', sky2: '#8878A8',
+      ground: '#7A6878', ground2: '#5A4858',
+      glow: '#C8A8E0', glowOp: 0.4,
+      cap: '#EDE8D8', rock: '#483060',
+      treeCanopy: '#B890C8', treeTrunk: '#3A2848',
+    },
+    community: {
+      sky1: '#B8D098', sky2: '#6A9848',
+      ground: '#5A8030', ground2: '#3A5820',
+      glow: '#D4C840', glowOp: 0.4,
+      cap: '#EDE8D8', rock: '#2A5850',
+      treeCanopy: '#8AB830', treeTrunk: '#3A5820',
+    },
   };
   const p = schemes[scheme];
   const id = `news-${scheme}`;
@@ -231,40 +336,46 @@ function NewsPaintedThumb({ scheme }: { scheme: 'devlog' | 'lore' | 'community' 
          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <defs>
         <linearGradient id={`${id}-sky`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={p.sky}/><stop offset="100%" stopColor={p.floor}/>
+          <stop offset="0%" stopColor={p.sky1}/><stop offset="100%" stopColor={p.sky2}/>
         </linearGradient>
-        <radialGradient id={`${id}-glow`} cx="0.5" cy="0.45" r="0.7">
-          <stop offset="0%" stopColor={p.glow} stopOpacity={0.45}/><stop offset="100%" stopColor={p.glow} stopOpacity={0}/>
+        <radialGradient id={`${id}-glow`} cx="0.45" cy="0.3" r="0.65">
+          <stop offset="0%" stopColor={p.glow} stopOpacity={p.glowOp}/><stop offset="100%" stopColor={p.glow} stopOpacity={0}/>
         </radialGradient>
-        <filter id={`${id}-blur`}><feGaussianBlur stdDeviation="2"/></filter>
-        <filter id={`${id}-noise`}>
-          <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed={scheme.length}/>
-          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.12 0"/>
-          <feComposite in2="SourceGraphic" operator="in"/>
-        </filter>
+        <filter id={`${id}-blur`}><feGaussianBlur stdDeviation="3"/></filter>
       </defs>
       <rect width="400" height="240" fill={`url(#${id}-sky)`}/>
-      <ellipse cx="200" cy="120" rx="220" ry="110" fill={`url(#${id}-glow)`}/>
-      <g filter={`url(#${id}-blur)`} opacity={0.7}>
-        <ellipse cx="100" cy="80" rx="120" ry="50" fill={p.canopy}/>
-        <ellipse cx="320" cy="70" rx="140" ry="50" fill={p.canopy} opacity={0.8}/>
+      <ellipse cx="180" cy="100" rx="220" ry="100" fill={`url(#${id}-glow)`}/>
+      {/* Distant rock formation (teal/accent) */}
+      <path d="M 240 200 Q 280 130 320 115 Q 360 100 385 145 Q 395 175 380 200 Z"
+            fill={p.rock} opacity={0.85}/>
+      {/* Tree trunk + canopy */}
+      <path d="M 55 240 L 60 150 Q 63 142 67 150 L 72 240 Z" fill={p.treeTrunk}/>
+      <path d="M 63 148 Q 30 100 20 68 Q 42 82 58 58 Q 63 45 70 58 Q 78 75 95 65 Q 80 100 72 148 Z"
+            fill={p.treeCanopy} opacity={0.92}/>
+      <ellipse cx="63" cy="90" rx="35" ry="22" fill={p.treeCanopy} opacity={0.45}/>
+      {/* Ground */}
+      <path d="M 0 200 Q 200 188 400 200 L 400 240 L 0 240 Z" fill={p.ground}/>
+      <path d="M 0 215 Q 200 206 400 215 L 400 240 L 0 240 Z" fill={p.ground2} opacity={0.7}/>
+      {/* Main mushroom (center-left) */}
+      <g transform="translate(175 198)">
+        <ellipse cx="0" cy="6" rx="42" ry="5" fill="#1A0A06" opacity={0.3}/>
+        <rect x="-6" y="-50" width="12" height="56" fill="#D8CEB0" rx="2"/>
+        <path d="M -55 -38 C -57 -80 -34 -98 0 -100 C 34 -98 57 -80 55 -38 C 38 -48 20 -50 0 -48 C -20 -50 -38 -48 -55 -38 Z"
+              fill={p.cap}/>
+        <ellipse cx="-16" cy="-72" rx="10" ry="3" fill="#fff" opacity={0.3}/>
       </g>
-      <path d="M -20 240 L -10 60 Q 10 30 30 60 L 40 240 Z" fill={p.trunks}/>
-      <path d="M 360 240 L 372 50 Q 392 20 412 50 L 420 240 Z" fill={p.trunks}/>
-      <g transform="translate(200 180)">
-        <ellipse cx="0" cy="8" rx="50" ry="5" fill="#000" opacity={0.6}/>
-        <rect x="-8" y="-10" width="16" height="20" fill="#F2E8C8" rx="2"/>
-        <ellipse cx="0" cy="-18" rx="40" ry="22" fill={p.glow}/>
-        <ellipse cx="-12" cy="-25" rx="6" ry="2" fill="#fff" opacity={0.55}/>
-        <circle cx="-8" cy="-22" r="3" fill="#F2EAD8"/>
-        <circle cx="10" cy="-18" r="2.5" fill="#F2EAD8"/>
+      {/* Small accent mushroom */}
+      <g transform="translate(280 205)">
+        <rect x="-4" y="-28" width="8" height="30" fill="#D0C898" rx="1.5"/>
+        <path d="M -28 -22 C -29 -46 -18 -56 0 -57 C 18 -56 29 -46 27 -22 C 18 -28 10 -29 0 -28 C -10 -29 -18 -28 -28 -22 Z"
+              fill="#EDE8D8"/>
       </g>
-      {Array.from({ length: 18 }).map((_, i) => {
-        const x = (i * 47 + 20) % 400;
-        const y = (i * 37 + 10) % 200;
-        return <circle key={i} cx={x} cy={y} r={1 + (i%3)*0.4} fill={p.glow} opacity={0.3 + (i%3)*0.18}/>;
+      {/* Spore particles */}
+      {Array.from({ length: 16 }).map((_, i) => {
+        const x = (i * 43 + 18) % 395;
+        const y = ((i * 61 + 12) % 180) + 8;
+        return <circle key={i} cx={x} cy={y} r={1 + (i%3)*0.45} fill={p.glow} opacity={0.18 + (i%4)*0.1}/>;
       })}
-      <rect width="400" height="240" filter={`url(#${id}-noise)`} opacity={0.5}/>
     </svg>
   );
 }

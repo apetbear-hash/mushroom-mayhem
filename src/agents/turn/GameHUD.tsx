@@ -36,13 +36,13 @@ export function GameHUD({ state }: GameHUDProps) {
 
   return (
     <div style={{
-      background: '#0d0d1a',
-      borderBottom: `2px solid ${meta.color}55`,
+      background: '#1A100A',
+      borderBottom: `2px solid ${meta.color}66`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '8px 16px',
-      fontFamily: 'sans-serif',
+      fontFamily: "'Cormorant Garamond', Georgia, serif",
       gap: 12,
       flexWrap: 'wrap',
     }}>
@@ -54,7 +54,7 @@ export function GameHUD({ state }: GameHUDProps) {
           <div style={{ color: meta.color, fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
             {meta.label}
           </div>
-          <div style={{ color: '#666', fontSize: 10 }}>
+          <div style={{ color: '#8A7848', fontSize: 10, fontStyle: 'italic' }}>
             {effectLabel}
           </div>
         </div>
@@ -62,11 +62,11 @@ export function GameHUD({ state }: GameHUDProps) {
 
       {/* Turn counter */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#eee', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>
+        <div style={{ color: '#F2EAD8', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>
           {state.currentTurn}
-          <span style={{ color: '#444', fontWeight: 400, fontSize: 13 }}> / 20</span>
+          <span style={{ color: '#6A5838', fontWeight: 400, fontSize: 13 }}> / 20</span>
         </div>
-        <div style={{ color: '#666', fontSize: 10 }}>
+        <div style={{ color: '#8A7848', fontSize: 10 }}>
           Turn {turnInSeason} of {seasonEnd - seasonStart + 1} in {meta.label}
         </div>
       </div>
@@ -75,8 +75,8 @@ export function GameHUD({ state }: GameHUDProps) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{
           fontSize: 22,
-          background: currentPlayer.color + '22',
-          border: `1px solid ${currentPlayer.color}66`,
+          background: currentPlayer.color + '33',
+          border: `1px solid ${currentPlayer.color}88`,
           borderRadius: '50%',
           width: 36,
           height: 36,
@@ -90,7 +90,7 @@ export function GameHUD({ state }: GameHUDProps) {
           <div style={{ color: currentPlayer.color, fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>
             {currentPlayer.name}
           </div>
-          <div style={{ color: '#666', fontSize: 10 }}>Active player</div>
+          <div style={{ color: '#8A7848', fontSize: 10 }}>Active player</div>
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export function GameHUD({ state }: GameHUDProps) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                opacity: isActive ? 1 : 0.4,
+                opacity: isActive ? 1 : 0.35,
                 borderBottom: isActive ? `2px solid ${sm.color}` : '2px solid transparent',
                 paddingBottom: 2,
               }}
