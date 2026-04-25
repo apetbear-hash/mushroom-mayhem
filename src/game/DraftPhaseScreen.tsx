@@ -150,14 +150,14 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
                   opacity: isMarked ? 0.55 : (!canMark ? 0.35 : 1),
                   cursor: canMark ? 'pointer' : 'default',
                   outline: isMarked ? '2px solid #D4A04A' : 'none',
-                  borderRadius: 6,
+                  borderRadius: 14,
                 }}
               >
                 <CardComponent card={card} isPlayable={!isMarked} />
                 {isMarked && (
                   <div style={{
                     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                    borderRadius: 6,
+                    borderRadius: 14,
                     background: 'rgba(14,9,7,0.6)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 11, color: '#D4A04A', fontWeight: 700, letterSpacing: 1,

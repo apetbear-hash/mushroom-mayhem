@@ -57,7 +57,7 @@ export function HandDisplay({
               transition: 'transform 0.15s, opacity 0.15s',
               cursor: plantMode && plantable ? 'pointer' : 'default',
               outline: isSelected ? `2px solid #fff` : 'none',
-              borderRadius: 10,
+              borderRadius: 14,
             }}
           >
             <CardComponent
