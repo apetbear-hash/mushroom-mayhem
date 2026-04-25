@@ -254,7 +254,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['wet', 'decay'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[Player Choice] During the Collect phase, discard this mushroom from the board to gain 3 spores.',
+    power: '[Player Choice] Discard during Collect phase to gain 3 spores.',
   },
   {
     id: 33,
@@ -290,7 +290,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['wet'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[When Planted] If adjacent to a friendly mushroom, score +3 points for Shaggy Mane and +3 for the adjacent mushroom.',
+    power: '[When Planted] +3 pts each for this and one adjacent friendly mushroom.',
   },
   {
     id: 40,
@@ -302,7 +302,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'wet'],
     type: 'saprophytic',
     isOngoing: true,
-    power: '[Ongoing] During Winter, generates +1 additional moisture. Not affected by winter seasonal effects.',
+    power: '[Ongoing] +1 moisture in Winter. Immune to winter seasonal effects.',
   },
   {
     id: 44,
@@ -326,7 +326,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'shade'],
     type: 'saprophytic',
     isOngoing: true,
-    power: '[Ongoing] Scores +3 points per turn in Summer. Generates no resources or points in Winter.',
+    power: '[Ongoing] +3 pts/turn in Summer. No resources or points in Winter.',
   },
   {
     id: 48,
@@ -388,7 +388,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['shade', 'tree'],
     type: 'symbiotic',
     isOngoing: true,
-    power: '[Ongoing] Each Collect phase, choose one adjacent friendly mushroom — it scores +1 point this turn.',
+    power: '[Ongoing] Each Collect: one adjacent friendly scores +1 point.',
   },
   {
     id: 35,
@@ -412,7 +412,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['shade'],
     type: 'symbiotic',
     isOngoing: true,
-    power: '[Ongoing] Adjacent friendly sunlight generators produce +2 extra sunlight per Candy Cap adjacent to them.',
+    power: '[Ongoing] Each adjacent friendly sunlight generator produces +2 extra.',
   },
   {
     id: 49,
@@ -424,7 +424,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['wet'],
     type: 'symbiotic',
     isOngoing: false,
-    power: '[Start of Season] If on the board at the start of Autumn, place 2 free copies on adjacent network tiles.',
+    power: '[Start of Season] At Autumn start, place 2 free copies on adjacent tiles.',
   },
 
   // ── Parasitic (8) ───────────────────────────────────────────────────────────
@@ -438,7 +438,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'shade'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Adjacent opponent mushrooms generate 1 fewer resource per turn (minimum 0).',
+    power: '[Ongoing] Adjacent opponents generate 1 fewer resource/turn.',
   },
   {
     id: 22,
@@ -462,7 +462,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['shade'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Adjacent opponent mushrooms do not generate resources (still score points).',
+    power: '[Ongoing] Adjacent opponents generate no resources (still score).',
   },
   {
     id: 25,
@@ -474,7 +474,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Counts as any mushroom type for Mycelium Harmony chain scoring. Declare type at the start of each Collect phase during Winter.',
+    power: '[Ongoing] Any type for Mycelium Harmony. Redeclare each Collect in Winter.',
   },
   {
     id: 26,
@@ -486,7 +486,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree', 'shade'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Opponents must pay +1 moisture to spread into tiles adjacent to this mushroom.',
+    power: '[Ongoing] Opponents pay +1 moisture to spread into adjacent tiles.',
   },
   {
     id: 27,
@@ -498,7 +498,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Opponents cannot plant mushrooms on tiles directly adjacent to this mushroom.',
+    power: '[Ongoing] Opponents can\'t plant on adjacent tiles.',
   },
   {
     id: 28,
@@ -510,7 +510,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'shade'],
     type: 'parasitic',
     isOngoing: true,
-    power: '[Ongoing] Adjacent opponent mushrooms generate 1 fewer resource per turn (minimum 0).',
+    power: '[Ongoing] Adjacent opponents generate 1 fewer resource/turn.',
   },
   {
     id: 30,
@@ -522,7 +522,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['tree'],
     type: 'parasitic',
     isOngoing: false,
-    power: '[When Planted] Opponents cannot spread into adjacent tiles for the remainder of the current season.',
+    power: '[When Planted] Blocks opponent spreading into adjacent tiles this season.',
   },
 
   // ── Opportunistic (7) ───────────────────────────────────────────────────────
@@ -608,7 +608,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'shade'],
     type: 'opportunistic',
     isOngoing: true,
-    power: '[Ongoing] During Autumn, generates +1 extra spore and scores +1 bonus point per turn.',
+    power: '[Ongoing] Autumn: +1 spore and +1 point per turn.',
   },
 ];
 
