@@ -336,7 +336,7 @@ export function resolveRestAction(state: GameState, playerId: string): GameState
 
   return {
     ...updatePlayer(state, updatedPlayer),
-    turnState: { actionType: 'rest', restUsed: true },
+    turnState: { actionType: 'rest', restUsed: true, cardsDrawnThisTurn: 0 },
   };
 }
 
