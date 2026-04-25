@@ -5,12 +5,13 @@ import type { PlayerDraft } from './agents/turn/PlayerSetup';
 import { GameScreen } from './game/GameScreen';
 import { DraftPhaseScreen } from './game/DraftPhaseScreen';
 import { BalancePanel } from './agents/balance';
+import { LandingPage } from './game/LandingPage';
 import { createInitialGameState } from './agents/simulation/gameInit';
 
-type Screen = 'setup' | 'draft' | 'game' | 'balance';
+type Screen = 'landing' | 'setup' | 'draft' | 'game' | 'balance';
 
 export function App() {
-  const [screen, setScreen] = useState<Screen>('setup');
+  const [screen, setScreen] = useState<Screen>('landing');
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   function handleSetupConfirm(players: PlayerDraft[]) {
@@ -21,6 +22,10 @@ export function App() {
   function handleDraftConfirm(draftedState: GameState) {
     setGameState(draftedState);
     setScreen('game');
+  }
+
+  if (screen === 'landing') {
+    return <LandingPage onPlay={() => setScreen('setup')}/>;
   }
 
   if (screen === 'setup') {
