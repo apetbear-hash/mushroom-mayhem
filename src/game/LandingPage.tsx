@@ -108,94 +108,6 @@ function PaintedForestBackdrop({ id = 'bg', variant = 'deep' }: { id?: string; v
   );
 }
 
-function HeroMushroomCluster() {
-  return (
-    <svg viewBox="0 0 600 500" preserveAspectRatio="xMidYEnd meet"
-         style={{ position: 'absolute', left: '50%', bottom: 0, transform: 'translateX(-50%)',
-                  width: 'min(720px, 75%)', height: 'auto', maxHeight: '75%', pointerEvents: 'none' }}>
-      <defs>
-        <radialGradient id="hmA-cap" cx="0.32" cy="0.22" r="0.95">
-          <stop offset="0%" stopColor="#F05A42"/>
-          <stop offset="50%" stopColor="#C8281A"/>
-          <stop offset="100%" stopColor="#3A0805"/>
-        </radialGradient>
-        <linearGradient id="hmA-stem" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#7A6A4A"/>
-          <stop offset="50%" stopColor="#F2E8C8"/>
-          <stop offset="100%" stopColor="#7A6A4A"/>
-        </linearGradient>
-        <radialGradient id="hmB-cap" cx="0.4" cy="0.25" r="1">
-          <stop offset="0%" stopColor="#FFD98C"/>
-          <stop offset="55%" stopColor="#D4953A"/>
-          <stop offset="100%" stopColor="#5A3210"/>
-        </radialGradient>
-        <linearGradient id="hmC-cap" x1="0.3" y1="0" x2="0.5" y2="1">
-          <stop offset="0%" stopColor="#A0608A"/>
-          <stop offset="60%" stopColor="#5C3A60"/>
-          <stop offset="100%" stopColor="#1F0E22"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="300" cy="490" rx="240" ry="14" fill="#000" opacity={0.6}/>
-      {/* Chanterelle */}
-      <g transform="translate(110, 440)">
-        <ellipse cx="0" cy="6" rx="60" ry="6" fill="#000" opacity={0.55}/>
-        <path d="M -18 0 C -22 -60 -18 -120 -8 -160 C -2 -180 6 -180 12 -160 C 22 -120 26 -60 22 0 Z" fill="url(#hmB-cap)"/>
-        <path d="M -78 -160 C -82 -210 -52 -240 -16 -244 C 8 -246 30 -244 50 -236 C 82 -224 92 -200 88 -170 C 86 -156 78 -150 60 -156 C 44 -160 28 -158 18 -158 C 6 -156 -10 -156 -28 -160 C -50 -166 -68 -166 -78 -160 Z" fill="url(#hmB-cap)"/>
-        <g opacity={0.7} stroke="#5A3210" strokeLinecap="round" fill="none">
-          {[-66,-54,-40,-26,-12,4,18,32,46,60,74].map((x,i) => (
-            <path key={i} d={`M ${x} -158 C ${x*0.9} -120 ${x*0.7} -60 ${x*0.5} -10`} strokeWidth="2"/>
-          ))}
-        </g>
-        <path d="M -76 -158 C -80 -208 -52 -238 -16 -242" fill="none" stroke="#FFE6A8" strokeWidth="3" opacity={0.7} strokeLinecap="round"/>
-        <ellipse cx="-44" cy="-220" rx="22" ry="5" fill="#fff" opacity={0.35}/>
-      </g>
-      {/* Fly agaric */}
-      <g transform="translate(310, 440)">
-        <ellipse cx="0" cy="10" rx="120" ry="14" fill="#000" opacity={0.65}/>
-        <path d="M -42 10 C -54 -10 -42 -50 -36 -90 C -32 -130 -30 -170 -28 -200 C -24 -230 -10 -240 0 -240 C 10 -240 24 -230 28 -200 C 30 -170 32 -130 36 -90 C 42 -50 54 -10 42 10 Z" fill="url(#hmA-stem)"/>
-        <path d="M -38 8 C -50 -10 -38 -48 -32 -88 C -28 -128 -26 -168 -24 -198" stroke="#5A4A30" strokeWidth="6" fill="none" opacity={0.55} strokeLinecap="round"/>
-        <ellipse cx="-30" cy="0" rx="8" ry="5" fill="#F8EBD0"/>
-        <ellipse cx="30" cy="4" rx="7" ry="4" fill="#F8EBD0"/>
-        <ellipse cx="0" cy="8" rx="6" ry="3.5" fill="#F8EBD0" opacity={0.85}/>
-        <path d="M -50 -210 Q -42 -224 -22 -222 Q 0 -218 22 -222 Q 42 -224 50 -210 Q 42 -200 22 -202 Q 0 -198 -22 -202 Q -42 -200 -50 -210 Z" fill="url(#hmA-stem)"/>
-        <path d="M -50 -210 Q 0 -200 50 -210" fill="none" stroke="#5A4A30" strokeWidth="2" opacity={0.7}/>
-        <path d="M -120 -240 C -116 -224 -60 -218 0 -218 C 60 -218 116 -224 120 -240 C 100 -232 60 -226 0 -226 C -60 -226 -100 -232 -120 -240 Z" fill="#3A0805" opacity={0.85}/>
-        <g stroke="#fff" strokeWidth="1" opacity={0.35}>
-          {[-100,-80,-60,-40,-20,0,20,40,60,80,100].map((x,i) => (
-            <line key={i} x1={x} y1="-240" x2={x*0.85} y2="-220"/>
-          ))}
-        </g>
-        <path d="M -150 -250 C -154 -350 -110 -430 -36 -448 C -12 -454 12 -454 36 -448 C 110 -430 154 -350 150 -250 C 120 -260 80 -262 0 -258 C -80 -262 -120 -260 -150 -250 Z" fill="url(#hmA-cap)"/>
-        <path d="M -150 -250 C -130 -240 -90 -240 0 -236 C 90 -240 130 -240 150 -250 C 130 -230 90 -228 0 -224 C -90 -228 -130 -230 -150 -250 Z" fill="#3A0805" opacity={0.55}/>
-        {([[-78,-360,16],[20,-410,14],[68,-330,12],[-22,-420,11],[98,-280,10],[-110,-300,11],[-44,-380,10],[44,-368,11],[-2,-360,9],[-66,-310,8],[88,-360,9],[-92,-360,7]] as [number,number,number][]).map(([x,y,r],i) => (
-          <g key={i}>
-            <circle cx={x} cy={y+1.5} r={r} fill="#3A0805" opacity={0.4}/>
-            <circle cx={x} cy={y} r={r} fill="#F8EBD0"/>
-            <circle cx={x-r*0.3} cy={y-r*0.3} r={r*0.5} fill="#fff"/>
-          </g>
-        ))}
-        <ellipse cx="-72" cy="-380" rx="40" ry="10" fill="#fff" opacity={0.3} transform="rotate(-22 -72 -380)"/>
-        <ellipse cx="-60" cy="-396" rx="20" ry="5" fill="#fff" opacity={0.5} transform="rotate(-22 -60 -396)"/>
-        <path d="M -148 -260 C -152 -356 -108 -428 -38 -446" fill="none" stroke="#F05A42" strokeWidth="4" opacity={0.85} strokeLinecap="round"/>
-      </g>
-      {/* Purple shade mushroom */}
-      <g transform="translate(490, 440)">
-        <ellipse cx="0" cy="6" rx="55" ry="6" fill="#000" opacity={0.55}/>
-        <path d="M -16 -2 C -20 -50 -16 -110 -8 -148 C -2 -166 6 -166 12 -148 C 20 -110 24 -50 20 -2 Z" fill="#5A4A60"/>
-        <path d="M -68 -148 C -72 -190 -50 -218 -16 -224 C 6 -226 26 -224 44 -218 C 72 -208 80 -188 76 -160 C 74 -148 66 -144 50 -148 C 36 -150 22 -150 14 -150 C 4 -148 -8 -148 -24 -150 C -42 -154 -58 -154 -68 -148 Z" fill="url(#hmC-cap)"/>
-        <path d="M -66 -146 C -70 -188 -48 -214 -16 -220" fill="none" stroke="#A488B8" strokeWidth="3" opacity={0.65} strokeLinecap="round"/>
-        <ellipse cx="-32" cy="-198" rx="16" ry="3.5" fill="#fff" opacity={0.3}/>
-      </g>
-      <g>
-        {Array.from({ length: 16 }).map((_, i) => {
-          const x = (i * 41) % 600;
-          const y = 100 + ((i * 67) % 300);
-          return <circle key={i} cx={x} cy={y} r={1 + (i%3)*0.7} fill="#F0BC6C" opacity={0.4 + (i%3)*0.2}/>;
-        })}
-      </g>
-    </svg>
-  );
-}
 
 function FeatureIllustration({ kind }: { kind: 'hex' | 'cards' }) {
   if (kind === 'hex') {
@@ -468,8 +380,17 @@ function Hero({ vp, onPlay }: { vp: ReturnType<typeof useViewport>; onPlay: () =
       maxHeight: isMobile ? 'none' : 920,
       color: PALETTE.paper, background: PALETTE.ink,
     }}>
-      <PaintedForestBackdrop id="hero-bg" variant="deep"/>
-      <HeroMushroomCluster/>
+      {/* Splash image backdrop */}
+      <img src={`${import.meta.env.BASE_URL}splash.png`} alt="" aria-hidden="true" style={{
+        position: 'absolute', inset: 0, width: '100%', height: '100%',
+        objectFit: 'cover', objectPosition: 'center top',
+        display: 'block',
+      }}/>
+      {/* Dark gradient overlay so text stays readable */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(14,9,7,0.45) 0%, rgba(14,9,7,0.2) 40%, rgba(14,9,7,0.75) 100%)',
+      }}/>
 
       <div style={{
         position: 'absolute', top: isNarrow ? 90 : 140, left: 36, zIndex: 4,
