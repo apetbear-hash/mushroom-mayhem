@@ -44,7 +44,6 @@ export function calculateSpreadCost(
   const season = getSeason(state.currentTurn);
   const effect = state.forecast[season];
 
-  if (effect === 'thaw') cost -= 1;
   if (effect === 'scorching_heat') cost += 1;
   if (effect === 'creeping_mist' && (tile.habitat === 'shade' || tile.habitat === 'wet')) {
     cost -= 1;

@@ -62,6 +62,9 @@ export function applySeasonStart(state: GameState): GameState {
         ...p, resources: { ...p.resources, moisture: p.resources.moisture + 3 },
       }));
     }
+    if (state.forecast.spring === 'thaw') {
+      s = applyNetworkExpansionAll(s);
+    }
   }
 
   // ── Summer ────────────────────────────────────────────────────────────────
@@ -117,6 +120,12 @@ export function applySeasonEnd(state: GameState, endedTurn?: number): GameState 
   const turn = endedTurn ?? state.currentTurn;
   let s = state;
 
+  if (turn === SEASON_TURNS.spring[1]) {
+    if (state.forecast.spring === 'thaw') {
+      s = applyNetworkExpansionAll(s);
+    }
+  }
+
   if (turn === SEASON_TURNS.autumn[1]) {
     if (state.forecast.autumn === 'mushroom_festival') {
       s = updateAllPlayers(s, p => {
@@ -129,13 +138,13 @@ export function applySeasonEnd(state: GameState, endedTurn?: number): GameState 
   return s;
 }
 
-// ── Spore Wind expansion helper ───────────────────────────────────────────────
+// ── Network expansion helper (used by Thaw, Spore Wind) ──────────────────────
 
-function applySporeWindExpansion(state: GameState): GameState {
+// Expands each player's network by 1 random adjacent unoccupied tile.
+function applyNetworkExpansionAll(state: GameState): GameState {
   let s = state;
 
   for (const player of state.players) {
-    // Find all unoccupied, non-blight tiles adjacent to this player's network
     const candidates = new Set<string>();
     for (const tileId of player.networkTileIds) {
       for (const adjId of getAdjacentTileIds(tileId, s.tiles)) {
@@ -161,6 +170,10 @@ function applySporeWindExpansion(state: GameState): GameState {
   }
 
   return s;
+}
+
+function applySporeWindExpansion(state: GameState): GameState {
+  return applyNetworkExpansionAll(state);
 }
 
 // ── Scarlet Waxy Cap trigger (id 49) ─────────────────────────────────────────
