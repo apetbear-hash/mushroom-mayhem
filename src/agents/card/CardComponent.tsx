@@ -322,8 +322,9 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
 
         {/* Power text */}
         <div style={{
-          fontSize: 16, lineHeight: 1.5,
+          fontSize: 14, lineHeight: 1.5,
           color: '#FFFFFF',
+          textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
           flex: 1, overflow: 'hidden',
         }}>
           {card.power}
