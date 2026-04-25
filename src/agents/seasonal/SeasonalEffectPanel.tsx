@@ -61,7 +61,7 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, width: 190, fontFamily: 'sans-serif' }}>
-      <div style={{ color: '#444', fontSize: 9, fontWeight: 700, letterSpacing: 2, paddingLeft: 2, marginBottom: 1 }}>
+      <div style={{ color: '#444', fontSize: 10, fontWeight: 700, letterSpacing: 2, paddingLeft: 2, marginBottom: 1 }}>
         FORECAST
       </div>
 
@@ -113,7 +113,7 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
             {effect && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                 {dot && (
-                  <span style={{ color: dot.color, fontSize: 8, lineHeight: 1 }}>{dot.symbol}</span>
+                  <span style={{ color: dot.color, fontSize: 10, lineHeight: 1 }}>{dot.symbol}</span>
                 )}
                 <span style={{ color: isActive ? '#ddd' : '#666', fontWeight: 700, fontSize: 11 }}>
                   {effect.name}
@@ -131,7 +131,7 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
             {/* Long Summer extra: show copied effect */}
             {isLongSummer && copiedSummerEffect && (
               <div style={{ marginTop: 5, paddingTop: 5, borderTop: '1px solid #222' }}>
-                <div style={{ color: '#555', fontSize: 9, marginBottom: 2 }}>copies ☀️:</div>
+                <div style={{ color: '#555', fontSize: 10, marginBottom: 2 }}>copies ☀️:</div>
                 <div style={{ color: isActive ? '#bbb' : '#555', fontWeight: 700, fontSize: 10, marginBottom: 1 }}>
                   {copiedSummerEffect.name}
                 </div>

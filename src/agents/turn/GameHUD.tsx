@@ -113,7 +113,7 @@ export function GameHUD({ state }: GameHUDProps) {
               }}
             >
               <span style={{ fontSize: 14 }}>{sm.icon}</span>
-              <span style={{ color: sm.color, fontSize: 8, fontWeight: 600 }}>
+              <span style={{ color: sm.color, fontSize: 10, fontWeight: 600 }}>
                 {sm.label.slice(0, 2).toUpperCase()}
               </span>
             </div>
@@ -126,7 +126,7 @@ export function GameHUD({ state }: GameHUDProps) {
         {state.players.map(p => (
           <div key={p.id} style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 14 }}>{portraitEmoji(p.portrait)}</div>
-            <div style={{ color: p.color, fontWeight: 700, fontSize: 13 }}>{p.score}</div>
+            <div style={{ color: p.color, fontWeight: 800, fontSize: 16 }}>{p.score}</div>
           </div>
         ))}
       </div>

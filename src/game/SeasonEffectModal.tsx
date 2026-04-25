@@ -134,7 +134,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
                   {!isSelected && recommended && (
                     <div style={{
                       position: 'absolute', bottom: 4, left: 0, right: 0,
-                      textAlign: 'center', fontSize: 8, color: '#5cb85c', letterSpacing: 0.5,
+                      textAlign: 'center', fontSize: 10, color: '#5cb85c', letterSpacing: 0.5,
                     }}>
                       ↑ low value
                     </div>

@@ -92,7 +92,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
 
       {/* Portrait picker — only interactive when active */}
       <div>
-        <div style={{ color: '#666', fontSize: 9, marginBottom: 5, letterSpacing: 1 }}>PORTRAIT</div>
+        <div style={{ color: '#666', fontSize: 10, marginBottom: 5, letterSpacing: 1 }}>PORTRAIT</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {PORTRAITS.map(p => {
             const taken = takenPortraits.has(p.id) && p.id !== slot.portrait;
@@ -121,7 +121,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
 
       {/* Colour picker */}
       <div>
-        <div style={{ color: '#666', fontSize: 9, marginBottom: 5, letterSpacing: 1 }}>COLOUR</div>
+        <div style={{ color: '#666', fontSize: 10, marginBottom: 5, letterSpacing: 1 }}>COLOUR</div>
         <div style={{ display: 'flex', gap: 6 }}>
           {COLOR_OPTIONS.map(c => {
             const taken = takenColors.has(c.hex) && c.hex !== slot.color;

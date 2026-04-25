@@ -46,25 +46,25 @@ function CardScene({ habitats, typeColor }: { habitats: readonly string[]; typeC
         background: `radial-gradient(ellipse at 50% 70%, ${typeColor}44 0%, transparent 68%)`,
       }}/>
       {/* Illustrated mushroom */}
-      <svg width="140" height="62" style={{ position: 'absolute', inset: 0, display: 'block' }}>
+      <svg width="160" height="62" viewBox="0 0 160 62" style={{ position: 'absolute', inset: 0, display: 'block' }}>
         {/* Ground shadow */}
-        <ellipse cx="70" cy="57" rx="20" ry="3" fill="#1A0A06" opacity={0.35}/>
+        <ellipse cx="80" cy="57" rx="22" ry="3" fill="#1A0A06" opacity={0.35}/>
         {/* Stem */}
-        <rect x="66" y="40" width="8" height="17" fill="#D8CEB0" rx="2"/>
+        <rect x="76" y="40" width="8" height="17" fill="#D8CEB0" rx="2"/>
         {/* Stem ring */}
-        <ellipse cx="70" cy="48" rx="7" ry="1.8" fill="#C8B898" opacity={0.7}/>
+        <ellipse cx="80" cy="48" rx="7" ry="1.8" fill="#C8B898" opacity={0.7}/>
         {/* Cap underside */}
-        <ellipse cx="70" cy="38" rx="23" ry="6" fill={typeColor} opacity={0.55}/>
+        <ellipse cx="80" cy="38" rx="25" ry="6" fill={typeColor} opacity={0.55}/>
         {/* Cap */}
-        <ellipse cx="70" cy="36" rx="26" ry="15" fill={typeColor}/>
+        <ellipse cx="80" cy="36" rx="28" ry="15" fill={typeColor}/>
         {/* Cap highlight */}
-        <ellipse cx="62" cy="28" rx="7" ry="3" fill="#fff" opacity={0.3}/>
+        <ellipse cx="71" cy="28" rx="8" ry="3" fill="#fff" opacity={0.3}/>
         {/* Ambient spore particles */}
-        <circle cx="22" cy="15" r="1.5" fill={typeColor} opacity={0.22}/>
-        <circle cx="114" cy="11" r="1.2" fill={typeColor} opacity={0.18}/>
-        <circle cx="46"  cy="9"  r="1"   fill="#E8A030"  opacity={0.2}/>
-        <circle cx="96"  cy="20" r="1.2" fill="#E8A030"  opacity={0.16}/>
-        <circle cx="130" cy="30" r="0.9" fill={typeColor} opacity={0.15}/>
+        <circle cx="24"  cy="15" r="1.5" fill={typeColor} opacity={0.22}/>
+        <circle cx="132" cy="11" r="1.2" fill={typeColor} opacity={0.18}/>
+        <circle cx="50"  cy="9"  r="1"   fill="#E8A030"  opacity={0.2}/>
+        <circle cx="112" cy="20" r="1.2" fill="#E8A030"  opacity={0.16}/>
+        <circle cx="148" cy="30" r="0.9" fill={typeColor} opacity={0.15}/>
       </svg>
       {/* Ground strip */}
       <div style={{
@@ -83,7 +83,8 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
     <div
       onClick={isPlayable ? onClick : undefined}
       style={{
-        width: 140,
+        width: 160,
+        height: 290,
         borderRadius: 6,
         border: `1.5px solid ${isSelected ? '#D4A04A' : typeColor + 'AA'}`,
         background: '#F2EAD8',
@@ -99,18 +100,20 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
+        flexShrink: 0,
       }}
     >
       {/* Type stripe */}
       <div style={{
         background: typeColor,
         padding: '4px 8px',
-        fontSize: 9,
+        fontSize: 10,
         fontWeight: 700,
         textTransform: 'uppercase',
         letterSpacing: 1.5,
         color: '#fff',
         fontFamily: 'sans-serif',
+        flexShrink: 0,
       }}>
         {card.type}{card.isOngoing && <span style={{ marginLeft: 6, opacity: 0.8 }}>· Ongoing</span>}
       </div>
@@ -119,24 +122,24 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
       <CardScene habitats={card.habitats} typeColor={typeColor}/>
 
       {/* Divider */}
-      <div style={{ height: 1, background: `${typeColor}55` }}/>
+      <div style={{ height: 1, background: `${typeColor}55`, flexShrink: 0 }}/>
 
       {/* Name + pts */}
-      <div style={{ padding: '7px 8px 3px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4 }}>
+      <div style={{ padding: '7px 8px 3px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4, flexShrink: 0 }}>
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: 12.5, lineHeight: 1.2, color: '#1A140F' }}>{card.name}</div>
-          <div style={{ color: '#8A7848', fontSize: 9, fontStyle: 'italic', marginTop: 2 }}>{card.scientificName}</div>
+          <div style={{ fontWeight: 700, fontSize: 13, lineHeight: 1.2, color: '#1A140F' }}>{card.name}</div>
+          <div style={{ color: '#8A7848', fontSize: 10, fontStyle: 'italic', marginTop: 2 }}>{card.scientificName}</div>
         </div>
         {card.pts > 0 && (
           <div style={{
             background: '#D4A04A',
             color: '#1A0A00',
             borderRadius: 3,
-            padding: '2px 5px',
+            padding: '2px 6px',
             fontWeight: 800,
-            fontSize: 13,
+            fontSize: 14,
             flexShrink: 0,
-            minWidth: 20,
+            minWidth: 22,
             textAlign: 'center',
             fontFamily: 'sans-serif',
             lineHeight: 1.3,
@@ -148,9 +151,10 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
 
       {/* Cost + Habitats */}
       <div style={{
-        padding: '3px 8px 3px',
+        padding: '3px 8px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         borderTop: '1px solid #D8C8A0',
+        flexShrink: 0,
       }}>
         <span style={{ color: '#8B6F47', fontWeight: 700, fontFamily: 'sans-serif', fontSize: 10 }}>
           {card.cost}🍄
@@ -162,8 +166,8 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
               border: `1px solid ${HABITAT_COLORS[h]}88`,
               color: '#2A1810',
               borderRadius: 3,
-              padding: '1px 4px',
-              fontSize: 8.5,
+              padding: '1px 5px',
+              fontSize: 10,
               fontWeight: 600,
               fontFamily: 'sans-serif',
             }}>
@@ -176,9 +180,10 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
       {/* Resource generation */}
       {resourceEntries.length > 0 && (
         <div style={{
-          padding: '2px 8px 3px', display: 'flex', gap: 6,
+          padding: '3px 8px', display: 'flex', gap: 6,
           borderTop: '1px solid #D8C8A0',
           fontFamily: 'sans-serif',
+          flexShrink: 0,
         }}>
           {resourceEntries.map(([resource, amount]) => (
             <span key={resource} style={{ color: RESOURCE_COLORS[resource], fontWeight: 700, fontSize: 10 }}>
@@ -188,14 +193,15 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
         </div>
       )}
 
-      {/* Power text */}
+      {/* Power text — fixed remaining space, clipped */}
       <div style={{
         padding: '5px 8px 8px',
         color: card.isOngoing ? '#2A6858' : '#3A2810',
         fontSize: 10,
-        lineHeight: 1.45,
+        lineHeight: 1.5,
         fontStyle: 'italic',
         flex: 1,
+        overflow: 'hidden',
         borderTop: '1px solid #D8C8A0',
       }}>
         {card.power}

@@ -70,7 +70,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
 
         {/* ── Horizontal bar graph ── */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 9, color: '#444', letterSpacing: 2, marginBottom: 12, textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 10, color: '#444', letterSpacing: 2, marginBottom: 12, textTransform: 'uppercase' }}>
             Final Scores
           </div>
 
@@ -95,14 +95,14 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
                   </span>
                   <span style={{
                     color: isWinner ? '#c9a84c' : '#eee',
-                    fontWeight: 800, fontSize: 15,
+                    fontWeight: 800, fontSize: 18,
                     minWidth: 32, textAlign: 'right', flexShrink: 0,
                   }}>
                     {p.score}
                   </span>
                 </div>
 
-                {/* Bar track */}
+                {/* Bar track — score bar */}
                 <div style={{
                   height: 12,
                   background: '#16162a',
@@ -139,7 +139,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
           {/* X-axis tick marks */}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
             {[0, 25, 50, 75, 100].map(pct => (
-              <div key={pct} style={{ fontSize: 8, color: '#333', textAlign: 'center' }}>
+              <div key={pct} style={{ fontSize: 10, color: '#555', textAlign: 'center' }}>
                 {Math.round((pct / 100) * maxScore)}
               </div>
             ))}
@@ -170,9 +170,9 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
                   {p.name}
                 </div>
                 <div style={{ color: '#eee', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>{p.score}</div>
-                <div style={{ color: '#555', fontSize: 8, marginBottom: 6 }}>pts</div>
-                <div style={{ color: '#888', fontSize: 9 }}>{p.networkTileIds.length} tiles</div>
-                <div style={{ color: '#888', fontSize: 9 }}>{mushroomCount} mushrooms</div>
+                <div style={{ color: '#888', fontSize: 10, fontWeight: 700, marginBottom: 6 }}>pts</div>
+                <div style={{ color: '#aaa', fontSize: 10 }}>{p.networkTileIds.length} tiles</div>
+                <div style={{ color: '#aaa', fontSize: 10 }}>{mushroomCount} mushrooms</div>
               </div>
             );
           })}

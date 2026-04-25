@@ -146,7 +146,7 @@ export function ActionBar({
             >
               <span style={{ fontSize: 18 }}>{a.icon}</span>
               <span>{a.label}</span>
-              <span style={{ fontSize: 9, color: 'inherit', opacity: 0.7 }}>{a.hint}</span>
+              <span style={{ fontSize: 10, color: 'inherit', opacity: 0.7 }}>{a.hint}</span>
             </button>
           );
         })}
