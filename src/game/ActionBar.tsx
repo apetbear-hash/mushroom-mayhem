@@ -53,8 +53,8 @@ export function ActionBar({
 
   const actions: { type: ActionType; label: string; icon: string; enabled: boolean; hint: string }[] = [
     { type: 'draw',   label: 'Draw',   icon: '🃏', enabled: canDraw,   hint: drawHint },
-    { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : isDrought ? '✕' : isDeepFreeze ? '✕' : '💧' },
-    { type: 'plant',  label: 'Spawn',  icon: '🍄', enabled: canPlant,  hint: 'spores' },
+    { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : isDrought ? '✕ Drought' : isDeepFreeze ? '✕ Frozen' : '💧' },
+    { type: 'plant',  label: 'Spawn',  icon: '🍄', enabled: canPlant,  hint: 'costs spores' },
     { type: 'rest',   label: 'Rest',   icon: '💤', enabled: canRest,   hint: '+1 each' },
   ];
 
@@ -62,18 +62,18 @@ export function ActionBar({
 
   return (
     <div style={{
-      background: '#1A100A',
+      background: '#DDD0B0',
       display: 'flex', flexDirection: 'column', gap: 8,
       padding: '10px 12px',
-      fontFamily: 'sans-serif',
+      fontFamily: "'Cormorant Garamond', Georgia, serif",
       height: '100%', boxSizing: 'border-box',
     }}>
       {/* Resources */}
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
         {(['spore', 'moisture', 'sunlight'] as const).map(res => (
-          <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-            <span style={{ fontSize: 13 }}>{RESOURCE_ICONS[res]}</span>
-            <span style={{ color: '#F2EAD8', fontWeight: 700, fontSize: 15 }}>
+          <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ fontSize: 15 }}>{RESOURCE_ICONS[res]}</span>
+            <span style={{ color: '#1A1408', fontWeight: 700, fontSize: 18 }}>
               {player.resources[res]}
             </span>
           </div>
@@ -91,19 +91,20 @@ export function ActionBar({
               disabled={!a.enabled}
               title={a.hint}
               style={{
-                background: isSelected ? player.color + '33' : '#0E0907',
-                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#1A100A' : '#3A2818'}`,
-                borderRadius: 8, padding: '6px 4px',
-                color: isSelected ? player.color : !a.enabled ? '#3A2818' : '#8A7848',
-                fontWeight: isSelected ? 700 : 400,
-                fontSize: 11, cursor: a.enabled ? 'pointer' : 'not-allowed',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
+                background: isSelected ? player.color + '22' : '#EAE0C8',
+                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#C8B88A' : '#B0A070'}`,
+                borderRadius: 8, padding: '7px 4px',
+                color: isSelected ? player.color : !a.enabled ? '#C8B88A' : '#4A3820',
+                fontWeight: isSelected ? 700 : 500,
+                fontSize: 13, cursor: a.enabled ? 'pointer' : 'not-allowed',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
                 transition: 'all 0.15s',
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
               }}
             >
-              <span style={{ fontSize: 16 }}>{a.icon}</span>
-              <span style={{ fontSize: 11 }}>{a.label}</span>
-              <span style={{ fontSize: 9, opacity: 0.65 }}>{a.hint}</span>
+              <span style={{ fontSize: 18 }}>{a.icon}</span>
+              <span style={{ fontSize: 13 }}>{a.label}</span>
+              <span style={{ fontSize: 10, opacity: 0.7 }}>{a.hint}</span>
             </button>
           );
         })}
@@ -111,7 +112,7 @@ export function ActionBar({
 
       {/* Feedback message */}
       {message && (
-        <div style={{ color: '#D4A04A', fontSize: 10, textAlign: 'center', lineHeight: 1.3 }}>
+        <div style={{ color: '#C84820', fontSize: 12, textAlign: 'center', lineHeight: 1.3 }}>
           {message}
         </div>
       )}
@@ -120,10 +121,11 @@ export function ActionBar({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 'auto' }}>
         {undoState && (
           <button onClick={onUndo} style={{
-            background: 'transparent', border: '1px solid #3A2818',
-            color: '#8A7848', borderRadius: 6,
-            padding: '5px 8px', fontWeight: 600, fontSize: 11,
+            background: 'transparent', border: '1px solid #B0A070',
+            color: '#4A3820', borderRadius: 6,
+            padding: '6px 8px', fontWeight: 600, fontSize: 13,
             cursor: 'pointer', width: '100%',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
           }}>
             ↩ Undo
           </button>
@@ -132,12 +134,13 @@ export function ActionBar({
           onClick={onEndTurn}
           disabled={!actionTaken}
           style={{
-            background: actionTaken ? '#C84820' : '#1A100A',
-            color: actionTaken ? '#F2EAD8' : '#3A2818',
-            border: actionTaken ? 'none' : '1px solid #3A2818',
-            borderRadius: 6, padding: '8px', fontWeight: 700, fontSize: 13,
+            background: actionTaken ? '#C84820' : '#C8B88A',
+            color: actionTaken ? '#F2EAD8' : '#8A7848',
+            border: 'none',
+            borderRadius: 6, padding: '9px', fontWeight: 700, fontSize: 15,
             cursor: actionTaken ? 'pointer' : 'not-allowed', width: '100%',
-            boxShadow: actionTaken ? '0 2px 10px rgba(200,72,32,0.4)' : 'none',
+            boxShadow: actionTaken ? '0 2px 10px rgba(200,72,32,0.3)' : 'none',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
           }}
         >
           End Turn →

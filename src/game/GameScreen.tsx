@@ -542,7 +542,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      height: '100vh', background: '#0E0907',
+      height: '100vh', background: '#EAE0C8',
       overflow: 'hidden', fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
       <GameHUD state={state} />
@@ -551,9 +551,9 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
         {/* Left: seasonal forecast */}
         <div style={{
-          width: 190, borderRight: '1px solid #3A2818',
+          width: 200, borderRight: '1px solid #C8B88A',
           overflowY: 'auto', flexShrink: 0, padding: '10px 8px',
-          background: '#120A06',
+          background: '#DDD0B0',
         }}>
           <SeasonalEffectPanel state={state} />
         </div>
@@ -574,11 +574,11 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       {/* Bottom panel: action controls (left) + hand (right) */}
       {isHumanTurn && !state.isOver && (
         <div style={{
-          borderTop: '1px solid #3A2818', background: '#120A06',
+          borderTop: '1px solid #C8B88A', background: '#DDD0B0',
           display: 'flex', alignItems: 'stretch',
         }}>
           {/* Action column — narrow, fixed width */}
-          <div style={{ width: 200, borderRight: '1px solid #3A2818', flexShrink: 0 }}>
+          <div style={{ width: 200, borderRight: '1px solid #C8B88A', flexShrink: 0 }}>
             <ActionBar
               state={state}
               playerId={currentPlayer.id}
@@ -596,7 +596,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
             {/* Context hint bar */}
             {(plantSecondary || inkyCapPendingTileId || (canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary)) && (
               <div style={{
-                borderBottom: '1px solid #3A2818',
+                borderBottom: '1px solid #C8B88A',
                 padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 10,
                 background: '#1A100A', flexShrink: 0,
               }}>
@@ -606,7 +606,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
                       {secondaryPrompt(plantSecondary.type)}
                     </span>
                     <button onClick={handleSkipSecondary} style={{
-                      background: 'transparent', border: '1px solid #3A2818', color: '#8A7848',
+                      background: 'transparent', border: '1px solid #C8B88A', color: '#4A3820',
                       borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer',
                     }}>Skip</button>
                   </>
@@ -621,7 +621,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
                       borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
                     }}>Discard +3🍄</button>
                     <button onClick={() => setInkyCapPendingTileId(null)} style={{
-                      background: 'transparent', border: '1px solid #3A2818', color: '#8A7848',
+                      background: 'transparent', border: '1px solid #C8B88A', color: '#4A3820',
                       borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer',
                     }}>Cancel</button>
                   </>
@@ -656,10 +656,10 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
 
       {!isHumanTurn && !state.isOver && !showAnnouncement && !aiSummary && (
         <div style={{
-          borderTop: '1px solid #3A2818',
+          borderTop: '1px solid #C8B88A',
           padding: '12px 16px', textAlign: 'center',
           color: currentPlayer.color, fontSize: 13, fontWeight: 600,
-          background: '#120A06',
+          background: '#DDD0B0',
         }}>
           {currentPlayer.name} is thinking…
         </div>
