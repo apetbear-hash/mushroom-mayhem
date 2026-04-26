@@ -31,7 +31,7 @@ export function ActionBar({
   const deckOrDiscard = state.deck.length > 0 || state.discard.length > 0;
   const confirmedAction = state.turnState.actionType;
 
-  const canDraw    = !state.turnState.restUsed &&
+  const canDraw = !state.turnState.restUsed &&
     (confirmedAction === null || confirmedAction === 'draw') &&
     player.resources.sunlight >= nextDrawCost && deckOrDiscard;
 
@@ -39,84 +39,49 @@ export function ActionBar({
   const freeSpreadCount = pendingFreeSpread?.spreadsRemaining ?? 0;
   const hasFreeSpread = freeSpreadCount > 0;
 
-  const canSpread  = !state.turnState.restUsed && !isDeepFreeze &&
+  const canSpread = !state.turnState.restUsed && !isDeepFreeze &&
     (confirmedAction === null || confirmedAction === 'spread') &&
     (hasFreeSpread || (player.resources.moisture >= 1 && !isDrought));
 
-  const canPlant   = !state.turnState.restUsed &&
+  const canPlant = !state.turnState.restUsed &&
     (confirmedAction === null || confirmedAction === 'plant') &&
     player.hand.length > 0;
 
-  const canRest    = !state.turnState.restUsed && confirmedAction === null;
+  const canRest = !state.turnState.restUsed && confirmedAction === null;
 
-  const drawHint = drawn === 0 ? `${nextDrawCost}☀️` : `${nextDrawCost}☀️ (↑ each draw)`;
+  const drawHint = drawn === 0 ? `${nextDrawCost}☀️` : `${nextDrawCost}☀️ ↑`;
 
   const actions: { type: ActionType; label: string; icon: string; enabled: boolean; hint: string }[] = [
     { type: 'draw',   label: 'Draw',   icon: '🃏', enabled: canDraw,   hint: drawHint },
-    { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : `${isDrought ? '✕ Drought' : isDeepFreeze ? '✕ Frozen' : '💧 scaled'}` },
-    { type: 'plant',  label: 'Spawn',  icon: '🍄', enabled: canPlant,  hint: 'costs spores' },
-    { type: 'rest',   label: 'Rest',   icon: '💤', enabled: canRest,   hint: '+1🍄💧☀️' },
+    { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : isDrought ? '✕' : isDeepFreeze ? '✕' : '💧' },
+    { type: 'plant',  label: 'Spawn',  icon: '🍄', enabled: canPlant,  hint: 'spores' },
+    { type: 'rest',   label: 'Rest',   icon: '💤', enabled: canRest,   hint: '+1 each' },
   ];
 
   const actionTaken = state.turnState.actionType !== null || state.turnState.restUsed;
 
   return (
     <div style={{
-      background: '#DDD0B0',
-      borderTop: '1px solid #C8B88A',
-      padding: '10px 16px',
+      background: '#1A100A',
       display: 'flex', flexDirection: 'column', gap: 8,
+      padding: '10px 12px',
       fontFamily: 'sans-serif',
+      height: '100%', boxSizing: 'border-box',
     }}>
-      {/* Resource display */}
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+      {/* Resources */}
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
         {(['spore', 'moisture', 'sunlight'] as const).map(res => (
-          <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ fontSize: 14 }}>{RESOURCE_ICONS[res]}</span>
-            <span style={{ color: '#1A1408', fontWeight: 700, fontSize: 15 }}>
+          <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <span style={{ fontSize: 13 }}>{RESOURCE_ICONS[res]}</span>
+            <span style={{ color: '#F2EAD8', fontWeight: 700, fontSize: 15 }}>
               {player.resources[res]}
             </span>
           </div>
         ))}
-
-        {message && (
-          <span style={{ color: '#C84820', fontSize: 11, marginLeft: 8 }}>{message}</span>
-        )}
-
-        {undoState && (
-          <button
-            onClick={onUndo}
-            style={{
-              marginLeft: 'auto',
-              background: 'transparent', border: '1px solid #B0A070',
-              color: '#4A3820', borderRadius: 8,
-              padding: '8px 14px', fontWeight: 600, fontSize: 12,
-              cursor: 'pointer',
-            }}
-          >
-            ↩ Undo
-          </button>
-        )}
-
-        <button
-          onClick={onEndTurn}
-          disabled={!actionTaken}
-          style={{
-            marginLeft: undoState ? 8 : 'auto',
-            background: actionTaken ? '#C84820' : '#C8B88A',
-            color: actionTaken ? '#EAE0C8' : '#8A7848',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 20px', fontWeight: 700, fontSize: 13,
-            cursor: actionTaken ? 'pointer' : 'not-allowed',
-          }}
-        >
-          End Turn →
-        </button>
       </div>
 
-      {/* Action buttons */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      {/* Action buttons — 2×2 grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
         {actions.map(a => {
           const isSelected = selectedAction === a.type;
           return (
@@ -126,41 +91,58 @@ export function ActionBar({
               disabled={!a.enabled}
               title={a.hint}
               style={{
-                flex: 1,
-                background: isSelected ? player.color + '22' : '#EAE0C8',
-                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#C8B88A' : '#B0A070'}`,
-                borderRadius: 8, padding: '8px 4px',
-                color: isSelected ? player.color : !a.enabled ? '#C8B88A' : '#4A3820',
-                fontWeight: isSelected ? 700 : 500,
-                fontSize: 12, cursor: a.enabled ? 'pointer' : 'not-allowed',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+                background: isSelected ? player.color + '33' : '#0E0907',
+                border: `1.5px solid ${isSelected ? player.color : !a.enabled ? '#1A100A' : '#3A2818'}`,
+                borderRadius: 8, padding: '6px 4px',
+                color: isSelected ? player.color : !a.enabled ? '#3A2818' : '#8A7848',
+                fontWeight: isSelected ? 700 : 400,
+                fontSize: 11, cursor: a.enabled ? 'pointer' : 'not-allowed',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
                 transition: 'all 0.15s',
               }}
             >
-              <span style={{ fontSize: 18 }}>{a.icon}</span>
-              <span>{a.label}</span>
-              <span style={{ fontSize: 10, color: 'inherit', opacity: 0.7 }}>{a.hint}</span>
+              <span style={{ fontSize: 16 }}>{a.icon}</span>
+              <span style={{ fontSize: 11 }}>{a.label}</span>
+              <span style={{ fontSize: 9, opacity: 0.65 }}>{a.hint}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Context hint */}
-      {selectedAction === 'spread' && (
-        <div style={{ color: '#2A6888', fontSize: 11 }}>
-          Tap a highlighted tile to spread your network.
+      {/* Feedback message */}
+      {message && (
+        <div style={{ color: '#D4A04A', fontSize: 10, textAlign: 'center', lineHeight: 1.3 }}>
+          {message}
         </div>
       )}
-      {selectedAction === 'plant' && (
-        <div style={{ color: '#C84820', fontSize: 11 }}>
-          Select a card below, then tap a highlighted tile to spawn it.
-        </div>
-      )}
-      {selectedAction === 'draw' && (
-        <div style={{ color: '#A07010', fontSize: 11 }}>
-          Click Draw again to draw another card (costs 1☀️ each).
-        </div>
-      )}
+
+      {/* Undo + End Turn */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 'auto' }}>
+        {undoState && (
+          <button onClick={onUndo} style={{
+            background: 'transparent', border: '1px solid #3A2818',
+            color: '#8A7848', borderRadius: 6,
+            padding: '5px 8px', fontWeight: 600, fontSize: 11,
+            cursor: 'pointer', width: '100%',
+          }}>
+            ↩ Undo
+          </button>
+        )}
+        <button
+          onClick={onEndTurn}
+          disabled={!actionTaken}
+          style={{
+            background: actionTaken ? '#C84820' : '#1A100A',
+            color: actionTaken ? '#F2EAD8' : '#3A2818',
+            border: actionTaken ? 'none' : '1px solid #3A2818',
+            borderRadius: 6, padding: '8px', fontWeight: 700, fontSize: 13,
+            cursor: actionTaken ? 'pointer' : 'not-allowed', width: '100%',
+            boxShadow: actionTaken ? '0 2px 10px rgba(200,72,32,0.4)' : 'none',
+          }}
+        >
+          End Turn →
+        </button>
+      </div>
     </div>
   );
 }

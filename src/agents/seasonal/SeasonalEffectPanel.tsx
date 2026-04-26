@@ -3,10 +3,10 @@ import { SEASON_TURNS } from '../../shared/constants';
 import { getSeason } from './index';
 
 const SEASON_META: Record<Season, { icon: string; color: string; label: string }> = {
-  spring: { icon: '🌿', color: '#4A8030', label: 'Spring' },
-  summer: { icon: '☀️',  color: '#A07010', label: 'Summer' },
-  autumn: { icon: '🍂', color: '#C84820', label: 'Autumn' },
-  winter: { icon: '❄️',  color: '#3A78A8', label: 'Winter' },
+  spring: { icon: '🌿', color: '#6AAA5A', label: 'Spring' },
+  summer: { icon: '☀️',  color: '#D4A04A', label: 'Summer' },
+  autumn: { icon: '🍂', color: '#C86828', label: 'Autumn' },
+  winter: { icon: '❄️',  color: '#88C0D8', label: 'Winter' },
 };
 
 interface EffectMeta {
@@ -24,25 +24,25 @@ const EFFECT_META: Record<string, EffectMeta> = {
   long_days:          { name: 'Long Days',           type: 'positive', lines: ['All mushrooms +1 🍄/harvest'] },
   abundant_canopy:    { name: 'Abundant Canopy',     type: 'positive', lines: ['Shade mushrooms +1 ⭐/turn'] },
   drought:            { name: 'Drought',             type: 'negative', lines: ['Start: 💧→0. No 💧 gain'] },
-  scorching_heat:     { name: 'Scorching Heat',      type: 'negative', lines: ['Spread +1 💧. Open tiles: no ⭐'] },
+  scorching_heat:     { name: 'Scorching Heat',      type: 'negative', lines: ['Spread +1 💧. Open: no ⭐'] },
   mild_summer:        { name: 'Mild Summer',         type: 'neutral',  lines: ['No effect'] },
-  mushroom_festival:  { name: 'Mushroom Festival',   type: 'positive', lines: ['Season end: +1 ⭐ per', 'mushroom on board'] },
-  spore_wind:         { name: 'Spore Wind',          type: 'positive', lines: ['Start: +4 🍄 each +', '1 free network tile'] },
+  mushroom_festival:  { name: 'Mushroom Festival',   type: 'positive', lines: ['Season end: +1 ⭐ per 🍄'] },
+  spore_wind:         { name: 'Spore Wind',          type: 'positive', lines: ['Start: +4 🍄 + 1 tile each'] },
   blight:             { name: 'Blight',              type: 'negative', lines: ['Start: 3–5 tiles ✕ forever'] },
   long_summer:        { name: 'Long Summer',         type: 'positive', lines: ['Copies ☀️ Summer effect'] },
-  decay_bloom:        { name: 'Decay Bloom',         type: 'risk',     lines: ['Decay: +2 res/turn', 'but 0 ⭐ this season'] },
+  decay_bloom:        { name: 'Decay Bloom',         type: 'risk',     lines: ['Decay: +2 res/turn,  0 ⭐'] },
   deep_freeze:        { name: 'Deep Freeze',         type: 'negative', lines: ['Spreading ✕. Spread', 'card effects disabled'] },
-  mycelium_harmony:   { name: 'Mycelium Harmony',    type: 'positive', lines: ['Score = longest same-', 'type chain/turn'] },
+  mycelium_harmony:   { name: 'Mycelium Harmony',    type: 'positive', lines: ['Score = longest same-type chain'] },
   mild_winter:        { name: 'Mild Winter',         type: 'neutral',  lines: ['No effect'] },
   winter_stores:      { name: 'Winter Stores',       type: 'positive', lines: ['Start: +2 🍄💧☀️ each'] },
   final_harvest:      { name: 'Final Harvest',       type: 'risk',     lines: ['No resources from 🍄s.', 'End: +1 ⭐ per 3 unspent'] },
 };
 
 const TYPE_DOT: Record<string, { symbol: string; color: string }> = {
-  positive: { symbol: '▲', color: '#4A8030' },
+  positive: { symbol: '▲', color: '#6AAA5A' },
   negative: { symbol: '▼', color: '#C84820' },
-  risk:     { symbol: '◆', color: '#A07010' },
-  neutral:  { symbol: '●', color: '#8A7848' },
+  risk:     { symbol: '◆', color: '#D4A04A' },
+  neutral:  { symbol: '●', color: '#5A4830' },
 };
 
 interface SeasonalEffectPanelProps {
@@ -54,8 +54,8 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
   const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, width: 190, fontFamily: 'sans-serif' }}>
-      <div style={{ color: '#8A7848', fontSize: 10, fontWeight: 700, letterSpacing: 2, paddingLeft: 2, marginBottom: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, fontFamily: 'sans-serif' }}>
+      <div style={{ color: '#D4A04A', fontSize: 9, fontWeight: 700, letterSpacing: 2, paddingLeft: 2, marginBottom: 3 }}>
         FORECAST
       </div>
 
@@ -71,61 +71,52 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
         const copiedSummerEffect = isLongSummer ? EFFECT_META[state.forecast.summer] : null;
 
         return (
-          <div
-            key={season}
-            style={{
-              background: isActive ? '#F2ECD8' : '#EAE0C8',
-              border: `1.5px solid ${isActive ? meta.color + '99' : '#C8B88A'}`,
-              borderRadius: 8,
-              padding: '7px 10px',
-              transition: 'border-color 0.2s',
-              boxShadow: isActive ? `0 2px 8px rgba(26,20,8,0.1)` : 'none',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-              <span style={{ fontSize: 13 }}>{meta.icon}</span>
-              <span style={{ color: isActive ? meta.color : '#8A7848', fontWeight: 700, fontSize: 11 }}>
+          <div key={season} style={{
+            background: isActive ? '#251808' : '#120A06',
+            border: `1px solid ${isActive ? meta.color + '77' : '#3A2818'}`,
+            borderRadius: 8, padding: '6px 8px',
+            boxShadow: isActive ? `0 0 8px ${meta.color}18` : 'none',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
+              <span style={{ fontSize: 12 }}>{meta.icon}</span>
+              <span style={{ color: isActive ? meta.color : '#5A4830', fontWeight: 700, fontSize: 11 }}>
                 {meta.label}
               </span>
               {isActive && (
                 <span style={{
-                  background: meta.color, color: '#F2ECD8',
+                  background: meta.color, color: '#0E0907',
                   fontSize: 7, fontWeight: 800, borderRadius: 3,
                   padding: '1px 4px', letterSpacing: 0.5,
                 }}>
                   NOW
                 </span>
               )}
-              <span style={{ marginLeft: 'auto', color: '#B0A070', fontSize: 9 }}>
-                {start}–{end}
-              </span>
+              <span style={{ marginLeft: 'auto', color: '#3A2818', fontSize: 9 }}>{start}–{end}</span>
             </div>
 
             {effect && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
-                {dot && (
-                  <span style={{ color: dot.color, fontSize: 10, lineHeight: 1 }}>{dot.symbol}</span>
-                )}
-                <span style={{ color: isActive ? '#1A1408' : '#6A5030', fontWeight: 700, fontSize: 11 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
+                {dot && <span style={{ color: dot.color, fontSize: 9 }}>{dot.symbol}</span>}
+                <span style={{ color: isActive ? '#F2EAD8' : '#5A4830', fontWeight: 700, fontSize: 10 }}>
                   {effect.name}
                 </span>
               </div>
             )}
 
             {effect && effect.lines.map((line, i) => (
-              <div key={i} style={{ color: isActive ? '#4A3820' : '#8A7848', fontSize: 10, lineHeight: 1.4 }}>
+              <div key={i} style={{ color: isActive ? '#8A7848' : '#3A2818', fontSize: 9, lineHeight: 1.4 }}>
                 {line}
               </div>
             ))}
 
             {isLongSummer && copiedSummerEffect && (
-              <div style={{ marginTop: 5, paddingTop: 5, borderTop: '1px solid #C8B88A' }}>
-                <div style={{ color: '#8A7848', fontSize: 10, marginBottom: 2 }}>copies ☀️:</div>
-                <div style={{ color: isActive ? '#1A1408' : '#6A5030', fontWeight: 700, fontSize: 10, marginBottom: 1 }}>
+              <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px solid #3A2818' }}>
+                <div style={{ color: '#5A4830', fontSize: 9, marginBottom: 2 }}>copies ☀️:</div>
+                <div style={{ color: isActive ? '#F2EAD8' : '#5A4830', fontWeight: 700, fontSize: 9 }}>
                   {copiedSummerEffect.name}
                 </div>
                 {copiedSummerEffect.lines.map((line, i) => (
-                  <div key={i} style={{ color: isActive ? '#4A3820' : '#8A7848', fontSize: 10, lineHeight: 1.4 }}>
+                  <div key={i} style={{ color: isActive ? '#8A7848' : '#3A2818', fontSize: 9, lineHeight: 1.4 }}>
                     {line}
                   </div>
                 ))}

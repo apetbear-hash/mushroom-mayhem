@@ -4,10 +4,10 @@ import { portraitEmoji } from './playerSetupData';
 import { SEASON_TURNS } from '../../shared/constants';
 
 const SEASON_META: Record<string, { icon: string; color: string; label: string }> = {
-  spring: { icon: '🌿', color: '#4A8030', label: 'Spring' },
-  summer: { icon: '☀️',  color: '#A07010', label: 'Summer' },
-  autumn: { icon: '🍂', color: '#C84820', label: 'Autumn' },
-  winter: { icon: '❄️',  color: '#3A78A8', label: 'Winter' },
+  spring: { icon: '🌿', color: '#6AAA5A', label: 'Spring' },
+  summer: { icon: '☀️',  color: '#D4A04A', label: 'Summer' },
+  autumn: { icon: '🍂', color: '#C86828', label: 'Autumn' },
+  winter: { icon: '❄️',  color: '#88C0D8', label: 'Winter' },
 };
 
 const EFFECT_LABELS: Record<string, string> = {
@@ -36,25 +36,22 @@ export function GameHUD({ state }: GameHUDProps) {
 
   return (
     <div style={{
-      background: '#DDD0B0',
-      borderBottom: `2px solid ${meta.color}88`,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '8px 16px',
+      background: '#1A100A',
+      borderBottom: `1px solid ${meta.color}55`,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '6px 16px',
       fontFamily: "'Cormorant Garamond', Georgia, serif",
-      gap: 12,
-      flexWrap: 'wrap',
+      gap: 12, flexWrap: 'wrap',
     }}>
 
-      {/* Season block */}
+      {/* Season + effect */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 20 }}>{meta.icon}</span>
+        <span style={{ fontSize: 18 }}>{meta.icon}</span>
         <div>
           <div style={{ color: meta.color, fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
             {meta.label}
           </div>
-          <div style={{ color: '#6A5030', fontSize: 10, fontStyle: 'italic' }}>
+          <div style={{ color: '#8A7848', fontSize: 10, fontStyle: 'italic' }}>
             {effectLabel}
           </div>
         </div>
@@ -62,11 +59,11 @@ export function GameHUD({ state }: GameHUDProps) {
 
       {/* Turn counter */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#1A1408', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>
+        <div style={{ color: '#F2EAD8', fontWeight: 800, fontSize: 17, lineHeight: 1 }}>
           {state.currentTurn}
-          <span style={{ color: '#8A7848', fontWeight: 400, fontSize: 13 }}> / 20</span>
+          <span style={{ color: '#6A5838', fontWeight: 400, fontSize: 12 }}> / 20</span>
         </div>
-        <div style={{ color: '#6A5030', fontSize: 10 }}>
+        <div style={{ color: '#8A7848', fontSize: 10 }}>
           Turn {turnInSeason} of {seasonEnd - seasonStart + 1} in {meta.label}
         </div>
       </div>
@@ -74,11 +71,10 @@ export function GameHUD({ state }: GameHUDProps) {
       {/* Current player */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{
-          fontSize: 22,
+          fontSize: 20,
           background: currentPlayer.color + '22',
-          border: `1px solid ${currentPlayer.color}99`,
-          borderRadius: '50%',
-          width: 36, height: 36,
+          border: `1px solid ${currentPlayer.color}77`,
+          borderRadius: '50%', width: 32, height: 32,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {portraitEmoji(currentPlayer.portrait)}
@@ -87,28 +83,27 @@ export function GameHUD({ state }: GameHUDProps) {
           <div style={{ color: currentPlayer.color, fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>
             {currentPlayer.name}
           </div>
-          <div style={{ color: '#6A5030', fontSize: 10 }}>Active player</div>
+          <div style={{ color: '#8A7848', fontSize: 10 }}>Active player</div>
         </div>
       </div>
 
-      {/* Forecast strip */}
+      {/* Season strip */}
       <div style={{ display: 'flex', gap: 6 }}>
         {(['spring', 'summer', 'autumn', 'winter'] as const).map(s => {
           const sm = SEASON_META[s];
           const isActive = s === season;
           return (
-            <div
-              key={s}
+            <div key={s}
               title={`${sm.label}: ${EFFECT_LABELS[state.forecast[s]] ?? state.forecast[s]}`}
               style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
-                opacity: isActive ? 1 : 0.4,
+                opacity: isActive ? 1 : 0.3,
                 borderBottom: isActive ? `2px solid ${sm.color}` : '2px solid transparent',
                 paddingBottom: 2,
               }}
             >
-              <span style={{ fontSize: 14 }}>{sm.icon}</span>
-              <span style={{ color: sm.color, fontSize: 10, fontWeight: 600 }}>
+              <span style={{ fontSize: 13 }}>{sm.icon}</span>
+              <span style={{ color: sm.color, fontSize: 9, fontWeight: 600, fontFamily: 'sans-serif' }}>
                 {sm.label.slice(0, 2).toUpperCase()}
               </span>
             </div>
@@ -120,8 +115,8 @@ export function GameHUD({ state }: GameHUDProps) {
       <div style={{ display: 'flex', gap: 10 }}>
         {state.players.map(p => (
           <div key={p.id} style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 14 }}>{portraitEmoji(p.portrait)}</div>
-            <div style={{ color: p.color, fontWeight: 800, fontSize: 16 }}>{p.score}</div>
+            <div style={{ fontSize: 13 }}>{portraitEmoji(p.portrait)}</div>
+            <div style={{ color: p.color, fontWeight: 800, fontSize: 15 }}>{p.score}</div>
           </div>
         ))}
       </div>

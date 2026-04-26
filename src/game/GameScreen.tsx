@@ -542,122 +542,124 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      height: '100vh', background: '#EAE0C8',
+      height: '100vh', background: '#0E0907',
       overflow: 'hidden', fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
       <GameHUD state={state} />
 
+      {/* Main area: left sidebar + centered board */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
-        <div style={{ flex: 1, overflow: 'auto', position: 'relative' }}>
+        {/* Left: seasonal forecast */}
+        <div style={{
+          width: 190, borderRight: '1px solid #3A2818',
+          overflowY: 'auto', flexShrink: 0, padding: '10px 8px',
+          background: '#120A06',
+        }}>
+          <SeasonalEffectPanel state={state} />
+        </div>
+
+        {/* Center: board — flex centering so it sits in the middle */}
+        <div style={{
+          flex: 1, overflow: 'auto',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
           <BoardComponent
             state={state}
             highlightedTileIds={highlightedTiles}
             onTileClick={isHumanTurn ? handleTileClick : undefined}
           />
         </div>
-        <div style={{
-          width: 200, borderLeft: '1px solid #C8B88A',
-          overflowY: 'auto', flexShrink: 0,
-        }}>
-          <SeasonalEffectPanel state={state} />
-        </div>
       </div>
 
+      {/* Bottom panel: action controls (left) + hand (right) */}
       {isHumanTurn && !state.isOver && (
-        <div style={{ borderTop: '1px solid #C8B88A' }}>
-          <ActionBar
-            state={state}
-            playerId={currentPlayer.id}
-            selectedAction={selectedAction}
-            message={feedback}
-            onSelectAction={handleActionSelect}
-            onEndTurn={handleEndTurn}
-            undoState={undoState}
-            onUndo={handleUndo}
-          />
-          {plantSecondary && (
-            <div style={{
-              background: '#F2ECD8', borderTop: '1px solid #C8B88A',
-              padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 12,
-            }}>
-              <span style={{ color: '#4A8030', fontSize: 12, flex: 1 }}>
-                {secondaryPrompt(plantSecondary.type)}
-              </span>
-              <button
-                onClick={handleSkipSecondary}
-                style={{
-                  background: '#EAE0C8', border: '1px solid #C8B88A', color: '#6A5030',
-                  borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
-                }}
-              >
-                Skip
-              </button>
-            </div>
-          )}
-          {inkyCapPendingTileId && (
-            <div style={{
-              background: '#F2ECD8', borderTop: '1px solid #C8B88A',
-              padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 12,
-            }}>
-              <span style={{ color: '#A07010', fontSize: 12, flex: 1 }}>
-                Inky Cap: discard this mushroom to gain +3 spores?
-              </span>
-              <button
-                onClick={handleInkyCapConfirm}
-                style={{
-                  background: '#C84820', border: 'none', color: '#F2ECD8',
-                  borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer', fontWeight: 700,
-                }}
-              >
-                Discard +3🍄
-              </button>
-              <button
-                onClick={() => setInkyCapPendingTileId(null)}
-                style={{
-                  background: 'transparent', border: '1px solid #C8B88A', color: '#6A5030',
-                  borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-          {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
-            <div style={{
-              background: '#F2ECD8', borderTop: '1px solid #C8B88A',
-              padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 12,
-            }}>
-              <span style={{ color: '#2A6888', fontSize: 12, flex: 1 }}>
-                Shiitake: sacrifice 1💧 to gain 1☀️
-              </span>
-              <button
-                onClick={handleShiitakeSwap}
-                style={{
-                  background: '#2A6888', border: 'none', color: '#F2ECD8',
-                  borderRadius: 4, padding: '5px 14px', fontSize: 12, cursor: 'pointer', fontWeight: 700,
-                }}
-              >
-                Swap 1💧→1☀️
-              </button>
-            </div>
-          )}
-          <div style={{ background: '#EAE0C8', padding: '0 16px 12px' }}>
-            <HandDisplay
+        <div style={{
+          borderTop: '1px solid #3A2818', background: '#120A06',
+          display: 'flex', alignItems: 'stretch',
+        }}>
+          {/* Action column — narrow, fixed width */}
+          <div style={{ width: 200, borderRight: '1px solid #3A2818', flexShrink: 0 }}>
+            <ActionBar
               state={state}
               playerId={currentPlayer.id}
-              selectedCardId={selectedCardId}
-              plantMode={selectedAction === 'plant' && !plantSecondary}
-              onSelectCard={handleSelectCard}
+              selectedAction={selectedAction}
+              message={feedback}
+              onSelectAction={handleActionSelect}
+              onEndTurn={handleEndTurn}
+              undoState={undoState}
+              onUndo={handleUndo}
             />
+          </div>
+
+          {/* Right: context prompts + scrollable hand */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            {/* Context hint bar */}
+            {(plantSecondary || inkyCapPendingTileId || (canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary)) && (
+              <div style={{
+                borderBottom: '1px solid #3A2818',
+                padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 10,
+                background: '#1A100A', flexShrink: 0,
+              }}>
+                {plantSecondary && (
+                  <>
+                    <span style={{ color: '#6AAA5A', fontSize: 12, flex: 1 }}>
+                      {secondaryPrompt(plantSecondary.type)}
+                    </span>
+                    <button onClick={handleSkipSecondary} style={{
+                      background: 'transparent', border: '1px solid #3A2818', color: '#8A7848',
+                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer',
+                    }}>Skip</button>
+                  </>
+                )}
+                {inkyCapPendingTileId && (
+                  <>
+                    <span style={{ color: '#D4A04A', fontSize: 12, flex: 1 }}>
+                      Inky Cap: discard this mushroom to gain +3 spores?
+                    </span>
+                    <button onClick={handleInkyCapConfirm} style={{
+                      background: '#C84820', border: 'none', color: '#F2EAD8',
+                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                    }}>Discard +3🍄</button>
+                    <button onClick={() => setInkyCapPendingTileId(null)} style={{
+                      background: 'transparent', border: '1px solid #3A2818', color: '#8A7848',
+                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer',
+                    }}>Cancel</button>
+                  </>
+                )}
+                {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
+                  <>
+                    <span style={{ color: '#88C0D8', fontSize: 12, flex: 1 }}>
+                      Shiitake: sacrifice 1💧 to gain 1☀️
+                    </span>
+                    <button onClick={handleShiitakeSwap} style={{
+                      background: '#2A6888', border: 'none', color: '#F2EAD8',
+                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                    }}>Swap 1💧→1☀️</button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Hand */}
+            <div style={{ flex: 1, overflow: 'hidden', padding: '8px 12px' }}>
+              <HandDisplay
+                state={state}
+                playerId={currentPlayer.id}
+                selectedCardId={selectedCardId}
+                plantMode={selectedAction === 'plant' && !plantSecondary}
+                onSelectCard={handleSelectCard}
+              />
+            </div>
           </div>
         </div>
       )}
 
       {!isHumanTurn && !state.isOver && !showAnnouncement && !aiSummary && (
         <div style={{
-          borderTop: '1px solid #C8B88A',
-          padding: '16px', textAlign: 'center',
+          borderTop: '1px solid #3A2818',
+          padding: '12px 16px', textAlign: 'center',
           color: currentPlayer.color, fontSize: 13, fontWeight: 600,
+          background: '#120A06',
         }}>
           {currentPlayer.name} is thinking…
         </div>
