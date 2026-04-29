@@ -563,7 +563,17 @@ export function BoardComponent({
               {/* Art layer */}
               <g clipPath={`url(#${clipId})`}>
                 {tile.isBlight ? (
-                  <BlightArt cx={center.x} cy={center.y} s={TILE_SIZE} />
+                  <>
+                    <BlightArt cx={center.x} cy={center.y} s={TILE_SIZE} />
+                    <image
+                      href={`${BASE}tiles/tile-blight.png`}
+                      x={center.x - TILE_SIZE * 0.866}
+                      y={center.y - TILE_SIZE}
+                      width={TILE_SIZE * 1.732}
+                      height={TILE_SIZE * 2}
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  </>
                 ) : (
                   <>
                     {/* SVG fallback — shows while image loads or if missing */}
