@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
 
 const PALETTE = {
-  ink:       '#0E0907',
-  inkSoft:   '#1A140F',
+  ink:       '#0B0705',
+  inkSoft:   '#18120D',
   paper:     '#F2EAD8',
   paperWarm: '#E8DCC0',
-  amber:     '#D4A04A',
-  amberDeep: '#A87214',
+  amber:     '#E89A3A',
+  amberDeep: '#A55818',
+  rust:      '#C04A1E',
   moss:      '#5C7338',
   mossDeep:  '#2E3A1B',
-  blood:     '#8E2820',
-  forest:    '#1F2A1A',
+  blood:     '#9E2A20',
+  forest:    '#1A2014',
 };
 
 const txt = {
@@ -497,10 +498,14 @@ function Hero({ vp, onPlay }: { vp: ReturnType<typeof useViewport>; onPlay: () =
         objectFit: 'cover', objectPosition: 'center top',
         display: 'block',
       }}/>
-      {/* Dark gradient overlay so text stays readable */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(14,9,7,0.45) 0%, rgba(14,9,7,0.2) 40%, rgba(14,9,7,0.75) 100%)',
+      {/* Bottom-fade keeps text legible; top keeps painting bright */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        background: 'linear-gradient(180deg, rgba(11,7,5,0.15) 0%, rgba(11,7,5,0) 25%, rgba(11,7,5,0) 55%, rgba(11,7,5,0.6) 85%, rgba(11,7,5,0.92) 100%)',
+      }}/>
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse at 30% 70%, rgba(11,7,5,0) 0%, rgba(11,7,5,0.35) 90%)',
       }}/>
 
       <div style={{
@@ -655,10 +660,11 @@ function Features({ vp }: { vp: ReturnType<typeof useViewport> }) {
 
 function News({ vp }: { vp: ReturnType<typeof useViewport> }) {
   const { isNarrow } = vp;
+  const base = import.meta.env.BASE_URL;
   const posts = [
-    { kicker: 'Devlog',    date: 'Apr 18, 2026', read: '6 min', title: 'Patch 0.7 — the parasitic update.', body: 'Fly Agaric finally pulls its weight. We rebalanced six type interactions and added a new season effect.', scheme: 'devlog' as const },
-    { kicker: 'Lore',      date: 'Apr 02, 2026', read: '3 min', title: 'Notes from the Mycelial Codex.', body: 'A short field journal on how the forest remembers — and what that means for our card text rules.', scheme: 'lore' as const },
-    { kicker: 'Community', date: 'Mar 24, 2026', read: '4 min', title: 'Tournament results & decklists.', body: 'Fifty players, eight rounds, one absurd Reishi-mirror final. Top 8 decklists inside.', scheme: 'community' as const },
+    { kicker: 'Devlog',    date: 'Apr 18, 2026', read: '6 min', title: 'Patch 0.7 — the parasitic update.', body: 'Fly Agaric finally pulls its weight. We rebalanced six type interactions and added a new season effect.', scheme: 'devlog' as const, image: `${base}news-parasitic.png` },
+    { kicker: 'Lore',      date: 'Apr 02, 2026', read: '3 min', title: 'Notes from the Mycelial Codex.', body: 'A short field journal on how the forest remembers — and what that means for our card text rules.', scheme: 'lore' as const, image: `${base}news-codex.png` },
+    { kicker: 'Community', date: 'Mar 24, 2026', read: '4 min', title: 'Tournament results & decklists.', body: 'Fifty players, eight rounds, one absurd Reishi-mirror final. Top 8 decklists inside.', scheme: 'community' as const, image: `${base}news-tournament.png` },
   ];
   const kickerColors: Record<string, string> = { Devlog: PALETTE.blood, Lore: '#7A6BA0', Community: PALETTE.moss };
   return (
@@ -701,7 +707,14 @@ function News({ vp }: { vp: ReturnType<typeof useViewport> }) {
               onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 24px 48px -16px rgba(14,9,7,0.28)'; }}
               onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 16px 32px -12px rgba(14,9,7,0.18)'; }}>
               <div style={{ position: 'relative', aspectRatio: '5 / 3', overflow: 'hidden', background: PALETTE.forest }}>
-                <NewsPaintedThumb scheme={p.scheme}/>
+                {p.image ? (
+                  <img src={p.image} alt="" aria-hidden="true" style={{
+                    position: 'absolute', inset: 0, width: '100%', height: '100%',
+                    objectFit: 'cover', objectPosition: 'center',
+                  }}/>
+                ) : (
+                  <NewsPaintedThumb scheme={p.scheme}/>
+                )}
                 <div style={{
                   position: 'absolute', top: 14, left: 14,
                   background: 'rgba(14,9,7,0.85)', backdropFilter: 'blur(6px)',
@@ -742,7 +755,19 @@ function BigCTA({ vp, onPlay }: { vp: ReturnType<typeof useViewport>; onPlay: ()
       padding: isNarrow ? '100px 20px' : '160px 56px',
       color: PALETTE.paper, background: PALETTE.ink, isolation: 'isolate',
     }}>
-      <PaintedForestBackdrop id="cta-bg" variant="warm"/>
+      {/* Painted mushroom photograph backdrop */}
+      <img src={`${import.meta.env.BASE_URL}cta-mushrooms.png`} alt="" aria-hidden="true"
+           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', zIndex: 0 }}/>
+      {/* Left-heavy darkening gradient so headline stays legible */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        background: 'linear-gradient(90deg, rgba(11,7,5,0.78) 0%, rgba(11,7,5,0.55) 45%, rgba(11,7,5,0.35) 100%)',
+      }}/>
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        background: 'linear-gradient(180deg, rgba(11,7,5,0.25) 0%, rgba(11,7,5,0) 30%, rgba(11,7,5,0) 70%, rgba(11,7,5,0.55) 100%)',
+      }}/>
+      {/* Floating cap motif */}
       <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 60, right: 80, width: 80, height: 80, opacity: 0.55, zIndex: 1 }}>
         <ellipse cx="50" cy="50" rx="40" ry="28" fill="#C8281A"/>
         <circle cx="35" cy="38" r="6" fill="#F8EBD0"/>
