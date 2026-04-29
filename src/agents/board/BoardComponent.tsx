@@ -16,6 +16,14 @@ const TILE_IMAGES: Record<Habitat, string> = {
   open:  `${BASE}tiles/tile-open.png`,
 };
 
+const HABITAT_TINTS: Record<Habitat, string> = {
+  tree:  '#2A7A18',
+  wet:   '#1A50C0',
+  shade: '#6018A8',
+  decay: '#7A9018',
+  open:  '#C8A010',
+};
+
 const RESOURCE_ICONS: Record<string, string> = {
   spore: '🍄', moisture: '💧', sunlight: '☀️',
 };
@@ -590,9 +598,14 @@ export function BoardComponent({
                   </>
                 )}
 
+                {/* Habitat colour tint */}
+                {!tile.isBlight && (
+                  <polygon points={artPoints} fill={HABITAT_TINTS[tile.habitat]} fillOpacity={0.22} />
+                )}
+
                 {/* Unowned dim overlay */}
                 {!tile.ownerId && (
-                  <polygon points={artPoints} fill="#1A0A00" fillOpacity={0.25} />
+                  <polygon points={artPoints} fill="#1A0A00" fillOpacity={0.2} />
                 )}
 
                 {/* Highlight overlay */}
@@ -668,17 +681,6 @@ export function BoardComponent({
                 </text>
               )}
 
-              {/* Habitat initial on empty unowned tiles */}
-              {!tile.ownerId && !tile.isBlight && !mushroom && (
-                <text
-                  x={center.x} y={center.y + 5}
-                  textAnchor="middle" fontSize={TILE_SIZE * 0.22}
-                  fill="#fff" fillOpacity={0.45} fontFamily="sans-serif"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  {tile.habitat[0].toUpperCase()}
-                </text>
-              )}
             </g>
           );
         })}
