@@ -1,5 +1,6 @@
 import type { ActionType, GameState } from '../shared/types';
 import { getSeason } from '../agents/seasonal';
+import { baseSpreadCost } from '../agents/turn/spreadCost';
 
 const RESOURCE_ICONS: Record<string, string> = {
   spore: '🍄', moisture: '💧', sunlight: '☀️',
@@ -25,6 +26,19 @@ export function ActionBar({
   const effect = state.forecast[season];
   const isDeepFreeze = season === 'winter' && effect === 'deep_freeze';
   const isDrought = effect === 'drought';
+
+  // Compute min/max spread cost for current network size + active season effect
+  const networkSize = player.networkTileIds.length;
+  const isScorching = effect === 'scorching_heat' ||
+    (season === 'autumn' && effect === 'long_summer' && state.forecast.summer === 'scorching_heat');
+  const isCreepingMist = effect === 'creeping_mist';
+  const baseMin = baseSpreadCost(networkSize, 'open');   // cheapest tile type
+  const basePremium = baseSpreadCost(networkSize, 'wet'); // wet/shade costs +1
+  const spreadCostMin = Math.max(1, baseMin + (isScorching ? 1 : 0));
+  const spreadCostMax = Math.max(1, basePremium + (isScorching ? 1 : 0) + (isCreepingMist ? -1 : 0));
+  const spreadCostHint = spreadCostMin === spreadCostMax
+    ? `${spreadCostMin}💧`
+    : `${spreadCostMin}–${spreadCostMax}💧`;
 
   const drawn = state.turnState.cardsDrawnThisTurn;
   const nextDrawCost = drawn + 1;
@@ -53,7 +67,7 @@ export function ActionBar({
 
   const actions: { type: ActionType; label: string; icon: string; enabled: boolean; hint: string }[] = [
     { type: 'draw',   label: 'Draw',   icon: '🃏', enabled: canDraw,   hint: drawHint },
-    { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : isDrought ? '✕ Drought' : isDeepFreeze ? '✕ Frozen' : '💧' },
+    { type: 'spread', label: 'Spread', icon: '🌐', enabled: canSpread, hint: hasFreeSpread ? `FREE ×${freeSpreadCount}` : isDrought ? '✕ Drought' : isDeepFreeze ? '✕ Frozen' : spreadCostHint },
     { type: 'plant',  label: 'Spawn',  icon: '🍄', enabled: canPlant,  hint: 'costs spores' },
     { type: 'rest',   label: 'Rest',   icon: '💤', enabled: canRest,   hint: '+1 each' },
   ];
