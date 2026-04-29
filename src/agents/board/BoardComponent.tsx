@@ -1,13 +1,25 @@
 import { useState } from 'react';
-import type { GameState, Habitat, MushroomType, Tile } from '../../shared/types';
+import type { GameState, Habitat, MushroomType, Season, Tile } from '../../shared/types';
 import { TYPE_COLORS, RESOURCE_COLORS, HABITAT_COLORS } from '../../shared/constants';
 import { getCard } from '../card/cards';
+import { getSeason } from '../seasonal';
 import { hexToPixel, hexPolygonPoints } from './hexMath';
 
 const EMPTY_STROKE = '#7A6040';
 const TILE_SIZE = 54; // 50% bigger than original 36
 
 const BASE = import.meta.env.BASE_URL;
+
+// Extra canvas padding around the tile grid for the seasonal border illustration.
+const SEASON_BORDER = 190;
+
+const SEASON_BG: Record<Season, string | null> = {
+  spring: `${BASE}seasons/board-spring.png`,
+  summer: null, // placeholder — add board-summer.png to public/seasons/
+  autumn: null, // placeholder — add board-autumn.png to public/seasons/
+  winter: null, // placeholder — add board-winter.png to public/seasons/
+};
+
 const TILE_IMAGES: Record<Habitat, string> = {
   tree:  `${BASE}tiles/tile-tree.png`,
   decay: `${BASE}tiles/tile-decay.png`,
@@ -518,12 +530,22 @@ export function BoardComponent({
   const [hoveredTileId, setHoveredTileId] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
+  const season = getSeason(state.currentTurn);
+  const seasonBg = SEASON_BG[season];
+
   const tiles = Object.values(state.tiles);
   const pixels = tiles.map(t => hexToPixel(t.coord, TILE_SIZE));
-  const minX = Math.min(...pixels.map(p => p.x)) - TILE_SIZE * 1.2;
-  const minY = Math.min(...pixels.map(p => p.y)) - TILE_SIZE * 1.2;
-  const maxX = Math.max(...pixels.map(p => p.x)) + TILE_SIZE * 1.2;
-  const maxY = Math.max(...pixels.map(p => p.y)) + TILE_SIZE * 1.2;
+  const tileMinX = Math.min(...pixels.map(p => p.x)) - TILE_SIZE * 1.2;
+  const tileMinY = Math.min(...pixels.map(p => p.y)) - TILE_SIZE * 1.2;
+  const tileMaxX = Math.max(...pixels.map(p => p.x)) + TILE_SIZE * 1.2;
+  const tileMaxY = Math.max(...pixels.map(p => p.y)) + TILE_SIZE * 1.2;
+
+  // Expand canvas for the seasonal border illustration
+  const border = seasonBg ? SEASON_BORDER : 0;
+  const minX = tileMinX - border;
+  const minY = tileMinY - border;
+  const maxX = tileMaxX + border;
+  const maxY = tileMaxY + border;
   const width  = maxX - minX;
   const height = maxY - minY;
 
@@ -541,6 +563,16 @@ export function BoardComponent({
         style={{ display: 'block' }}
       >
         <HabitatDefs prefix="g" />
+
+        {/* Seasonal background — fills the extended canvas, tiles render on top */}
+        {seasonBg && (
+          <image
+            href={seasonBg}
+            x={minX} y={minY}
+            width={width} height={height}
+            preserveAspectRatio="xMidYMid slice"
+          />
+        )}
 
         {tiles.map(tile => {
           const center    = hexToPixel(tile.coord, TILE_SIZE);
