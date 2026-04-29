@@ -58,7 +58,7 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
       display: 'flex', flexDirection: 'column', gap: 6,
       fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
-      <div style={{ color: '#6A5030', fontSize: 11, fontWeight: 700, letterSpacing: 2, paddingLeft: 2, marginBottom: 2 }}>
+      <div style={{ color: '#6A5030', fontSize: 15, fontWeight: 700, letterSpacing: 2, paddingLeft: 2, marginBottom: 2 }}>
         FORECAST
       </div>
 
@@ -81,45 +81,45 @@ export function SeasonalEffectPanel({ state }: SeasonalEffectPanelProps) {
             boxShadow: isActive ? `0 2px 8px rgba(26,20,8,0.1)` : 'none',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-              <span style={{ fontSize: 14 }}>{meta.icon}</span>
-              <span style={{ color: isActive ? meta.color : '#8A7848', fontWeight: 700, fontSize: 13 }}>
+              <span style={{ fontSize: 18 }}>{meta.icon}</span>
+              <span style={{ color: isActive ? meta.color : '#8A7848', fontWeight: 700, fontSize: 17 }}>
                 {meta.label}
               </span>
               {isActive && (
                 <span style={{
                   background: meta.color, color: '#F2ECD8',
-                  fontSize: 8, fontWeight: 800, borderRadius: 3,
+                  fontSize: 12, fontWeight: 800, borderRadius: 3,
                   padding: '1px 5px', letterSpacing: 0.5,
                 }}>
                   NOW
                 </span>
               )}
-              <span style={{ marginLeft: 'auto', color: '#B0A070', fontSize: 10 }}>{start}–{end}</span>
+              <span style={{ marginLeft: 'auto', color: '#B0A070', fontSize: 14 }}>{start}–{end}</span>
             </div>
 
             {effect && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
-                {dot && <span style={{ color: dot.color, fontSize: 11 }}>{dot.symbol}</span>}
-                <span style={{ color: isActive ? '#1A1408' : '#6A5030', fontWeight: 700, fontSize: 12 }}>
+                {dot && <span style={{ color: dot.color, fontSize: 15 }}>{dot.symbol}</span>}
+                <span style={{ color: isActive ? '#1A1408' : '#6A5030', fontWeight: 700, fontSize: 16 }}>
                   {effect.name}
                 </span>
               </div>
             )}
 
             {effect && effect.lines.map((line, i) => (
-              <div key={i} style={{ color: isActive ? '#4A3820' : '#8A7848', fontSize: 11, lineHeight: 1.4 }}>
+              <div key={i} style={{ color: isActive ? '#4A3820' : '#8A7848', fontSize: 15, lineHeight: 1.4 }}>
                 {line}
               </div>
             ))}
 
             {isLongSummer && copiedSummerEffect && (
               <div style={{ marginTop: 5, paddingTop: 5, borderTop: '1px solid #C8B88A' }}>
-                <div style={{ color: '#8A7848', fontSize: 11, marginBottom: 2 }}>copies ☀️:</div>
-                <div style={{ color: isActive ? '#1A1408' : '#6A5030', fontWeight: 700, fontSize: 12 }}>
+                <div style={{ color: '#8A7848', fontSize: 15, marginBottom: 2 }}>copies ☀️:</div>
+                <div style={{ color: isActive ? '#1A1408' : '#6A5030', fontWeight: 700, fontSize: 16 }}>
                   {copiedSummerEffect.name}
                 </div>
                 {copiedSummerEffect.lines.map((line, i) => (
-                  <div key={i} style={{ color: isActive ? '#4A3820' : '#8A7848', fontSize: 11, lineHeight: 1.4 }}>
+                  <div key={i} style={{ color: isActive ? '#4A3820' : '#8A7848', fontSize: 15, lineHeight: 1.4 }}>
                     {line}
                   </div>
                 ))}

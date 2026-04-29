@@ -72,8 +72,8 @@ export function ActionBar({
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
         {(['spore', 'moisture', 'sunlight'] as const).map(res => (
           <div key={res} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ fontSize: 15 }}>{RESOURCE_ICONS[res]}</span>
-            <span style={{ color: '#1A1408', fontWeight: 700, fontSize: 18 }}>
+            <span style={{ fontSize: 19 }}>{RESOURCE_ICONS[res]}</span>
+            <span style={{ color: '#1A1408', fontWeight: 700, fontSize: 22 }}>
               {player.resources[res]}
             </span>
           </div>
@@ -96,15 +96,15 @@ export function ActionBar({
                 borderRadius: 8, padding: '7px 4px',
                 color: isSelected ? player.color : !a.enabled ? '#C8B88A' : '#4A3820',
                 fontWeight: isSelected ? 700 : 500,
-                fontSize: 13, cursor: a.enabled ? 'pointer' : 'not-allowed',
+                fontSize: 17, cursor: a.enabled ? 'pointer' : 'not-allowed',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
                 transition: 'all 0.15s',
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
               }}
             >
-              <span style={{ fontSize: 18 }}>{a.icon}</span>
-              <span style={{ fontSize: 13 }}>{a.label}</span>
-              <span style={{ fontSize: 10, opacity: 0.7 }}>{a.hint}</span>
+              <span style={{ fontSize: 22 }}>{a.icon}</span>
+              <span style={{ fontSize: 17 }}>{a.label}</span>
+              <span style={{ fontSize: 14, opacity: 0.7 }}>{a.hint}</span>
             </button>
           );
         })}
@@ -112,7 +112,7 @@ export function ActionBar({
 
       {/* Feedback message */}
       {message && (
-        <div style={{ color: '#C84820', fontSize: 12, textAlign: 'center', lineHeight: 1.3 }}>
+        <div style={{ color: '#C84820', fontSize: 16, textAlign: 'center', lineHeight: 1.3 }}>
           {message}
         </div>
       )}
@@ -123,7 +123,7 @@ export function ActionBar({
           <button onClick={onUndo} style={{
             background: 'transparent', border: '1px solid #B0A070',
             color: '#4A3820', borderRadius: 6,
-            padding: '6px 8px', fontWeight: 600, fontSize: 13,
+            padding: '6px 8px', fontWeight: 600, fontSize: 17,
             cursor: 'pointer', width: '100%',
             fontFamily: "'Cormorant Garamond', Georgia, serif",
           }}>
@@ -137,7 +137,7 @@ export function ActionBar({
             background: actionTaken ? '#C84820' : '#C8B88A',
             color: actionTaken ? '#F2EAD8' : '#8A7848',
             border: 'none',
-            borderRadius: 6, padding: '9px', fontWeight: 700, fontSize: 15,
+            borderRadius: 6, padding: '9px', fontWeight: 700, fontSize: 19,
             cursor: actionTaken ? 'pointer' : 'not-allowed', width: '100%',
             boxShadow: actionTaken ? '0 2px 10px rgba(200,72,32,0.3)' : 'none',
             fontFamily: "'Cormorant Garamond', Georgia, serif",

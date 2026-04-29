@@ -46,12 +46,12 @@ export function GameHUD({ state }: GameHUDProps) {
 
       {/* Season + effect */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ fontSize: 22 }}>{meta.icon}</span>
+        <span style={{ fontSize: 26 }}>{meta.icon}</span>
         <div>
-          <div style={{ color: meta.color, fontWeight: 700, fontSize: 17, lineHeight: 1.2 }}>
+          <div style={{ color: meta.color, fontWeight: 700, fontSize: 21, lineHeight: 1.2 }}>
             {meta.label}
           </div>
-          <div style={{ color: '#6A5030', fontSize: 12, fontStyle: 'italic' }}>
+          <div style={{ color: '#6A5030', fontSize: 16, fontStyle: 'italic' }}>
             {effectLabel}
           </div>
         </div>
@@ -59,11 +59,11 @@ export function GameHUD({ state }: GameHUDProps) {
 
       {/* Turn counter */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#1A1408', fontWeight: 800, fontSize: 22, lineHeight: 1 }}>
+        <div style={{ color: '#1A1408', fontWeight: 800, fontSize: 26, lineHeight: 1 }}>
           {state.currentTurn}
-          <span style={{ color: '#8A7848', fontWeight: 400, fontSize: 15 }}> / 20</span>
+          <span style={{ color: '#8A7848', fontWeight: 400, fontSize: 19 }}> / 20</span>
         </div>
-        <div style={{ color: '#6A5030', fontSize: 12 }}>
+        <div style={{ color: '#6A5030', fontSize: 16 }}>
           Turn {turnInSeason} of {seasonEnd - seasonStart + 1} in {meta.label}
         </div>
       </div>
@@ -71,7 +71,7 @@ export function GameHUD({ state }: GameHUDProps) {
       {/* Current player */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{
-          fontSize: 24,
+          fontSize: 28,
           background: currentPlayer.color + '22',
           border: `2px solid ${currentPlayer.color}99`,
           borderRadius: '50%', width: 40, height: 40,
@@ -80,10 +80,10 @@ export function GameHUD({ state }: GameHUDProps) {
           {portraitEmoji(currentPlayer.portrait)}
         </div>
         <div>
-          <div style={{ color: currentPlayer.color, fontWeight: 700, fontSize: 16, lineHeight: 1.2 }}>
+          <div style={{ color: currentPlayer.color, fontWeight: 700, fontSize: 20, lineHeight: 1.2 }}>
             {currentPlayer.name}
           </div>
-          <div style={{ color: '#6A5030', fontSize: 12 }}>Active player</div>
+          <div style={{ color: '#6A5030', fontSize: 16 }}>Active player</div>
         </div>
       </div>
 
@@ -102,8 +102,8 @@ export function GameHUD({ state }: GameHUDProps) {
                 paddingBottom: 2,
               }}
             >
-              <span style={{ fontSize: 16 }}>{sm.icon}</span>
-              <span style={{ color: sm.color, fontSize: 11, fontWeight: 700 }}>
+              <span style={{ fontSize: 20 }}>{sm.icon}</span>
+              <span style={{ color: sm.color, fontSize: 15, fontWeight: 700 }}>
                 {sm.label.slice(0, 3)}
               </span>
             </div>
@@ -115,8 +115,8 @@ export function GameHUD({ state }: GameHUDProps) {
       <div style={{ display: 'flex', gap: 14 }}>
         {state.players.map(p => (
           <div key={p.id} style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 16 }}>{portraitEmoji(p.portrait)}</div>
-            <div style={{ color: p.color, fontWeight: 800, fontSize: 18 }}>{p.score}</div>
+            <div style={{ fontSize: 20 }}>{portraitEmoji(p.portrait)}</div>
+            <div style={{ color: p.color, fontWeight: 800, fontSize: 22 }}>{p.score}</div>
           </div>
         ))}
       </div>
