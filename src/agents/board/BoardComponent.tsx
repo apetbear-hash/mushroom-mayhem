@@ -7,6 +7,15 @@ import { hexToPixel, hexPolygonPoints } from './hexMath';
 const EMPTY_STROKE = '#7A6040';
 const TILE_SIZE = 54; // 50% bigger than original 36
 
+const BASE = import.meta.env.BASE_URL;
+const TILE_IMAGES: Record<Habitat, string> = {
+  tree:  `${BASE}tiles/tile-tree.png`,
+  decay: `${BASE}tiles/tile-decay.png`,
+  shade: `${BASE}tiles/tile-shade.png`,
+  wet:   `${BASE}tiles/tile-wet.png`,
+  open:  `${BASE}tiles/tile-open.png`,
+};
+
 const RESOURCE_ICONS: Record<string, string> = {
   spore: '🍄', moisture: '💧', sunlight: '☀️',
 };
@@ -556,7 +565,19 @@ export function BoardComponent({
                 {tile.isBlight ? (
                   <BlightArt cx={center.x} cy={center.y} s={TILE_SIZE} />
                 ) : (
-                  <HabitatArt habitat={tile.habitat} cx={center.x} cy={center.y} s={TILE_SIZE} gp="g" />
+                  <>
+                    {/* SVG fallback — shows while image loads or if missing */}
+                    <HabitatArt habitat={tile.habitat} cx={center.x} cy={center.y} s={TILE_SIZE} gp="g" />
+                    {/* Painted tile image */}
+                    <image
+                      href={TILE_IMAGES[tile.habitat]}
+                      x={center.x - TILE_SIZE * 0.866}
+                      y={center.y - TILE_SIZE}
+                      width={TILE_SIZE * 1.732}
+                      height={TILE_SIZE * 2}
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  </>
                 )}
 
                 {/* Unowned dim overlay */}
