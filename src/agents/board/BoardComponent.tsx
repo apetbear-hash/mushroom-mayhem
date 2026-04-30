@@ -10,8 +10,9 @@ const TILE_SIZE = 54; // 50% bigger than original 36
 
 const BASE = import.meta.env.BASE_URL;
 
-// Extra canvas padding around the tile grid for the seasonal border illustration.
-const SEASON_BORDER = 190;
+// CSS padding around the board SVG that reveals the seasonal border illustration.
+// The SVG itself stays at its original size — only the wrapper div grows.
+const SEASON_BORDER = 120;
 
 const SEASON_BG: Record<Season, string | null> = {
   spring: `${BASE}seasons/board-spring.png`,
@@ -535,17 +536,11 @@ export function BoardComponent({
 
   const tiles = Object.values(state.tiles);
   const pixels = tiles.map(t => hexToPixel(t.coord, TILE_SIZE));
-  const tileMinX = Math.min(...pixels.map(p => p.x)) - TILE_SIZE * 1.2;
-  const tileMinY = Math.min(...pixels.map(p => p.y)) - TILE_SIZE * 1.2;
-  const tileMaxX = Math.max(...pixels.map(p => p.x)) + TILE_SIZE * 1.2;
-  const tileMaxY = Math.max(...pixels.map(p => p.y)) + TILE_SIZE * 1.2;
-
-  // Expand canvas for the seasonal border illustration
-  const border = seasonBg ? SEASON_BORDER : 0;
-  const minX = tileMinX - border;
-  const minY = tileMinY - border;
-  const maxX = tileMaxX + border;
-  const maxY = tileMaxY + border;
+  // SVG stays at the original tight bounds — unchanged for all player counts
+  const minX = Math.min(...pixels.map(p => p.x)) - TILE_SIZE * 1.2;
+  const minY = Math.min(...pixels.map(p => p.y)) - TILE_SIZE * 1.2;
+  const maxX = Math.max(...pixels.map(p => p.x)) + TILE_SIZE * 1.2;
+  const maxY = Math.max(...pixels.map(p => p.y)) + TILE_SIZE * 1.2;
   const width  = maxX - minX;
   const height = maxY - minY;
 
@@ -554,25 +549,41 @@ export function BoardComponent({
     ? (state.placedMushrooms.find(m => m.tileId === hoveredTileId) ?? null)
     : null;
 
+  const pad = seasonBg ? SEASON_BORDER : 0;
+
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div style={{
+      position: 'relative',
+      display: 'inline-block',
+      padding: pad,
+    }}>
+      {/* Seasonal background — behind the SVG, muted so it doesn't distract */}
+      {seasonBg && (
+        <img
+          src={seasonBg}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            borderRadius: 6,
+            filter: 'saturate(0.45) brightness(0.55)',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       <svg
         viewBox={`${minX} ${minY} ${width} ${height}`}
         width={width}
         height={height}
-        style={{ display: 'block' }}
+        style={{ display: 'block', position: 'relative', zIndex: 1 }}
       >
         <HabitatDefs prefix="g" />
-
-        {/* Seasonal background — fills the extended canvas, tiles render on top */}
-        {seasonBg && (
-          <image
-            href={seasonBg}
-            x={minX} y={minY}
-            width={width} height={height}
-            preserveAspectRatio="xMidYMid slice"
-          />
-        )}
 
         {tiles.map(tile => {
           const center    = hexToPixel(tile.coord, TILE_SIZE);
