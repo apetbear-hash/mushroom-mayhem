@@ -258,7 +258,7 @@ function Nav({ isNarrow, menuOpen, setMenuOpen, onPlay }: {
   setMenuOpen: (fn: (o: boolean) => boolean) => void;
   onPlay: () => void;
 }) {
-  const items = ['Game', 'Cards', 'News', 'Lore', 'Community'];
+  const items = ['Game', 'Rules', 'Cards', 'News', 'Lore', 'Community'];
   return (
     <nav style={{
       position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50,
@@ -516,6 +516,229 @@ function Features({ vp }: { vp: ReturnType<typeof useViewport> }) {
   );
 }
 
+function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
+  const { isNarrow, isMobile } = vp;
+
+  const steps = [
+    {
+      num: '01',
+      title: 'Seed your colony.',
+      body: 'Each player starts with a spawn tile and 2 adjacent tiles. Draw 5 mushroom cards, then discard any you don\'t want — each discard earns 1 spore.',
+    },
+    {
+      num: '02',
+      title: 'Choose one action.',
+      body: 'On your turn, pick a single action type and repeat it as many times as you can afford: Spread your network, Plant a mushroom, Draw cards, or Rest to bank resources.',
+    },
+    {
+      num: '03',
+      title: 'Then collect.',
+      body: 'Every mushroom on your network generates its listed resources — automatically, every turn. Ongoing powers also trigger here. No choices needed.',
+    },
+    {
+      num: '04',
+      title: 'Survive the seasons.',
+      body: 'Spring → Summer → Autumn → Winter. 5 turns each. One effect per season is drawn at game start. The full forecast is public — plan around it.',
+    },
+    {
+      num: '05',
+      title: 'Most points wins.',
+      body: 'Cards score when planted. Ongoing cards keep scoring each turn. After 20 turns the highest symbiosis total wins. Tiebreaker: largest network, then most mushrooms.',
+    },
+  ];
+
+  const resources = [
+    { icon: '🍄', name: 'Spore',    color: '#8B6F47', desc: 'Plant mushrooms' },
+    { icon: '💧', name: 'Moisture', color: '#3A6EA8', desc: 'Spread your network' },
+    { icon: '☀️', name: 'Sunlight', color: '#D4A843', desc: 'Draw cards' },
+  ];
+
+  const habitats = [
+    { name: 'Tree',  color: '#2A7A18', bg: '#2A7A1822', note: 'Most common. Widest mushroom support.' },
+    { name: 'Decay', color: '#7A5018', bg: '#7A501822', note: 'Resource engines. Saprophyte home.' },
+    { name: 'Shade', color: '#6018A8', bg: '#6018A822', note: '+1 moisture to enter. Premium species.' },
+    { name: 'Wet',   color: '#1A50C0', bg: '#1A50C022', note: '+1 moisture to enter. Rare and powerful.' },
+    { name: 'Open',  color: '#C8A010', bg: '#C8A01022', note: 'Any mushroom can plant here. Season-exposed.' },
+  ];
+
+  const actions = [
+    { name: 'Spread', cost: 'Moisture (scales with network size)', icon: '🕸️' },
+    { name: 'Plant',  cost: 'Spores (per card cost)',              icon: '🍄' },
+    { name: 'Draw',   cost: '1 Sunlight per card',                 icon: '☀️' },
+    { name: 'Rest',   cost: 'Free — gain 1 of each resource',      icon: '💤' },
+  ];
+
+  return (
+    <section id="game" style={{
+      background: PALETTE.ink, color: PALETTE.paper,
+      padding: isNarrow ? '72px 20px' : '120px 56px',
+      borderTop: `1px solid ${PALETTE.amber}22`,
+    }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+
+        {/* Header */}
+        <div style={{ ...txt.eyebrow, color: PALETTE.amber, marginBottom: 12 }}>§ 02 — How to Play</div>
+        <h2 style={{ ...txt.display, fontSize: isNarrow ? 38 : 64, margin: '0 0 16px', color: PALETTE.paper }}>
+          Grow your network.<br/>
+          <span style={{ fontStyle: 'italic', color: PALETTE.amber }}>Outwit the forest.</span>
+        </h2>
+        <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: isNarrow ? 16 : 20, maxWidth: 600, lineHeight: 1.6, color: 'rgba(242,234,216,0.7)', margin: 0 }}>
+          20 turns across four seasons. Two steps per turn. One winner.
+        </p>
+
+        {/* Steps */}
+        <div style={{
+          marginTop: isNarrow ? 48 : 72,
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : isNarrow ? '1fr 1fr' : 'repeat(5, 1fr)',
+          gap: isNarrow ? 16 : 20,
+        }}>
+          {steps.map(s => (
+            <div key={s.num} style={{
+              background: 'rgba(242,234,216,0.05)',
+              border: `1px solid ${PALETTE.paper}18`,
+              borderTop: `2px solid ${PALETTE.amber}`,
+              padding: isNarrow ? 18 : 24,
+              borderRadius: 4,
+            }}>
+              <div style={{ ...txt.mono, fontSize: 10, letterSpacing: 3, color: PALETTE.amber, opacity: 0.85, marginBottom: 12 }}>
+                Step {s.num}
+              </div>
+              <div style={{ ...txt.serif, fontWeight: 700, fontSize: isNarrow ? 16 : 18, color: PALETTE.paper, lineHeight: 1.2, marginBottom: 10 }}>
+                {s.title}
+              </div>
+              <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: 14, lineHeight: 1.55, color: 'rgba(242,234,216,0.65)', margin: 0 }}>
+                {s.body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Two-column reference */}
+        <div style={{
+          marginTop: isNarrow ? 48 : 72,
+          display: 'grid',
+          gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr',
+          gap: isNarrow ? 24 : 40,
+        }}>
+
+          {/* Actions */}
+          <div>
+            <div style={{ ...txt.eyebrow, color: PALETTE.paper, opacity: 0.5, marginBottom: 20 }}>◈ Actions</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {actions.map(a => (
+                <div key={a.name} style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '12px 16px',
+                  background: 'rgba(242,234,216,0.04)',
+                  border: `1px solid ${PALETTE.paper}14`,
+                  borderRadius: 3,
+                }}>
+                  <span style={{ fontSize: 20, flexShrink: 0 }}>{a.icon}</span>
+                  <div>
+                    <div style={{ ...txt.serif, fontWeight: 700, fontSize: 15, color: PALETTE.paper }}>{a.name}</div>
+                    <div style={{ ...txt.mono, fontSize: 10, letterSpacing: 1.5, color: PALETTE.amber, opacity: 0.8, marginTop: 2 }}>{a.cost}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{
+              marginTop: 14, padding: '14px 16px',
+              background: 'rgba(232,154,58,0.08)', border: `1px solid ${PALETTE.amber}33`, borderRadius: 3,
+              ...txt.serif, fontStyle: 'italic', fontSize: 13, lineHeight: 1.5, color: 'rgba(242,234,216,0.6)',
+            }}>
+              You must pick one action type per turn and repeat it as many times as resources allow. No mixing.
+            </div>
+          </div>
+
+          {/* Habitats + Resources */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+            <div>
+              <div style={{ ...txt.eyebrow, color: PALETTE.paper, opacity: 0.5, marginBottom: 20 }}>◈ Habitats</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {habitats.map(h => (
+                  <div key={h.name} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 14px',
+                    background: h.bg,
+                    border: `1px solid ${h.color}44`,
+                    borderLeft: `3px solid ${h.color}`,
+                    borderRadius: 3,
+                  }}>
+                    <div style={{
+                      ...txt.mono, fontWeight: 600, fontSize: 11, letterSpacing: 1.5, color: h.color,
+                      minWidth: 44, textTransform: 'uppercase',
+                    }}>{h.name}</div>
+                    <div style={{ ...txt.serif, fontSize: 13, color: 'rgba(242,234,216,0.65)', fontStyle: 'italic' }}>{h.note}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div style={{ ...txt.eyebrow, color: PALETTE.paper, opacity: 0.5, marginBottom: 16 }}>◈ Resources</div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                {resources.map(r => (
+                  <div key={r.name} style={{
+                    flex: 1, padding: '14px 12px', textAlign: 'center',
+                    background: `${r.color}18`, border: `1px solid ${r.color}44`, borderRadius: 3,
+                  }}>
+                    <div style={{ fontSize: 22 }}>{r.icon}</div>
+                    <div style={{ ...txt.serif, fontWeight: 700, fontSize: 13, color: PALETTE.paper, marginTop: 6 }}>{r.name}</div>
+                    <div style={{ ...txt.mono, fontSize: 9, letterSpacing: 1.5, color: r.color, marginTop: 4, textTransform: 'uppercase' }}>{r.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Season timeline */}
+        <div style={{ marginTop: isNarrow ? 48 : 64 }}>
+          <div style={{ ...txt.eyebrow, color: PALETTE.paper, opacity: 0.5, marginBottom: 20 }}>◈ The Year — 20 turns total</div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isNarrow ? '1fr 1fr' : 'repeat(4, 1fr)',
+            gap: 12,
+          }}>
+            {([
+              { name: 'Spring', turns: '1–5',   color: '#7AB828', bg: '#7AB82812', icon: '🌸', note: 'Thaw · Spring Rain · Creeping Mist · Germination Gamble · Sluggish Soil' },
+              { name: 'Summer', turns: '6–10',  color: '#E8A030', bg: '#E8A03012', icon: '☀️', note: 'Long Days · Abundant Canopy · Drought · Scorching Heat · Mild Summer' },
+              { name: 'Autumn', turns: '11–15', color: '#C84820', bg: '#C8482012', icon: '🍂', note: 'Mushroom Festival · Spore Wind · Blight · Long Summer · Decay Bloom' },
+              { name: 'Winter', turns: '16–20', color: '#6898C8', bg: '#6898C812', icon: '❄️', note: 'Deep Freeze · Mycelium Harmony · Mild Winter · Winter Stores · Final Harvest' },
+            ] as { name: string; turns: string; color: string; bg: string; icon: string; note: string }[]).map(s => (
+              <div key={s.name} style={{
+                padding: '18px 18px 16px',
+                background: s.bg,
+                border: `1px solid ${s.color}44`,
+                borderTop: `3px solid ${s.color}`,
+                borderRadius: 3,
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <span style={{ ...txt.serif, fontWeight: 700, fontSize: 17, color: s.color }}>{s.icon} {s.name}</span>
+                  <span style={{ ...txt.mono, fontSize: 10, letterSpacing: 2, color: PALETTE.paper, opacity: 0.5 }}>T{s.turns}</span>
+                </div>
+                <p style={{ ...txt.serif, fontSize: 12, fontStyle: 'italic', lineHeight: 1.5, color: 'rgba(242,234,216,0.5)', margin: 0 }}>
+                  {s.note}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div style={{
+            marginTop: 14, padding: '12px 16px',
+            background: 'rgba(242,234,216,0.04)', border: `1px solid ${PALETTE.paper}14`, borderRadius: 3,
+            ...txt.serif, fontStyle: 'italic', fontSize: 13, color: 'rgba(242,234,216,0.5)', lineHeight: 1.5,
+          }}>
+            One effect per season is drawn at setup. All four are revealed and public for the entire game. Plan ahead.
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
 function News({ vp }: { vp: ReturnType<typeof useViewport> }) {
   const { isNarrow } = vp;
   const base = import.meta.env.BASE_URL;
@@ -538,7 +761,7 @@ function News({ vp }: { vp: ReturnType<typeof useViewport> }) {
           gap: 20, marginBottom: isNarrow ? 32 : 56,
         }}>
           <div>
-            <div style={{ ...txt.eyebrow, color: PALETTE.amberDeep, marginBottom: 12 }}>§ 02 — Field Journal</div>
+            <div style={{ ...txt.eyebrow, color: PALETTE.amberDeep, marginBottom: 12 }}>§ 03 — Field Journal</div>
             <h2 style={{ ...txt.display, fontSize: isNarrow ? 38 : 56, margin: 0 }}>
               Latest from <span style={{ fontStyle: 'italic', color: PALETTE.mossDeep }}>the canopy.</span>
             </h2>
@@ -762,6 +985,7 @@ export function LandingPage({ onPlay }: { onPlay: () => void }) {
       <Nav isNarrow={vp.isNarrow} menuOpen={menuOpen} setMenuOpen={setMenuOpen} onPlay={onPlay}/>
       <Hero vp={vp} onPlay={onPlay}/>
       <Features vp={vp}/>
+      <HowToPlay vp={vp}/>
       <News vp={vp}/>
       <BigCTA vp={vp} onPlay={onPlay}/>
       <Footer vp={vp}/>
