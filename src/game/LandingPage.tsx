@@ -604,10 +604,10 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
               <div style={{ ...txt.mono, fontSize: 10, letterSpacing: 3, color: PALETTE.amber, opacity: 0.85, marginBottom: 12 }}>
                 Step {s.num}
               </div>
-              <div style={{ ...txt.serif, fontWeight: 700, fontSize: isNarrow ? 16 : 18, color: PALETTE.paper, lineHeight: 1.2, marginBottom: 10 }}>
+              <div style={{ ...txt.serif, fontWeight: 700, fontSize: isNarrow ? 18 : 20, color: PALETTE.paper, lineHeight: 1.2, marginBottom: 10 }}>
                 {s.title}
               </div>
-              <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: 14, lineHeight: 1.55, color: 'rgba(242,234,216,0.65)', margin: 0 }}>
+              <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: 16, lineHeight: 1.55, color: 'rgba(242,234,216,0.65)', margin: 0 }}>
                 {s.body}
               </p>
             </div>
