@@ -522,50 +522,50 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
   const steps = [
     {
       num: '01',
-      title: 'Wake up, mycelium!',
-      body: 'You start with three humble tiles and five mushroom cards from the deck. Discard the ones you don\'t fancy — each one rewards you with a free spore. The forest provides!',
+      title: 'Behold! Your colony awakens.',
+      body: 'Three tiles. Five cards. A handful of spores and a dream. Discard any cards you do not fancy and watch each one transform into a free spore right before your eyes. The forest is generous to those bold enough to begin!',
     },
     {
       num: '02',
-      title: 'Pick your mischief.',
-      body: 'Each turn you commit to one glorious thing: sprawl your network into new tiles, tuck a mushroom somewhere lovely, rummage for fresh cards, or take a cosy rest to refill your pouches.',
+      title: 'Choose your act for the evening.',
+      body: 'Ladies and gentlefolk, you may do exactly one spectacular thing this turn. Sprawl your network into new territory! Conjure a mushroom onto the board! Rummage through the deck for hidden wonders! Or simply rest and let the forest refill your pouches.',
     },
     {
       num: '03',
-      title: 'Watch the magic.',
-      body: 'Once your action is done, every mushroom on your network quietly does its job — dripping moisture, scattering spores, soaking up sunlight. No extra cost. Just good fungi doing good work.',
+      title: 'Now witness the harvest!',
+      body: 'Every mushroom you have ever planted will now perform on cue. Spores appear! Moisture drips! Sunlight pours in! No instruction needed. Your fungi know their role and they play it magnificently, turn after turn.',
     },
     {
       num: '04',
-      title: 'The forest has moods.',
-      body: 'Spring, Summer, Autumn, Winter — five turns each. One wild effect per season is revealed before the very first turn. Scorching heat! A mushroom festival! A sudden frost! You\'ll see it coming. Will you be ready?',
+      title: 'The seasons are alive!',
+      body: 'Spring! Summer! Autumn! Winter! Five turns apiece, with one extraordinary effect revealed for each before the curtain even rises. Will you face a scorching drought? A mushroom festival? A creeping frost? You shall know from the very start. The question is: will you be brilliant about it?',
     },
     {
       num: '05',
-      title: 'Count your glory.',
-      body: 'Points flow in the moment you plant. Ongoing mushrooms keep trickling them in every single turn. After 20 turns, whoever commanded the most symbiosis with the forest wins. May the tastiest fungi prevail!',
+      title: 'Take your bow. Count your glory.',
+      body: 'Points shower down the instant you plant. Ongoing mushrooms keep performing their little trick each and every turn. After twenty glorious turns the player with the most symbiosis points wins. May the most magnificent mycelium prevail!',
     },
   ];
 
   const resources = [
-    { icon: '🍄', name: 'Spore',    color: '#8B6F47', desc: 'Buy mushrooms' },
-    { icon: '💧', name: 'Moisture', color: '#3A6EA8', desc: 'Stretch your network' },
-    { icon: '☀️', name: 'Sunlight', color: '#D4A843', desc: 'Peek at new cards' },
+    { icon: '🍄', name: 'Spore',    color: '#8B6F47', desc: 'Plant mushrooms' },
+    { icon: '💧', name: 'Moisture', color: '#3A6EA8', desc: 'Grow your network' },
+    { icon: '☀️', name: 'Sunlight', color: '#D4A843', desc: 'Draw new cards' },
   ];
 
   const habitats = [
-    { name: 'Tree',  color: '#2A7A18', bg: '#2A7A1822', note: 'The neighbourhood everybody wants — broad, welcoming, abundant.' },
-    { name: 'Decay', color: '#7A5018', bg: '#7A501822', note: 'Rotten logs and crumbling bark. Ugly? Sure. Productive? Absolutely.' },
-    { name: 'Shade', color: '#6018A8', bg: '#6018A822', note: 'Cool, dim, a little mysterious. Costs an extra drop of moisture — worth every drip.' },
-    { name: 'Wet',   color: '#1A50C0', bg: '#1A50C022', note: 'Soggy, rare, and quietly wonderful. Unique creatures who thrive nowhere else.' },
-    { name: 'Open',  color: '#C8A010', bg: '#C8A01022', note: 'Sun-drenched clearings where any mushroom is welcome. And exposed to whatever the sky decides.' },
+    { name: 'Tree',  color: '#2A7A18', bg: '#2A7A1822', note: 'The neighbourhood everybody wants! Broad, welcoming, and absolutely teeming with possibility.' },
+    { name: 'Decay', color: '#7A5018', bg: '#7A501822', note: 'Rotten logs! Crumbling bark! Ugly? Perhaps. Extraordinarily productive? Oh, most certainly.' },
+    { name: 'Shade', color: '#6018A8', bg: '#6018A822', note: 'Cool, dim, and wonderfully mysterious. One extra drop of moisture to enter. Worth every drip, we assure you.' },
+    { name: 'Wet',   color: '#1A50C0', bg: '#1A50C022', note: 'Soggy, rare, and quietly spectacular. Home to creatures that thrive absolutely nowhere else on the board.' },
+    { name: 'Open',  color: '#C8A010', bg: '#C8A01022', note: 'Sun-kissed clearings where any mushroom is welcome! Do note the sky above has opinions about what happens here.' },
   ];
 
   const actions = [
-    { name: 'Spread', cost: 'Moisture — gets pricier as you grow',  icon: '🕸️' },
-    { name: 'Plant',  cost: 'Spores — whatever the card costs',     icon: '🍄' },
-    { name: 'Draw',   cost: '1 Sunlight per card',                   icon: '☀️' },
-    { name: 'Rest',   cost: 'Free! Pocket 1 of each resource',       icon: '💤' },
+    { name: 'Spread', cost: 'Moisture (grows costlier as your network does)',  icon: '🕸️' },
+    { name: 'Plant',  cost: 'Spores (whatever the card asks for)',             icon: '🍄' },
+    { name: 'Draw',   cost: '1 Sunlight per card',                             icon: '☀️' },
+    { name: 'Rest',   cost: 'Absolutely free! Gain 1 of each resource',        icon: '💤' },
   ];
 
   return (
@@ -579,11 +579,11 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
         {/* Header */}
         <div style={{ ...txt.eyebrow, color: PALETTE.amber, marginBottom: 12 }}>§ 02 — Rules of the Underbrush</div>
         <h2 style={{ ...txt.display, fontSize: isNarrow ? 38 : 64, margin: '0 0 16px', color: PALETTE.paper }}>
-          It's your turn<br/>
-          <span style={{ fontStyle: 'italic', color: PALETTE.amber }}>to bloom.</span>
+          Step right up.<br/>
+          <span style={{ fontStyle: 'italic', color: PALETTE.amber }}>The forest awaits.</span>
         </h2>
         <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: isNarrow ? 16 : 20, maxWidth: 640, lineHeight: 1.6, color: 'rgba(242,234,216,0.7)', margin: 0 }}>
-          Four seasons. Twenty turns. Two steps each. One forest — and it belongs to whoever grows the cleverest colony.
+          Four seasons. Twenty turns. Two steps each. One shared forest and it belongs to whoever grows the most magnificent colony. Allow us to explain.
         </p>
 
         {/* Steps */}
@@ -647,7 +647,7 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
               background: 'rgba(232,154,58,0.08)', border: `1px solid ${PALETTE.amber}33`, borderRadius: 3,
               ...txt.serif, fontStyle: 'italic', fontSize: 13, lineHeight: 1.5, color: 'rgba(242,234,216,0.6)',
             }}>
-              Commit to one action type each turn and go as wild as your resources allow. A jack of all trades feeds nobody.
+              Commit to one action type and perform it as many glorious times as your resources permit. A jack of all trades, dear friend, feeds absolutely nobody.
             </div>
           </div>
 
@@ -703,10 +703,10 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
             gap: 12,
           }}>
             {([
-              { name: 'Spring', turns: '1–5',   color: '#7AB828', bg: '#7AB82812', icon: '🌸', note: 'The ground thaws, the spores stir — anything could happen. Thaw · Spring Rain · Creeping Mist · Germination Gamble · Sluggish Soil' },
-              { name: 'Summer', turns: '6–10',  color: '#E8A030', bg: '#E8A03012', icon: '☀️', note: 'Long hot days, big ambitions, bigger risks. Long Days · Abundant Canopy · Drought · Scorching Heat · Mild Summer' },
-              { name: 'Autumn', turns: '11–15', color: '#C84820', bg: '#C8482012', icon: '🍂', note: 'The festival season! Also the blight season. Life is beautifully complicated. Mushroom Festival · Spore Wind · Blight · Long Summer · Decay Bloom' },
-              { name: 'Winter', turns: '16–20', color: '#6898C8', bg: '#6898C812', icon: '❄️', note: 'Everything slows. The most patient colony always blooms last. Deep Freeze · Mycelium Harmony · Mild Winter · Winter Stores · Final Harvest' },
+              { name: 'Spring', turns: '1–5',   color: '#7AB828', bg: '#7AB82812', icon: '🌸', note: 'The ground stirs! The spores wake up! Anything is possible. Thaw · Spring Rain · Creeping Mist · Germination Gamble · Sluggish Soil' },
+              { name: 'Summer', turns: '6–10',  color: '#E8A030', bg: '#E8A03012', icon: '☀️', note: 'Hot! Glorious! Possibly catastrophic! The stage is all yours. Long Days · Abundant Canopy · Drought · Scorching Heat · Mild Summer' },
+              { name: 'Autumn', turns: '11–15', color: '#C84820', bg: '#C8482012', icon: '🍂', note: 'Festival season and blight season rolled into one spectacular act. Mushroom Festival · Spore Wind · Blight · Long Summer · Decay Bloom' },
+              { name: 'Winter', turns: '16–20', color: '#6898C8', bg: '#6898C812', icon: '❄️', note: 'Hush now. The finale approaches. The most patient colony always blooms last. Deep Freeze · Mycelium Harmony · Mild Winter · Winter Stores · Final Harvest' },
             ] as { name: string; turns: string; color: string; bg: string; icon: string; note: string }[]).map(s => (
               <div key={s.name} style={{
                 padding: '18px 18px 16px',
@@ -730,7 +730,7 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
             background: 'rgba(242,234,216,0.04)', border: `1px solid ${PALETTE.paper}14`, borderRadius: 3,
             ...txt.serif, fontStyle: 'italic', fontSize: 13, color: 'rgba(242,234,216,0.5)', lineHeight: 1.5,
           }}>
-            All four season effects are drawn and revealed before anyone takes their very first turn. That's not luck — that's a puzzle. A delightful, spore-dusted puzzle.
+            All four season effects are revealed before anyone takes a single turn. That is not luck, dear audience. That is a puzzle. A delightful, spore-dusted, utterly magnificent puzzle.
           </div>
         </div>
 
