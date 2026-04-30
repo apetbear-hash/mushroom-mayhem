@@ -15,10 +15,10 @@ const BASE = import.meta.env.BASE_URL;
 const SEASON_BORDER = 120;
 
 const SEASON_BG: Record<Season, string | null> = {
-  spring: `${BASE}seasons/board-spring.png`,
-  summer: null, // placeholder — add board-summer.png to public/seasons/
-  autumn: null, // placeholder — add board-autumn.png to public/seasons/
-  winter: null, // placeholder — add board-winter.png to public/seasons/
+  spring: null, // add board-spring.png to public/seasons/ to re-enable
+  summer: null,
+  autumn: null,
+  winter: null,
 };
 
 const TILE_IMAGES: Record<Habitat, string> = {
