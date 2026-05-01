@@ -36,7 +36,7 @@ export function runGame(
   drafts?: PlayerDraft[],
 ): GameResult {
   const playerDrafts = drafts ?? buildAIDrafts(playerCount);
-  let state = createInitialGameState(playerDrafts);
+  let state = createInitialGameState(playerDrafts).state;
   const errors: string[] = [];
   const cardPlayCounts: Record<number, number> = {};
 
