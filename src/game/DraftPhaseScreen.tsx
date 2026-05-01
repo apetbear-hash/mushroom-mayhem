@@ -9,7 +9,7 @@ interface DraftPhaseScreenProps {
   onConfirm: (finalState: GameState) => void;
 }
 
-const MAX_DISCARD = 2;
+const MAX_DISCARD = 4;
 const HUMAN_PLAYER_ID = 'player_0';
 
 function applyAIDraft(state: GameState): GameState {
