@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { GameState, ActionType } from '../shared/types';
 import { BoardComponent } from '../agents/board/BoardComponent';
-import { SeasonalEffectPanel } from '../agents/seasonal';
-import { TurnAnnouncement, GameHUD } from '../agents/turn';
+import { TurnAnnouncement } from '../agents/turn';
 import {
   resolveDrawAction,
   resolveSpreadAction,
@@ -22,12 +21,46 @@ import { getSeason } from '../agents/seasonal';
 import { getAdjacentTileIds } from '../agents/board/boardGenerator';
 import { isSeasonStart, isSeasonEnd, applySeasonStart, applySeasonEnd } from '../agents/seasonal';
 import { aiTakeTurn } from '../agents/simulation/aiPlayer';
-import { ActionBar } from './ActionBar';
 import { HandDisplay } from './HandDisplay';
 import { GameOverScreen } from './GameOverScreen';
 import { SeasonEffectModal } from './SeasonEffectModal';
 import { AISummaryOverlay, generateAISummary } from './AISummaryOverlay';
 import type { AISummary } from './AISummaryOverlay';
+import { SEASONS, SEASON_TURNS } from '../shared/constants';
+
+const SEASON_UI = {
+  spring: { icon: '🌿', color: '#3A6828', bg: 'rgba(58,104,40,0.10)', label: 'Spring' },
+  summer: { icon: '☀️',  color: '#A07010', bg: 'rgba(160,112,16,0.10)', label: 'Summer' },
+  autumn: { icon: '🍂', color: '#B83818', bg: 'rgba(184,56,24,0.10)', label: 'Autumn' },
+  winter: { icon: '❄️',  color: '#2868A0', bg: 'rgba(40,104,160,0.10)', label: 'Winter' },
+} as const;
+
+const KIND_COLOR: Record<string, string> = {
+  positive: '#3A6828', negative: '#B83818', risk: '#A07010', neutral: '#8A7848',
+};
+
+const EFFECT_INFO: Record<string, { label: string; kind: string; desc: string }> = {
+  thaw:               { label: 'Thaw',               kind: 'positive', desc: 'Spread −1 💧 (min 1)' },
+  spring_rain:        { label: 'Spring Rain',         kind: 'positive', desc: 'Turn start: all players gain +3 💧' },
+  germination_gamble: { label: 'Germination Gamble',  kind: 'risk',     desc: 'Your turn start: discard your hand & redraw freely' },
+  creeping_mist:      { label: 'Creeping Mist',       kind: 'risk',     desc: 'Shade/Wet spread −1 💧, but no resource gain on those tiles' },
+  sluggish_soil:      { label: 'Sluggish Soil',       kind: 'negative', desc: 'All players lose 1 of each resource per turn (min 1)' },
+  long_days:          { label: 'Long Days',           kind: 'positive', desc: 'All mushrooms generate +1 🍄 per harvest' },
+  abundant_canopy:    { label: 'Abundant Canopy',     kind: 'positive', desc: 'Shade mushrooms earn +1 ⭐ per turn' },
+  drought:            { label: 'Drought',             kind: 'negative', desc: 'Turn start: 💧→0. No moisture gain this season' },
+  scorching_heat:     { label: 'Scorching Heat',      kind: 'negative', desc: 'Spread +1 💧. Open tiles yield no points' },
+  mild_summer:        { label: 'Mild Summer',         kind: 'neutral',  desc: 'No special effect this season' },
+  mushroom_festival:  { label: 'Mushroom Festival',   kind: 'positive', desc: 'Season end: +1 ⭐ per planted mushroom' },
+  spore_wind:         { label: 'Spore Wind',          kind: 'positive', desc: '+4 🍄 and 1 free tile for all at season start' },
+  blight:             { label: 'Blight',              kind: 'negative', desc: 'Season start: 3–5 tiles become blighted forever' },
+  long_summer:        { label: 'Long Summer',         kind: 'positive', desc: 'Copies the Summer effect into Autumn' },
+  decay_bloom:        { label: 'Decay Bloom',         kind: 'risk',     desc: 'Decay tiles give +2 resources/turn, but score 0' },
+  deep_freeze:        { label: 'Deep Freeze',         kind: 'negative', desc: 'No spreading allowed. Spread cards disabled' },
+  mycelium_harmony:   { label: 'Mycelium Harmony',    kind: 'positive', desc: 'Score = length of longest same-type mushroom chain' },
+  mild_winter:        { label: 'Mild Winter',         kind: 'neutral',  desc: 'No special effect this season' },
+  winter_stores:      { label: 'Winter Stores',       kind: 'positive', desc: 'Turn start: +2 🍄💧☀️ for all players' },
+  final_harvest:      { label: 'Final Harvest',       kind: 'risk',     desc: 'No resources from mushrooms. Season end: +1 ⭐ per 3 unspent resources' },
+};
 
 interface GameScreenProps {
   initialState: GameState;
@@ -164,11 +197,19 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   const [undoState, setUndoState] = useState<GameState | null>(null);
   const [plantSecondary, setPlantSecondary] = useState<PlantSecondaryInfo | null>(null);
   const [inkyCapPendingTileId, setInkyCapPendingTileId] = useState<string | null>(null);
+  const [showAlmanac, setShowAlmanac] = useState(false);
+  const [forecastOpen, setForecastOpen] = useState(true);
 
   const seasonModalShownForTurn = useRef<number>(-1);
 
   const currentPlayer = state.players[state.currentPlayerIndex];
   const isHumanTurn = currentPlayer.id === HUMAN_PLAYER_ID;
+
+  const season = getSeason(state.currentTurn);
+  const sm = SEASON_UI[season];
+  const effectInfo = EFFECT_INFO[state.forecast[season] as string] ?? { label: state.forecast[season] as string, kind: 'neutral', desc: '' };
+  const turnInSeasonNum = state.currentTurn - SEASON_TURNS[season][0] + 1;
+  const hasActionThisTurn = state.turnState.actionType !== null || state.turnState.restUsed;
 
   // Derived: Shiitake (id 3) swap availability
   const hasShiitakeOnBoard = isHumanTurn && state.placedMushrooms.some(
@@ -539,132 +580,450 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
     }
   }, [isHumanTurn, currentPlayer, state]);
 
+  const handleCancel = useCallback(() => {
+    setSelectedAction(null);
+    setSelectedCardId(null);
+    setHighlightedTiles(new Set());
+    setFeedback('');
+    setPlantSecondary(null);
+  }, []);
+
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
       height: '100vh', background: '#EAE0C8',
       overflow: 'hidden', fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
-      <GameHUD state={state} />
 
-      {/* Main area: left sidebar + centered board */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
-        {/* Left: seasonal forecast */}
+      {/* ══ HEADER ══ */}
+      <header style={{
+        flexShrink: 0, height: 64,
+        display: 'flex', alignItems: 'stretch',
+        background: '#DDD0B0',
+        borderBottom: '2px solid #C8B88A',
+        zIndex: 40,
+      }}>
+        {/* Season block */}
         <div style={{
-          width: 200, borderRight: '1px solid #C8B88A',
-          overflowY: 'auto', flexShrink: 0, padding: '10px 8px',
-          background: '#DDD0B0',
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '0 20px', minWidth: 210, flexShrink: 0,
+          background: sm.bg, borderRight: '1px solid #C8B88A',
         }}>
-          <SeasonalEffectPanel state={state} />
+          <div style={{
+            width: 36, height: 36, display: 'flex', alignItems: 'center',
+            justifyContent: 'center', border: `1.5px solid ${sm.color}`,
+            fontSize: 18, flexShrink: 0, borderRadius: 3,
+          }}>{sm.icon}</div>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: sm.color, lineHeight: 1 }}>{sm.label}</div>
+            <div style={{ fontStyle: 'italic', fontSize: 13, color: '#6A5030', marginTop: 2 }}>{effectInfo.label}</div>
+          </div>
         </div>
 
-        {/* Center: board — flex centering so it sits in the middle */}
+        {/* Turn number + season pip track */}
+        <div style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          gap: 16, borderRight: '1px solid #C8B88A', padding: '0 20px',
+        }}>
+          <div style={{ flexShrink: 0, textAlign: 'center' }}>
+            <div style={{ fontSize: 26, fontWeight: 700, color: '#1A1408', lineHeight: 1, letterSpacing: -1 }}>
+              {state.currentTurn}<span style={{ fontSize: 14, color: '#8A7848', fontWeight: 400 }}>/20</span>
+            </div>
+            <div style={{ fontStyle: 'italic', fontSize: 13, color: '#8A7848' }}>
+              Turn {turnInSeasonNum} of 5
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            {SEASONS.map((s, si) => {
+              const sc = SEASON_UI[s].color;
+              const isCur = s === season;
+              return (
+                <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{ display: 'flex', gap: 3 }}>
+                    {Array.from({ length: 5 }).map((_, ti) => {
+                      const t = si * 5 + ti + 1;
+                      const active = t === state.currentTurn;
+                      const past = t < state.currentTurn;
+                      return (
+                        <div key={ti} style={{
+                          width: active ? 10 : 6, height: active ? 10 : 6,
+                          borderRadius: '50%',
+                          background: (past || active) ? sc : '#C8B88A',
+                          boxShadow: active ? `0 0 4px ${sc}` : 'none',
+                          opacity: past ? 0.4 : 1, transition: 'all 180ms',
+                        }}/>
+                      );
+                    })}
+                  </div>
+                  <span style={{ fontSize: 9, letterSpacing: 1, color: isCur ? sc : '#8A7848', textTransform: 'uppercase' }}>
+                    {s.slice(0, 3)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Player chips + Almanac button */}
+        <div style={{ display: 'flex', alignItems: 'stretch' }}>
+          {state.players.map((pp, i) => {
+            const isActive = i === state.currentPlayerIndex;
+            return (
+              <div key={pp.id} style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '0 16px',
+                borderLeft: '1px solid #C8B88A',
+                background: isActive ? `${pp.color}18` : 'transparent',
+                position: 'relative',
+              }}>
+                {isActive && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: pp.color }}/>}
+                <div style={{
+                  width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                  background: `radial-gradient(circle at 35% 35%, ${pp.color}cc, ${pp.color}66)`,
+                  border: `2px solid ${isActive ? pp.color : pp.color + '66'}`,
+                  boxShadow: isActive ? `0 0 8px ${pp.color}55` : 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{pp.name[0]}</span>
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: 11, letterSpacing: 1, fontWeight: 700, lineHeight: 1,
+                    color: isActive ? '#1A1408' : '#6A5030', textTransform: 'uppercase',
+                  }}>
+                    {pp.name}{isActive && <span style={{ marginLeft: 4, fontSize: 9 }}>▶</span>}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginTop: 2 }}>
+                    <span style={{ fontSize: 22, fontWeight: 700, color: '#1A1408', lineHeight: 1 }}>{pp.score}</span>
+                    <span style={{ fontSize: 10, color: '#8A7848' }}>pts</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          <button
+            onClick={() => setShowAlmanac(true)}
+            style={{
+              borderLeft: '1px solid #C8B88A', padding: '0 16px',
+              background: 'transparent', border: 'none',
+              fontSize: 12, letterSpacing: 1, color: '#6A5030',
+              cursor: 'pointer', textTransform: 'uppercase',
+              fontFamily: 'inherit', fontWeight: 600,
+            }}
+          >Almanac</button>
+        </div>
+      </header>
+
+      {/* ══ MIDDLE ROW ══ */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
+
+        {/* LEFT: Action panel */}
+        <div style={{
+          width: 140, flexShrink: 0,
+          background: '#DDD0B0', borderRight: '1px solid #C8B88A',
+          display: 'flex', flexDirection: 'column', overflow: 'hidden',
+        }}>
+          {/* Active player + resources */}
+          <div style={{ padding: '10px 10px 8px', borderBottom: '1px solid #C8B88A', flexShrink: 0 }}>
+            <div style={{
+              fontSize: 10, letterSpacing: 1, color: currentPlayer.color,
+              textTransform: 'uppercase', marginBottom: 7, fontWeight: 700,
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              <div style={{ width: 7, height: 7, borderRadius: '50%', background: currentPlayer.color }}/>
+              {currentPlayer.name}
+            </div>
+            {[
+              { label: 'Spore',    val: currentPlayer.resources.spore,    color: '#8B6F47', icon: '🍄' },
+              { label: 'Moisture', val: currentPlayer.resources.moisture, color: '#3A6EA8', icon: '💧' },
+              { label: 'Sunlight', val: currentPlayer.resources.sunlight, color: '#C48820', icon: '☀️' },
+            ].map(r => (
+              <div key={r.label} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '4px 6px', marginBottom: 2,
+                border: `1px solid ${r.color}40`, background: `${r.color}10`, borderRadius: 3,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ fontSize: 12 }}>{r.icon}</span>
+                  <span style={{ fontSize: 10, color: r.color, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 700 }}>
+                    {r.label.slice(0, 3)}
+                  </span>
+                </div>
+                <span style={{ fontSize: 22, fontWeight: 700, color: '#1A1408', lineHeight: 1 }}>{r.val}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Action buttons */}
+          {isHumanTurn && !state.isOver && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '6px 6px', flexShrink: 0 }}>
+              {([
+                { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: '1☀/card',  color: '#C48820' },
+                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: 'scales💧', color: '#3A6EA8' },
+                { id: 'plant'  as ActionType, icon: '◉', label: 'Plant',  sub: 'card cost', color: '#8B6F47' },
+                { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030' },
+              ]).map(a => {
+                const isActive = selectedAction === a.id;
+                const noAction = selectedAction === null;
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => { if (noAction || isActive) handleActionSelect(a.id); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 7, padding: '8px 8px',
+                      border: `1px solid ${isActive ? a.color : noAction ? '#C8B88A' : 'transparent'}`,
+                      background: isActive ? `${a.color}18` : 'transparent',
+                      color: isActive ? a.color : noAction ? '#1A1408' : '#8A7848',
+                      cursor: (noAction || isActive) ? 'pointer' : 'default',
+                      opacity: (!noAction && !isActive) ? 0.4 : 1,
+                      transition: 'all 130ms', textAlign: 'left',
+                      borderRadius: 3, fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: 15, flexShrink: 0 }}>{a.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1 }}>{a.label}</div>
+                      <div style={{ fontSize: 10, opacity: 0.65, lineHeight: 1, marginTop: 2 }}>{a.sub}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div style={{ flex: 1 }}/>
+
+          {/* Undo / Cancel / End Turn */}
+          {isHumanTurn && !state.isOver && (undoState || selectedAction !== null || hasActionThisTurn) && (
+            <div style={{
+              padding: '6px 6px', borderTop: '1px solid #C8B88A',
+              display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0,
+            }}>
+              {undoState && (
+                <button onClick={handleUndo} style={{
+                  padding: '6px 6px', background: 'transparent',
+                  border: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 12, width: '100%', borderRadius: 3,
+                }}>↩ Undo</button>
+              )}
+              {selectedAction !== null && (
+                <button onClick={handleCancel} style={{
+                  padding: '7px 6px', background: 'transparent',
+                  border: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 12, width: '100%', borderRadius: 3,
+                }}>× Cancel</button>
+              )}
+              {hasActionThisTurn && (
+                <button onClick={handleEndTurn} style={{
+                  padding: '10px 6px', background: 'rgba(58,104,40,0.12)',
+                  border: '1px solid rgba(58,104,40,0.55)', color: '#3A6828', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 13, fontWeight: 700, width: '100%', borderRadius: 3,
+                }}>End Turn →</button>
+              )}
+            </div>
+          )}
+
+          {/* AI thinking */}
+          {!isHumanTurn && !state.isOver && !showAnnouncement && !aiSummary && (
+            <div style={{ padding: '10px 8px', borderTop: '1px solid #C8B88A', flexShrink: 0, textAlign: 'center' }}>
+              <div style={{ fontSize: 11, letterSpacing: 1, color: currentPlayer.color, textTransform: 'uppercase', fontWeight: 700 }}>
+                {currentPlayer.name}
+              </div>
+              <div style={{ fontStyle: 'italic', fontSize: 12, color: '#8A7848', marginTop: 2 }}>thinking…</div>
+            </div>
+          )}
+        </div>
+
+        {/* CENTER: Board */}
         <div style={{
           flex: 1, overflow: 'auto',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          position: 'relative',
         }}>
           <BoardComponent
             state={state}
             highlightedTileIds={highlightedTiles}
             onTileClick={isHumanTurn ? handleTileClick : undefined}
           />
+
+          {/* Action hint */}
+          {selectedAction && isHumanTurn && !showAnnouncement && (
+            <div style={{
+              position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
+              background: 'rgba(221,208,176,0.96)', border: '1px solid #C8B88A',
+              borderRadius: 20, padding: '8px 20px',
+              fontStyle: 'italic', fontSize: 15, color: '#6A5030',
+              pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 10,
+              boxShadow: '0 2px 10px rgba(26,20,8,0.12)',
+            }}>
+              {selectedAction === 'draw'   && 'Drew a card — click Draw again for more (each costs 1 more ☀️)'}
+              {selectedAction === 'spread' && 'Click a glowing tile to spread your network'}
+              {selectedAction === 'plant'  && (selectedCardId != null ? '✓ Card selected — click an owned tile' : 'Select a card below, then click an owned tile')}
+              {selectedAction === 'rest'   && 'Rested — gained +1 of each resource'}
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT: Forecast panel */}
+        <div style={{
+          width: forecastOpen ? 200 : 28, flexShrink: 0,
+          background: '#DDD0B0', borderLeft: '1px solid #C8B88A',
+          transition: 'width 240ms ease',
+          overflow: 'hidden', display: 'flex', flexDirection: 'column',
+        }}>
+          <button
+            onClick={() => setForecastOpen(o => !o)}
+            style={{
+              height: 36, flexShrink: 0, background: 'transparent', border: 'none',
+              borderBottom: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '0 10px', width: '100%', fontWeight: 600,
+            }}
+          >
+            {forecastOpen
+              ? <><span>Forecast</span><span style={{ opacity: 0.5 }}>▶</span></>
+              : <span style={{ margin: 'auto' }}>◀</span>}
+          </button>
+          {forecastOpen && (
+            <div style={{ overflowY: 'auto', flex: 1 }}>
+              {SEASONS.map((s, si) => {
+                const e = EFFECT_INFO[state.forecast[s] as string] ?? { label: state.forecast[s] as string, kind: 'neutral', desc: '' };
+                const smeta = SEASON_UI[s];
+                const cur = s === season;
+                const past = si < SEASONS.indexOf(season);
+                return (
+                  <div key={s} style={{
+                    padding: '10px 12px', borderBottom: '1px solid #C8B88A',
+                    background: cur ? smeta.bg : 'transparent',
+                    borderLeft: cur ? `3px solid ${smeta.color}` : '3px solid transparent',
+                    opacity: past ? 0.5 : 1,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <span style={{ fontSize: 14 }}>{smeta.icon}</span>
+                      <span style={{ fontSize: 12, letterSpacing: 1, color: smeta.color, textTransform: 'uppercase', fontWeight: 700 }}>
+                        {smeta.label}
+                        {cur && (
+                          <span style={{
+                            marginLeft: 5, background: smeta.color, color: '#EAE0C8',
+                            padding: '1px 4px', fontSize: 8, borderRadius: 2,
+                          }}>NOW</span>
+                        )}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1408', lineHeight: 1.2, marginBottom: 3 }}>
+                      {e.label}
+                    </div>
+                    {cur && (
+                      <div style={{ fontStyle: 'italic', fontSize: 13, color: '#6A5030', lineHeight: 1.4 }}>{e.desc}</div>
+                    )}
+                    {!cur && (
+                      <div style={{ fontSize: 11, color: KIND_COLOR[e.kind] ?? '#8A7848', textTransform: 'uppercase', letterSpacing: 1 }}>
+                        {e.kind}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Bottom panel: action controls (left) + hand (right) */}
-      {isHumanTurn && !state.isOver && (
-        <div style={{
-          borderTop: '1px solid #C8B88A', background: '#DDD0B0',
-          display: 'flex', alignItems: 'stretch',
-        }}>
-          {/* Action column — narrow, fixed width */}
-          <div style={{ width: 200, borderRight: '1px solid #C8B88A', flexShrink: 0 }}>
-            <ActionBar
-              state={state}
-              playerId={currentPlayer.id}
-              selectedAction={selectedAction}
-              message={feedback}
-              onSelectAction={handleActionSelect}
-              onEndTurn={handleEndTurn}
-              undoState={undoState}
-              onUndo={handleUndo}
-            />
-          </div>
+      {/* ══ BOTTOM: Hand tray (always visible) ══ */}
+      <div style={{
+        flexShrink: 0, background: '#DDD0B0',
+        borderTop: `2px solid ${currentPlayer.color}`,
+      }}>
+        <div style={{ height: 2, background: `linear-gradient(90deg, ${currentPlayer.color}, ${currentPlayer.color}44, transparent 70%)` }}/>
 
-          {/* Right: context prompts + scrollable hand */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            {/* Context hint bar */}
-            {(plantSecondary || inkyCapPendingTileId || (canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary)) && (
-              <div style={{
-                borderBottom: '1px solid #C8B88A',
-                padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 10,
-                background: '#1A100A', flexShrink: 0,
-              }}>
-                {plantSecondary && (
-                  <>
-                    <span style={{ color: '#6AAA5A', fontSize: 12, flex: 1 }}>
-                      {secondaryPrompt(plantSecondary.type)}
-                    </span>
-                    <button onClick={handleSkipSecondary} style={{
-                      background: 'transparent', border: '1px solid #C8B88A', color: '#4A3820',
-                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer',
-                    }}>Skip</button>
-                  </>
-                )}
-                {inkyCapPendingTileId && (
-                  <>
-                    <span style={{ color: '#D4A04A', fontSize: 12, flex: 1 }}>
-                      Inky Cap: discard this mushroom to gain +3 spores?
-                    </span>
-                    <button onClick={handleInkyCapConfirm} style={{
-                      background: '#C84820', border: 'none', color: '#F2EAD8',
-                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
-                    }}>Discard +3🍄</button>
-                    <button onClick={() => setInkyCapPendingTileId(null)} style={{
-                      background: 'transparent', border: '1px solid #C8B88A', color: '#4A3820',
-                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer',
-                    }}>Cancel</button>
-                  </>
-                )}
-                {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
-                  <>
-                    <span style={{ color: '#88C0D8', fontSize: 12, flex: 1 }}>
-                      Shiitake: sacrifice 1💧 to gain 1☀️
-                    </span>
-                    <button onClick={handleShiitakeSwap} style={{
-                      background: '#2A6888', border: 'none', color: '#F2EAD8',
-                      borderRadius: 4, padding: '4px 12px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
-                    }}>Swap 1💧→1☀️</button>
-                  </>
-                )}
-              </div>
+        {/* Tray header */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '5px 16px 4px', borderBottom: '1px solid #C8B88A',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: currentPlayer.color }}/>
+            <span style={{ fontSize: 12, letterSpacing: 1, color: '#1A1408', textTransform: 'uppercase', fontWeight: 700 }}>
+              {currentPlayer.name}'s Hand
+            </span>
+            <span style={{
+              fontSize: 11, color: '#8A7848', padding: '2px 7px',
+              border: '1px solid #C8B88A', borderRadius: 2,
+            }}>{currentPlayer.hand.length} cards</span>
+
+            {plantSecondary && (
+              <>
+                <span style={{ fontStyle: 'italic', fontSize: 13, color: '#6A5030' }}>
+                  {secondaryPrompt(plantSecondary.type)}
+                </span>
+                <button onClick={handleSkipSecondary} style={{
+                  background: 'transparent', border: '1px solid #C8B88A', color: '#6A5030',
+                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
+                }}>Skip</button>
+              </>
             )}
-
-            {/* Hand */}
-            <div style={{ flex: 1, overflow: 'hidden', padding: '8px 12px' }}>
-              <HandDisplay
-                state={state}
-                playerId={currentPlayer.id}
-                selectedCardId={selectedCardId}
-                plantMode={selectedAction === 'plant' && !plantSecondary}
-                onSelectCard={handleSelectCard}
-              />
-            </div>
+            {inkyCapPendingTileId && !plantSecondary && (
+              <>
+                <span style={{ fontStyle: 'italic', fontSize: 13, color: '#C89028' }}>
+                  Inky Cap: discard for +3 🍄?
+                </span>
+                <button onClick={handleInkyCapConfirm} style={{
+                  background: '#C84820', border: 'none', color: '#F2EAD8',
+                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                  fontFamily: 'inherit', borderRadius: 3,
+                }}>Discard +3🍄</button>
+                <button onClick={() => setInkyCapPendingTileId(null)} style={{
+                  background: 'transparent', border: '1px solid #C8B88A', color: '#6A5030',
+                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
+                }}>Cancel</button>
+              </>
+            )}
+            {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
+              <>
+                <span style={{ fontStyle: 'italic', fontSize: 13, color: '#3A6EA8' }}>Shiitake: 1💧 → 1☀️</span>
+                <button onClick={handleShiitakeSwap} style={{
+                  background: '#2A6888', border: 'none', color: '#F2EAD8',
+                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                  fontFamily: 'inherit', borderRadius: 3,
+                }}>Swap</button>
+              </>
+            )}
+            {selectedAction === 'plant' && !plantSecondary && !inkyCapPendingTileId && isHumanTurn && (
+              <span style={{ fontStyle: 'italic', fontSize: 13, color: selectedCardId != null ? '#8B6F47' : '#8A7848' }}>
+                {selectedCardId != null ? '✓ Card selected — click an owned tile' : 'Click a card to select for planting'}
+              </span>
+            )}
+            {feedback && !plantSecondary && !inkyCapPendingTileId && selectedAction !== 'plant' && (
+              <span style={{ fontStyle: 'italic', fontSize: 13, color: '#8A7848' }}>{feedback}</span>
+            )}
           </div>
-        </div>
-      )}
 
-      {!isHumanTurn && !state.isOver && !showAnnouncement && !aiSummary && (
-        <div style={{
-          borderTop: '1px solid #C8B88A',
-          padding: '12px 16px', textAlign: 'center',
-          color: currentPlayer.color, fontSize: 13, fontWeight: 600,
-          background: '#DDD0B0',
-        }}>
-          {currentPlayer.name} is thinking…
+          {selectedAction === 'draw' && isHumanTurn && (
+            <button
+              onClick={handleDrawAgain}
+              disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
+              style={{
+                padding: '5px 14px', background: 'rgba(196,136,32,0.15)',
+                border: '1px solid #C48820', color: '#8A5C10', cursor: 'pointer',
+                fontFamily: 'inherit', fontSize: 12, fontWeight: 700, flexShrink: 0, borderRadius: 3,
+              }}
+            >+ Draw Card ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
+          )}
         </div>
-      )}
 
+        {/* Hand cards */}
+        <div style={{ padding: '8px 12px', overflowX: 'auto', overflowY: 'visible' }}>
+          <HandDisplay
+            state={state}
+            playerId={currentPlayer.id}
+            selectedCardId={selectedCardId}
+            plantMode={selectedAction === 'plant' && !plantSecondary && isHumanTurn}
+            onSelectCard={handleSelectCard}
+          />
+        </div>
+      </div>
+
+      {/* ══ OVERLAYS ══ */}
       {showAnnouncement && !state.isOver && (
         <TurnAnnouncement
           player={currentPlayer}
@@ -693,6 +1052,78 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
 
       {state.isOver && (
         <GameOverScreen state={state} onNewGame={onNewGame} />
+      )}
+
+      {/* ══ ALMANAC OVERLAY ══ */}
+      {showAlmanac && (
+        <div
+          onClick={() => setShowAlmanac(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(26,20,8,0.5)', zIndex: 100,
+            backdropFilter: 'blur(3px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: '#EAE0C8', border: '1px solid #C8B88A',
+              padding: '28px 32px', maxWidth: 940, width: '100%',
+              boxShadow: '0 8px 40px rgba(26,20,8,0.25)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+              <div>
+                <div style={{ fontSize: 11, letterSpacing: 3, color: '#8A7848', textTransform: 'uppercase' }}>Seasonal</div>
+                <div style={{ fontSize: 36, fontWeight: 700, color: '#1A1408' }}>Almanac</div>
+              </div>
+              <button
+                onClick={() => setShowAlmanac(false)}
+                style={{
+                  background: 'transparent', border: '1px solid #C8B88A',
+                  color: '#6A5030', cursor: 'pointer', width: 38, height: 38,
+                  fontFamily: 'inherit', fontSize: 20,
+                }}
+              >×</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+              {SEASONS.map((s, si) => {
+                const e = EFFECT_INFO[state.forecast[s] as string] ?? { label: state.forecast[s] as string, kind: 'neutral', desc: '' };
+                const smeta = SEASON_UI[s];
+                const cur = s === season;
+                const past = si < SEASONS.indexOf(season);
+                return (
+                  <div key={s} style={{
+                    padding: '18px 16px',
+                    border: `1.5px solid ${cur ? smeta.color : '#C8B88A'}`,
+                    background: cur ? smeta.bg : '#DDD0B0',
+                    opacity: past ? 0.55 : 1, position: 'relative', borderRadius: 4,
+                  }}>
+                    {cur && (
+                      <div style={{
+                        position: 'absolute', top: 0, right: 0,
+                        background: smeta.color, color: '#EAE0C8',
+                        fontSize: 9, letterSpacing: 2, padding: '3px 8px', textTransform: 'uppercase',
+                        borderBottomLeftRadius: 4,
+                      }}>NOW</div>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                      <span style={{ fontSize: 16 }}>{smeta.icon}</span>
+                      <span style={{ fontSize: 11, letterSpacing: 1.5, color: smeta.color, textTransform: 'uppercase', fontWeight: 700 }}>{smeta.label}</span>
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: '#1A1408', marginBottom: 8, lineHeight: 1.2 }}>{e.label}</div>
+                    <div style={{ fontStyle: 'italic', fontSize: 14, color: '#6A5030', lineHeight: 1.5 }}>{e.desc}</div>
+                    <div style={{
+                      marginTop: 12, fontSize: 10, letterSpacing: 1.5, fontWeight: 600,
+                      color: KIND_COLOR[e.kind] ?? '#8A7848',
+                      textTransform: 'uppercase', padding: '4px 0', borderTop: '1px solid #C8B88A',
+                    }}>{e.kind}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
