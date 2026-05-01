@@ -27,11 +27,18 @@ function pickStartingAdjacent(
   return [adj[0], adj[1]];
 }
 
+export interface OrderEntry {
+  playerId: string;
+  name: string;
+  color: string;
+  cardId: number;
+}
+
 // Each player draws one card; highest pts goes first. Tiebreak: highest cost.
 function determinePlayerOrder(
   players: Player[],
   deck: number[],
-): { orderedPlayers: Player[]; remainingDeck: number[] } {
+): { orderedPlayers: Player[]; remainingDeck: number[]; orderEntries: OrderEntry[] } {
   const cardMap = new Map(CARDS.map(c => [c.id, c]));
   const drawn: { player: Player; cardId: number }[] = [];
   let remaining = [...deck];
@@ -59,12 +66,13 @@ function determinePlayerOrder(
   return {
     orderedPlayers: drawn.map((d, i) => ({ ...d.player, turnOrder: i })),
     remainingDeck: [...drawnIds, ...remaining],
+    orderEntries: drawn.map(d => ({ playerId: d.player.id, name: d.player.name, color: d.player.color, cardId: d.cardId })),
   };
 }
 
 // ── Main initialiser ──────────────────────────────────────────────────────────
 
-export function createInitialGameState(drafts: PlayerDraft[]): GameState {
+export function createInitialGameState(drafts: PlayerDraft[]): { state: GameState; orderCards: OrderEntry[] } {
   const playerCount = drafts.length;
   const { tiles: rawTiles, spawnTileIds } = generateBoard(playerCount);
 
@@ -94,7 +102,7 @@ export function createInitialGameState(drafts: PlayerDraft[]): GameState {
   }
 
   let deck = buildInitialDeck();
-  const { orderedPlayers, remainingDeck } = determinePlayerOrder(basePlayers, deck);
+  const { orderedPlayers, remainingDeck, orderEntries } = determinePlayerOrder(basePlayers, deck);
   deck = remainingDeck;
 
   // Deal starting hands
@@ -113,20 +121,23 @@ export function createInitialGameState(drafts: PlayerDraft[]): GameState {
   const forecast = selectSeasonalEffects();
 
   return {
-    players,
-    currentPlayerIndex: 0,
-    currentTurn: 1,
-    phase: 'action',
-    turnState: EMPTY_TURN_STATE,
-    tiles,
-    placedMushrooms: [],
-    deck,
-    discard: [],
-    forecast,
-    blightTileIds: [],
-    spreadCostOverrides: {},
-    pigskinBlocks: [],
-    pendingFreeSpreads: [],
-    isOver: false,
+    state: {
+      players,
+      currentPlayerIndex: 0,
+      currentTurn: 1,
+      phase: 'action',
+      turnState: EMPTY_TURN_STATE,
+      tiles,
+      placedMushrooms: [],
+      deck,
+      discard: [],
+      forecast,
+      blightTileIds: [],
+      spreadCostOverrides: {},
+      pigskinBlocks: [],
+      pendingFreeSpreads: [],
+      isOver: false,
+    },
+    orderCards: orderEntries,
   };
 }

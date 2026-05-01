@@ -4,19 +4,24 @@ import { PlayerSetup } from './agents/turn/PlayerSetup';
 import type { PlayerDraft } from './agents/turn/PlayerSetup';
 import { GameScreen } from './game/GameScreen';
 import { DraftPhaseScreen } from './game/DraftPhaseScreen';
+import { OrderRevealScreen } from './game/OrderRevealScreen';
 import { BalancePanel } from './agents/balance';
 import { LandingPage } from './game/LandingPage';
 import { createInitialGameState } from './agents/simulation/gameInit';
+import type { OrderEntry } from './agents/simulation/gameInit';
 
-type Screen = 'landing' | 'setup' | 'draft' | 'game' | 'balance';
+type Screen = 'landing' | 'setup' | 'order-reveal' | 'draft' | 'game' | 'balance';
 
 export function App() {
   const [screen, setScreen] = useState<Screen>('landing');
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const [orderCards, setOrderCards] = useState<OrderEntry[]>([]);
 
   function handleSetupConfirm(players: PlayerDraft[]) {
-    setGameState(createInitialGameState(players));
-    setScreen('draft');
+    const { state, orderCards: cards } = createInitialGameState(players);
+    setGameState(state);
+    setOrderCards(cards);
+    setScreen('order-reveal');
   }
 
   function handleDraftConfirm(draftedState: GameState) {
@@ -45,6 +50,15 @@ export function App() {
           </button>
         </div>
       </div>
+    );
+  }
+
+  if (screen === 'order-reveal') {
+    return (
+      <OrderRevealScreen
+        orderCards={orderCards}
+        onContinue={() => setScreen('draft')}
+      />
     );
   }
 
