@@ -37,9 +37,9 @@ export function HandDisplay({
   return (
     <div style={{
       display: 'flex', gap: 8, overflowX: 'auto',
-      padding: '4px 0 4px', alignItems: 'flex-end',
+      padding: '48px 0 4px', alignItems: 'flex-end',
     }}>
-      {player.hand.map(cardId => {
+      {player.hand.map((cardId, idx) => {
         const card = getCard(cardId);
         const affordable = player.resources.spore >= card.cost;
 
@@ -50,6 +50,10 @@ export function HandDisplay({
 
         const isSelected = selectedCardId === cardId;
         const isHovered = hoveredCardId === cardId;
+
+        const isFirst = idx === 0;
+        const isLast = idx === player.hand.length - 1;
+        const origin = isFirst ? 'bottom left' : isLast ? 'bottom right' : 'bottom center';
 
         // Compute transform: hovered → scale up to full size; selected → lift; both → combine
         let transform = 'none';
@@ -68,7 +72,7 @@ export function HandDisplay({
               zoom: CARD_SCALE,
               opacity: plantMode && !plantable ? 0.35 : 1,
               transform,
-              transformOrigin: 'bottom center',
+              transformOrigin: origin,
               transition: 'transform 0.18s ease, opacity 0.15s',
               cursor: plantMode && plantable ? 'pointer' : 'default',
               outline: isSelected ? `2px solid #1A1408` : 'none',

@@ -49,6 +49,7 @@ interface BoardProps {
   highlightedTileIds?: Set<string>;
   selectedTileId?: string | null;
   onTileClick?: (tileId: string) => void;
+  recentlyPlantedTileId?: string | null;
 }
 
 function ownerColor(tile: Tile, state: GameState): string | null {
@@ -527,6 +528,7 @@ export function BoardComponent({
   highlightedTileIds = new Set(),
   selectedTileId = null,
   onTileClick,
+  recentlyPlantedTileId = null,
 }: BoardProps) {
   const [hoveredTileId, setHoveredTileId] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
@@ -583,6 +585,21 @@ export function BoardComponent({
         height={height}
         style={{ display: 'block', position: 'relative', zIndex: 1 }}
       >
+        <defs>
+          <style>{`
+            @keyframes tilePlant {
+              0%   { opacity: 0.75; transform: scale(0.7); }
+              55%  { opacity: 0.4;  transform: scale(1.15); }
+              100% { opacity: 0;    transform: scale(1.0); }
+            }
+            .tile-plant-anim {
+              animation: tilePlant 0.6s ease-out forwards;
+              transform-box: fill-box;
+              transform-origin: center center;
+              pointer-events: none;
+            }
+          `}</style>
+        </defs>
         <HabitatDefs prefix="g" />
 
         {tiles.map(tile => {
@@ -664,6 +681,16 @@ export function BoardComponent({
                     cy={center.y}
                     s={TILE_SIZE}
                     color={TYPE_COLORS[card.type] ?? '#888'}
+                  />
+                )}
+
+                {/* Plant animation flash */}
+                {tile.id === recentlyPlantedTileId && (
+                  <polygon
+                    key={`anim-${tile.id}`}
+                    points={artPoints}
+                    fill="#ffffff"
+                    className="tile-plant-anim"
                   />
                 )}
               </g>

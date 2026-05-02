@@ -199,8 +199,15 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   const [inkyCapPendingTileId, setInkyCapPendingTileId] = useState<string | null>(null);
   const [showAlmanac, setShowAlmanac] = useState(false);
   const [forecastOpen, setForecastOpen] = useState(true);
+  const [recentlyPlantedTileId, setRecentlyPlantedTileId] = useState<string | null>(null);
 
   const seasonModalShownForTurn = useRef<number>(-1);
+
+  useEffect(() => {
+    if (!recentlyPlantedTileId) return;
+    const id = setTimeout(() => setRecentlyPlantedTileId(null), 650);
+    return () => clearTimeout(id);
+  }, [recentlyPlantedTileId]);
 
   const currentPlayer = state.players[state.currentPlayerIndex];
   const isHumanTurn = currentPlayer.id === HUMAN_PLAYER_ID;
@@ -210,6 +217,12 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   const effectInfo = EFFECT_INFO[state.forecast[season] as string] ?? { label: state.forecast[season] as string, kind: 'neutral', desc: '' };
   const turnInSeasonNum = state.currentTurn - SEASON_TURNS[season][0] + 1;
   const hasActionThisTurn = state.turnState.actionType !== null || state.turnState.restUsed;
+  const drawCost = state.turnState.cardsDrawnThisTurn + 1;
+  const selectedCard = selectedCardId != null ? getCard(selectedCardId) : null;
+  const spreadTileCount = isHumanTurn && !state.isOver
+    ? computeSpreadTiles(state, currentPlayer.id).size : 0;
+  const drawPending = selectedAction === 'draw' && state.turnState.cardsDrawnThisTurn === 0;
+  const restPending = selectedAction === 'rest' && !state.turnState.restUsed;
 
   // Derived: Shiitake (id 3) swap availability
   const hasShiitakeOnBoard = isHumanTurn && state.placedMushrooms.some(
@@ -327,30 +340,17 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
 
   const handleSelectAction = useCallback((action: ActionType) => {
     if (action === 'draw') {
-      try {
-        setState(prev => resolveDrawAction(prev, currentPlayer.id, { count: 1 }));
-        setUndoState(null);
-        setSelectedAction('draw');
-        setPlantSecondary(null);
-        setHighlightedTiles(new Set());
-        setFeedback('Drew 1 card.');
-      } catch (e: unknown) {
-        setFeedback(e instanceof Error ? e.message : 'Cannot draw.');
-      }
+      setSelectedAction('draw');
+      setPlantSecondary(null);
+      setHighlightedTiles(new Set());
+      setFeedback('');
       return;
     }
 
     if (action === 'rest') {
-      try {
-        setUndoState(state);
-        setState(prev => resolveRestAction(prev, currentPlayer.id));
-        setSelectedAction('rest');
-        setHighlightedTiles(new Set());
-        setFeedback('Rested. +1🍄💧☀️');
-      } catch (e: unknown) {
-        setUndoState(null);
-        setFeedback(e instanceof Error ? e.message : 'Cannot rest.');
-      }
+      setSelectedAction('rest');
+      setHighlightedTiles(new Set());
+      setFeedback('');
       return;
     }
 
@@ -370,6 +370,27 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       setHighlightedTiles(new Set());
       setFeedback('');
       return;
+    }
+  }, [state, currentPlayer]);
+
+  const handleConfirmDraw = useCallback(() => {
+    try {
+      setState(prev => resolveDrawAction(prev, currentPlayer.id, { count: 1 }));
+      setUndoState(null);
+      setFeedback('Drew 1 card.');
+    } catch (e: unknown) {
+      setFeedback(e instanceof Error ? e.message : 'Cannot draw.');
+    }
+  }, [currentPlayer]);
+
+  const handleConfirmRest = useCallback(() => {
+    try {
+      setUndoState(state);
+      setState(prev => resolveRestAction(prev, currentPlayer.id));
+      setFeedback('Rested. +1🍄💧☀️');
+    } catch (e: unknown) {
+      setUndoState(null);
+      setFeedback(e instanceof Error ? e.message : 'Cannot rest.');
     }
   }, [state, currentPlayer]);
 
@@ -506,6 +527,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       try {
         if (canUndo) setUndoState(state);
         setState(prev => resolvePlantAction(prev, currentPlayer.id, selectedCardId, tileId));
+        setRecentlyPlantedTileId(tileId);
         setSelectedCardId(null);
         setHighlightedTiles(new Set());
         setFeedback(canUndo ? 'Mushroom spawned!' : 'Mushroom spawned! (cannot undo)');
@@ -528,12 +550,37 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   }, [currentPlayer]);
 
   const handleActionSelect = useCallback((action: ActionType) => {
-    if (action === 'draw' && selectedAction === 'draw') {
+    if (action === 'draw' && selectedAction === 'draw' && state.turnState.cardsDrawnThisTurn > 0) {
       handleDrawAgain();
     } else {
       handleSelectAction(action);
     }
-  }, [selectedAction, handleDrawAgain, handleSelectAction]);
+  }, [selectedAction, state.turnState.cardsDrawnThisTurn, handleDrawAgain, handleSelectAction]);
+
+  const handleSkipTurn = useCallback(() => {
+    if (!isHumanTurn || state.isOver) return;
+    try {
+      setState(prev => {
+        let s = resolveCollectPhase(prev, currentPlayer.id, {});
+        const endedTurn = s.currentTurn;
+        s = advanceTurn(s);
+        if (s.currentPlayerIndex === 0 && isSeasonEnd(endedTurn)) s = applySeasonEnd(s, endedTurn);
+        if (s.isOver) s = resolveFinalHarvestBonus(s);
+        if (isSeasonStart(s.currentTurn) && s.currentPlayerIndex === 0) s = applySeasonStart(s);
+        return s;
+      });
+      setSelectedAction(null);
+      setSelectedCardId(null);
+      setPlantSecondary(null);
+      setInkyCapPendingTileId(null);
+      setHighlightedTiles(new Set());
+      setFeedback('');
+      setUndoState(null);
+      setShowAnnouncement(true);
+    } catch (e: unknown) {
+      setFeedback(e instanceof Error ? e.message : 'Error skipping turn.');
+    }
+  }, [isHumanTurn, state, currentPlayer]);
 
   const handleEndTurn = useCallback(() => {
     if (!isHumanTurn) return;
@@ -749,24 +796,25 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           {isHumanTurn && !state.isOver && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '12px 6px 6px', flexShrink: 0, borderTop: '1px solid #C8B88A' }}>
               {([
-                { id: 'plant'  as ActionType, icon: '◉', label: 'Spawn',  sub: 'card cost', color: '#8B6F47' },
-                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: 'scales💧', color: '#3A6EA8' },
-                { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: '1☀/card',  color: '#C48820' },
-                { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030' },
+                { id: 'plant'  as ActionType, icon: '◉', label: 'Spawn',  sub: selectedCard ? `${selectedCard.cost}🍄 cost` : 'card cost', color: '#8B6F47', disabled: false },
+                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: spreadTileCount === 0 ? 'no tiles' : `${spreadTileCount} tile${spreadTileCount !== 1 ? 's' : ''} 💧`, color: '#3A6EA8', disabled: spreadTileCount === 0 },
+                { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: `${drawCost}☀️ to draw`, color: '#C48820', disabled: false },
+                { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030', disabled: false },
               ]).map(a => {
                 const isActive = selectedAction === a.id;
                 const noAction = selectedAction === null;
+                const clickable = (noAction || isActive) && !a.disabled;
                 return (
                   <button
                     key={a.id}
-                    onClick={() => { if (noAction || isActive) handleActionSelect(a.id); }}
+                    onClick={() => { if (clickable) handleActionSelect(a.id); }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 7, padding: '8px 8px',
                       border: `1px solid ${isActive ? a.color : `${a.color}50`}`,
                       background: isActive ? `${a.color}22` : `${a.color}0C`,
                       color: isActive ? a.color : '#1A1408',
-                      cursor: (noAction || isActive) ? 'pointer' : 'default',
-                      opacity: (!noAction && !isActive) ? 0.35 : 1,
+                      cursor: clickable ? 'pointer' : a.disabled ? 'not-allowed' : 'default',
+                      opacity: a.disabled ? 0.25 : (!noAction && !isActive) ? 0.35 : 1,
                       transition: 'all 130ms', textAlign: 'left',
                       borderRadius: 3, fontFamily: 'inherit',
                     }}
@@ -779,6 +827,25 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
                   </button>
                 );
               })}
+            </div>
+          )}
+
+          {/* Confirm button for Draw / Rest */}
+          {isHumanTurn && !state.isOver && (drawPending || restPending) && (
+            <div style={{ padding: '4px 6px', flexShrink: 0 }}>
+              <button
+                onClick={drawPending ? handleConfirmDraw : handleConfirmRest}
+                style={{
+                  width: '100%', padding: '10px 6px',
+                  background: 'rgba(58,104,40,0.18)',
+                  border: '1.5px solid rgba(58,104,40,0.7)',
+                  color: '#3A6828', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
+                  borderRadius: 3,
+                }}
+              >
+                ✓ Confirm {drawPending ? 'Draw' : 'Rest'}
+              </button>
             </div>
           )}
 
@@ -828,6 +895,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
             state={state}
             highlightedTileIds={highlightedTiles}
             onTileClick={isHumanTurn ? handleTileClick : undefined}
+            recentlyPlantedTileId={recentlyPlantedTileId}
           />
 
           {/* Action hint */}
@@ -981,17 +1049,31 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
             )}
           </div>
 
-          {selectedAction === 'draw' && isHumanTurn && (
-            <button
-              onClick={handleDrawAgain}
-              disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
-              style={{
-                padding: '5px 14px', background: 'rgba(196,136,32,0.15)',
-                border: '1px solid #C48820', color: '#8A5C10', cursor: 'pointer',
-                fontFamily: 'inherit', fontSize: 12, fontWeight: 700, flexShrink: 0, borderRadius: 3,
-              }}
-            >+ Draw Card ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
-          )}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+            {selectedAction === 'draw' && isHumanTurn && state.turnState.cardsDrawnThisTurn > 0 && (
+              <button
+                onClick={handleDrawAgain}
+                disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
+                style={{
+                  padding: '5px 14px', background: 'rgba(196,136,32,0.15)',
+                  border: '1px solid #C48820', color: '#8A5C10', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
+                }}
+              >+ Draw Card ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
+            )}
+            {isHumanTurn && !state.isOver && (
+              <button
+                onClick={handleSkipTurn}
+                style={{
+                  padding: '5px 14px',
+                  background: 'rgba(200,72,32,0.12)',
+                  border: '1px solid rgba(200,72,32,0.45)',
+                  color: '#C84820', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
+                }}
+              >Skip Turn</button>
+            )}
+          </div>
         </div>
 
         {/* Hand cards */}
