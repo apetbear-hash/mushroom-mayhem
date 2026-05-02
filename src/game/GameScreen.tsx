@@ -57,11 +57,11 @@ const EFFECT_INFO: Record<string, { label: string; kind: string; desc: string }>
   blight:             { label: 'Blight',              kind: 'negative', desc: 'Season start: 3–5 tiles become blighted forever' },
   long_summer:        { label: 'Long Summer',         kind: 'positive', desc: 'Copies the Summer effect into Autumn' },
   decay_bloom:        { label: 'Decay Bloom',         kind: 'risk',     desc: 'Decay tiles give +2 resources/turn, but score 0' },
-  deep_freeze:        { label: 'Deep Freeze',         kind: 'negative', desc: 'No spreading allowed. Spread cards disabled' },
-  mycelium_harmony:   { label: 'Mycelium Harmony',    kind: 'positive', desc: 'Score = length of longest same-type mushroom chain' },
+  deep_freeze:        { label: 'Deep Freeze',         kind: 'negative', desc: 'Your mushroom colony is frozen. Spreading is not possible.' },
+  mycelium_harmony:   { label: 'Mycelium Harmony',    kind: 'positive', desc: 'Each collect: +1 point per mushroom in your longest adjacently-connected chain of same-type mushrooms.' },
   mild_winter:        { label: 'Mild Winter',         kind: 'neutral',  desc: 'No special effect this season' },
   winter_stores:      { label: 'Winter Stores',       kind: 'positive', desc: 'Turn start: +2 🍄💧☀️ for all players' },
-  final_harvest:      { label: 'Final Harvest',       kind: 'risk',     desc: 'No resources from mushrooms. Season end: +1 ⭐ per 3 unspent resources' },
+  final_harvest:      { label: 'Final Harvest',       kind: 'risk',     desc: 'Each mushroom generates only 1 resource per turn. Season end: +1 ⭐ per 3 unspent resources' },
 };
 
 interface GameScreenProps {

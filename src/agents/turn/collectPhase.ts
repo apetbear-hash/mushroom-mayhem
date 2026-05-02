@@ -48,12 +48,9 @@ function resolveMushroomGeneration(
     return { resourceDelta: {}, scoreBonus: 0 };
   }
 
-  // Final Harvest: no resource generation this season (immune cards still generate)
+  // Final Harvest: each mushroom generates at most 1 of each resource type (immune cards unaffected)
   const isWinter = season === 'winter';
-  if (isWinter && effect === 'final_harvest' && !isFullySeasonImmune) {
-    const ongoing = applyOngoingCollect(mushroom, state, player, opts);
-    return { resourceDelta: {}, scoreBonus: ongoing.scoreBonus };
-  }
+  const isFinalHarvestCapped = isWinter && effect === 'final_harvest' && !isFullySeasonImmune;
 
   // Base resource generation from card definition
   const base: Partial<ResourceBundle> = { ...card.generates };
@@ -130,6 +127,13 @@ function resolveMushroomGeneration(
       : null;
   if (activeSummerForPoints === 'abundant_canopy' && tile?.habitat === 'shade') {
     scoreBonus += 1;
+  }
+
+  // Final Harvest: cap each resource type at 1
+  if (isFinalHarvestCapped) {
+    for (const res of Object.keys(resourceDelta) as (keyof ResourceBundle)[]) {
+      if ((resourceDelta[res] ?? 0) > 1) resourceDelta[res] = 1;
+    }
   }
 
   return { resourceDelta, scoreBonus };

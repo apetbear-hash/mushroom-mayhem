@@ -438,6 +438,36 @@ function MushroomTileArt({
   return null;
 }
 
+// ── Blight tooltip ────────────────────────────────────────────────────────────
+
+function BlightTooltip({ pos }: { pos: { x: number; y: number } }) {
+  const TW = 200, TH = 64, margin = 12;
+  let tx = pos.x + 18;
+  let ty = pos.y - TH / 2;
+  if (tx + TW > window.innerWidth  - margin) tx = pos.x - TW - 8;
+  if (ty < margin)                           ty = margin;
+  if (ty + TH > window.innerHeight - margin) ty = window.innerHeight - TH - margin;
+
+  return (
+    <div style={{
+      position: 'fixed', left: tx, top: ty, width: TW,
+      zIndex: 300, pointerEvents: 'none',
+      borderRadius: 6, overflow: 'hidden',
+      border: '1.5px solid #cc44ff66',
+      background: '#F2EAD8',
+      boxShadow: '0 8px 32px rgba(14,9,7,0.55)',
+      fontFamily: "'Cormorant Garamond', Georgia, serif",
+    }}>
+      <div style={{ background: '#9933cc', padding: '5px 10px', fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
+        Blighted
+      </div>
+      <div style={{ padding: '8px 10px', fontSize: 12, color: '#3A2810', lineHeight: 1.4, fontStyle: 'italic' }}>
+        Mushrooms cannot grow on blight tiles.
+      </div>
+    </div>
+  );
+}
+
 // ── Hover tooltip ─────────────────────────────────────────────────────────────
 
 function TileTooltip({
@@ -739,29 +769,21 @@ export function BoardComponent({
                 </>
               )}
 
-              {/* Blight X */}
-              {tile.isBlight && (
-                <text
-                  x={center.x} y={center.y + 6}
-                  textAnchor="middle" fontSize={TILE_SIZE * 0.45}
-                  fill="#cc44ff" fillOpacity={0.7} fontFamily="sans-serif"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  ✕
-                </text>
-              )}
 
             </g>
           );
         })}
       </svg>
 
-      {hoveredTile && hoveredMushroom && (
+      {hoveredTile && hoveredMushroom && !hoveredTile.isBlight && (
         <TileTooltip
           cardId={hoveredMushroom.cardId}
           habitat={hoveredTile.habitat}
           pos={tooltipPos}
         />
+      )}
+      {hoveredTile?.isBlight && (
+        <BlightTooltip pos={tooltipPos} />
       )}
     </div>
   );
