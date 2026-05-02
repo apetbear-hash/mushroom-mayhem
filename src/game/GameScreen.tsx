@@ -759,7 +759,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
               {([
                 { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: '1☀/card',  color: '#C48820' },
                 { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: 'scales💧', color: '#3A6EA8' },
-                { id: 'plant'  as ActionType, icon: '◉', label: 'Plant',  sub: 'card cost', color: '#8B6F47' },
+                { id: 'plant'  as ActionType, icon: '◉', label: 'Spawn',  sub: 'card cost', color: '#8B6F47' },
                 { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030' },
               ]).map(a => {
                 const isActive = selectedAction === a.id;
@@ -770,11 +770,11 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
                     onClick={() => { if (noAction || isActive) handleActionSelect(a.id); }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 7, padding: '8px 8px',
-                      border: `1px solid ${isActive ? a.color : noAction ? '#C8B88A' : 'transparent'}`,
-                      background: isActive ? `${a.color}18` : 'transparent',
-                      color: isActive ? a.color : noAction ? '#1A1408' : '#8A7848',
+                      border: `1px solid ${isActive ? a.color : `${a.color}50`}`,
+                      background: isActive ? `${a.color}22` : `${a.color}0C`,
+                      color: isActive ? a.color : '#1A1408',
                       cursor: (noAction || isActive) ? 'pointer' : 'default',
-                      opacity: (!noAction && !isActive) ? 0.4 : 1,
+                      opacity: (!noAction && !isActive) ? 0.35 : 1,
                       transition: 'all 130ms', textAlign: 'left',
                       borderRadius: 3, fontFamily: 'inherit',
                     }}
@@ -804,13 +804,6 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
                   border: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
                   fontFamily: 'inherit', fontSize: 12, width: '100%', borderRadius: 3,
                 }}>↩ Undo</button>
-              )}
-              {selectedAction !== null && (
-                <button onClick={handleCancel} style={{
-                  padding: '7px 6px', background: 'transparent',
-                  border: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
-                  fontFamily: 'inherit', fontSize: 12, width: '100%', borderRadius: 3,
-                }}>× Cancel</button>
               )}
               {hasActionThisTurn && (
                 <button onClick={handleEndTurn} style={{
