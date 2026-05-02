@@ -715,7 +715,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
         }}>
           {/* Active player + resources */}
-          <div style={{ padding: '10px 10px 8px', borderBottom: '1px solid #C8B88A', flexShrink: 0 }}>
+          <div style={{ padding: '10px 10px 8px', flexShrink: 0 }}>
             <div style={{
               fontSize: 10, letterSpacing: 1, color: currentPlayer.color,
               textTransform: 'uppercase', marginBottom: 7, fontWeight: 700,
@@ -747,11 +747,11 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
 
           {/* Action buttons */}
           {isHumanTurn && !state.isOver && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '6px 6px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '12px 6px 6px', flexShrink: 0, borderTop: '1px solid #C8B88A' }}>
               {([
-                { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: '1☀/card',  color: '#C48820' },
-                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: 'scales💧', color: '#3A6EA8' },
                 { id: 'plant'  as ActionType, icon: '◉', label: 'Spawn',  sub: 'card cost', color: '#8B6F47' },
+                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: 'scales💧', color: '#3A6EA8' },
+                { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: '1☀/card',  color: '#C48820' },
                 { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030' },
               ]).map(a => {
                 const isActive = selectedAction === a.id;
