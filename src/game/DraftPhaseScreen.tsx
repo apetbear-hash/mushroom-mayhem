@@ -132,8 +132,9 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
 
         {/* Cards */}
         <div style={{
-          display: 'flex', gap: 14, justifyContent: 'center',
-          flexWrap: 'wrap', marginBottom: 20,
+          display: 'flex', gap: 14,
+          overflowX: 'auto', marginBottom: 20,
+          paddingBottom: 8,
         }}>
           {humanPlayer.hand.map(cardId => {
             const card = getCard(cardId);
