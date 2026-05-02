@@ -26,6 +26,7 @@ import { HandDisplay } from './HandDisplay';
 import { GameOverScreen } from './GameOverScreen';
 import { SeasonEffectModal } from './SeasonEffectModal';
 import { AISummaryOverlay, generateAISummary } from './AISummaryOverlay';
+import { DevPanel } from './DevPanel';
 import type { AISummary } from './AISummaryOverlay';
 import { SEASONS, SEASON_TURNS } from '../shared/constants';
 
@@ -66,6 +67,7 @@ const EFFECT_INFO: Record<string, { label: string; kind: string; desc: string }>
 interface GameScreenProps {
   initialState: GameState;
   onNewGame: () => void;
+  devMode?: boolean;
 }
 
 // Human player is always the first draft entry — id 'player_0' regardless of turn order.
@@ -180,7 +182,7 @@ function hasAnyValidAction(state: GameState, playerId: string): boolean {
   return false;
 }
 
-export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
+export function GameScreen({ initialState, onNewGame, devMode = false }: GameScreenProps) {
   const [state, setState] = useState<GameState>(() => {
     if (isSeasonStart(initialState.currentTurn)) {
       return applySeasonStart(initialState);
@@ -1144,6 +1146,8 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       {state.isOver && (
         <GameOverScreen state={state} onNewGame={onNewGame} />
       )}
+
+      {devMode && <DevPanel state={state} onStateChange={setState} />}
 
       {/* ══ ALMANAC OVERLAY ══ */}
       {showAlmanac && (

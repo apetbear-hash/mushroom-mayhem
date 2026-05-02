@@ -8,7 +8,7 @@ export interface PlayerDraft {
 }
 
 interface PlayerSetupProps {
-  onConfirm: (players: PlayerDraft[]) => void;
+  onConfirm: (players: PlayerDraft[], devMode: boolean) => void;
 }
 
 const MAX_SLOTS = 4;
@@ -137,6 +137,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
 
 export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
   const [slots, setSlots] = useState<SlotState[]>(buildInitialSlots());
+  const [devMode, setDevMode] = useState(false);
 
   const activeSlots = slots.filter(s => s.active);
   const takenPortraits = new Set(slots.filter(s => s.active).map(s => s.portrait));
@@ -153,7 +154,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
       name: `Player ${i + 1}`,
       portrait: s.portrait,
       color: s.color,
-    })));
+    })), devMode);
   }
 
   return (
@@ -189,6 +190,24 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
           ? 'Maximum 4 players.'
           : `${activeSlots.length} players ready.`}
       </div>
+
+      <button
+        onClick={() => setDevMode(v => !v)}
+        style={{
+          marginTop: 24,
+          background: devMode ? '#1A2A0A' : 'transparent',
+          border: `1px solid ${devMode ? '#3A6A10' : '#C8B88A'}`,
+          color: devMode ? '#7AC840' : '#8A7848',
+          borderRadius: 6,
+          padding: '6px 18px',
+          fontSize: 10,
+          letterSpacing: 2,
+          cursor: 'pointer',
+          fontFamily: "'JetBrains Mono', monospace",
+        }}
+      >
+        {devMode ? '⚙ DEV MODE ON' : '⚙ DEV MODE'}
+      </button>
 
       <button
         onClick={handleStart}

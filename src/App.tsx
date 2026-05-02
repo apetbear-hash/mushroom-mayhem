@@ -16,9 +16,11 @@ export function App() {
   const [screen, setScreen] = useState<Screen>('landing');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [orderCards, setOrderCards] = useState<OrderEntry[]>([]);
+  const [devMode, setDevMode] = useState(false);
 
-  function handleSetupConfirm(players: PlayerDraft[]) {
+  function handleSetupConfirm(players: PlayerDraft[], isDevMode: boolean) {
     const { state, orderCards: cards } = createInitialGameState(players);
+    setDevMode(isDevMode);
     setGameState(state);
     setOrderCards(cards);
     setScreen('order-reveal');
@@ -70,6 +72,7 @@ export function App() {
     return (
       <GameScreen
         initialState={gameState}
+        devMode={devMode}
         onNewGame={() => setScreen('setup')}
       />
     );
