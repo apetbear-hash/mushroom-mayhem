@@ -913,14 +913,12 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
                     <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1408', lineHeight: 1.2, marginBottom: 3 }}>
                       {e.label}
                     </div>
-                    {cur && (
-                      <div style={{ fontStyle: 'italic', fontSize: 13, color: '#6A5030', lineHeight: 1.4 }}>{e.desc}</div>
-                    )}
-                    {!cur && (
-                      <div style={{ fontSize: 11, color: KIND_COLOR[e.kind] ?? '#8A7848', textTransform: 'uppercase', letterSpacing: 1 }}>
-                        {e.kind}
-                      </div>
-                    )}
+                    <div style={{ fontStyle: 'italic', fontSize: 12, color: past ? '#8A7848' : '#6A5030', lineHeight: 1.4, marginBottom: 4 }}>
+                      {e.desc}
+                    </div>
+                    <div style={{ fontSize: 10, color: KIND_COLOR[e.kind] ?? '#8A7848', textTransform: 'uppercase', letterSpacing: 1 }}>
+                      {e.kind}
+                    </div>
                   </div>
                 );
               })}
