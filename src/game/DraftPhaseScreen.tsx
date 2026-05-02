@@ -81,7 +81,7 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       fontFamily: "'Cormorant Garamond', Georgia, serif", padding: 24,
     }}>
-      <div style={{ maxWidth: 860, width: '100%' }}>
+      <div style={{ maxWidth: 1060, width: '100%' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -131,11 +131,11 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
         </div>
 
         {/* Cards */}
-        <div style={{
-          display: 'flex', gap: 14,
-          overflowX: 'auto', marginBottom: 20,
-          paddingBottom: 8,
-        }}>
+        <div style={{ overflowX: 'auto', marginBottom: 20, paddingBottom: 8 }}>
+          <div style={{
+            display: 'flex', gap: 14, justifyContent: 'center',
+            minWidth: 'max-content',
+          }}>
           {humanPlayer.hand.map(cardId => {
             const card = getCard(cardId);
             const isMarked = markedForDiscard.has(cardId);
@@ -147,6 +147,7 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
                 onClick={() => !isDisabled && toggleCard(cardId)}
                 style={{
                   position: 'relative',
+                  zoom: 0.9,
                   transform: isMarked ? 'translateY(10px)' : 'none',
                   transition: 'transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s',
                   opacity: isDisabled ? 0.3 : 1,
@@ -180,6 +181,7 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
               </div>
             );
           })}
+          </div>
         </div>
 
         {/* Status line */}
