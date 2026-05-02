@@ -13,6 +13,7 @@ import {
   resolveCollectPhase,
   resolveFinalHarvestBonus,
   canSpreadTo,
+  calculateSpreadCost,
 } from '../agents/turn';
 import type { PlantOpts } from '../agents/turn/actions';
 import { canPlantOnTile, getDisruptionModifiers } from '../agents/card';
@@ -219,8 +220,13 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   const hasActionThisTurn = state.turnState.actionType !== null || state.turnState.restUsed;
   const drawCost = state.turnState.cardsDrawnThisTurn + 1;
   const selectedCard = selectedCardId != null ? getCard(selectedCardId) : null;
-  const spreadTileCount = isHumanTurn && !state.isOver
-    ? computeSpreadTiles(state, currentPlayer.id).size : 0;
+  const spreadTiles = isHumanTurn && !state.isOver
+    ? computeSpreadTiles(state, currentPlayer.id) : new Set<string>();
+  const spreadTileCount = spreadTiles.size;
+  const minSpreadCost = spreadTileCount > 0
+    ? Math.min(...Array.from(spreadTiles).map(id => calculateSpreadCost(id, currentPlayer.id, state)))
+    : 0;
+  const canAffordSpread = spreadTileCount > 0 && currentPlayer.resources.moisture >= minSpreadCost;
   const drawPending = selectedAction === 'draw' && state.turnState.cardsDrawnThisTurn === 0;
   const restPending = selectedAction === 'rest' && !state.turnState.restUsed;
 
@@ -562,6 +568,11 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
       setSelectedAction(null); // cancel pending rest
       return;
     }
+    if (action === 'spread' && selectedAction === 'spread') {
+      setSelectedAction(null); // cancel spread mode
+      setHighlightedTiles(new Set());
+      return;
+    }
     handleSelectAction(action);
   }, [selectedAction, state.turnState.cardsDrawnThisTurn, state.turnState.restUsed, handleDrawAgain, handleSelectAction]);
 
@@ -805,7 +816,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '12px 6px 6px', flexShrink: 0, borderTop: '1px solid #C8B88A' }}>
               {([
                 { id: 'plant'  as ActionType, icon: '◉', label: 'Spawn',  sub: selectedCard ? `${selectedCard.cost}🍄 cost` : 'card cost', color: '#8B6F47', disabled: false },
-                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: spreadTileCount === 0 ? 'no tiles' : `${spreadTileCount} tile${spreadTileCount !== 1 ? 's' : ''} 💧`, color: '#3A6EA8', disabled: spreadTileCount === 0 },
+                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: spreadTileCount === 0 ? 'no tiles' : !canAffordSpread ? `need ${minSpreadCost}💧` : `from ${minSpreadCost}💧`, color: '#3A6EA8', disabled: spreadTileCount === 0 || !canAffordSpread },
                 { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: `${drawCost}☀️ to draw`, color: '#C48820', disabled: false },
                 { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030', disabled: false },
               ]).map(a => {
