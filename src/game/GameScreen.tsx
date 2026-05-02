@@ -226,7 +226,11 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   const minSpreadCost = spreadTileCount > 0
     ? Math.min(...Array.from(spreadTiles).map(id => calculateSpreadCost(id, currentPlayer.id, state)))
     : 0;
-  const canAffordSpread = spreadTileCount > 0 && currentPlayer.resources.moisture >= minSpreadCost;
+  const pendingFreeSpread = state.pendingFreeSpreads.find(
+    ps => ps.playerId === currentPlayer.id && ps.spreadsRemaining > 0,
+  );
+  const hasFreeSpread = !!pendingFreeSpread;
+  const canAffordSpread = spreadTileCount > 0 && (hasFreeSpread || currentPlayer.resources.moisture >= minSpreadCost);
   const drawPending = selectedAction === 'draw' && state.turnState.cardsDrawnThisTurn === 0;
   const restPending = selectedAction === 'rest' && !state.turnState.restUsed;
 
@@ -816,7 +820,7 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '12px 6px 6px', flexShrink: 0, borderTop: '1px solid #C8B88A' }}>
               {([
                 { id: 'plant'  as ActionType, icon: '◉', label: 'Spawn',  sub: selectedCard ? `${selectedCard.cost}🍄 cost` : 'card cost', color: '#8B6F47', disabled: false },
-                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: spreadTileCount === 0 ? 'no tiles' : !canAffordSpread ? `need ${minSpreadCost}💧` : `from ${minSpreadCost}💧`, color: '#3A6EA8', disabled: spreadTileCount === 0 || !canAffordSpread },
+                { id: 'spread' as ActionType, icon: '⬡', label: 'Spread', sub: spreadTileCount === 0 ? 'no tiles' : hasFreeSpread ? `${pendingFreeSpread!.spreadsRemaining} free 🍄` : !canAffordSpread ? `need ${minSpreadCost}💧` : `from ${minSpreadCost}💧`, color: '#3A6EA8', disabled: spreadTileCount === 0 || !canAffordSpread },
                 { id: 'draw'   as ActionType, icon: '✦', label: 'Draw',   sub: `${drawCost}☀️ to draw`, color: '#C48820', disabled: false },
                 { id: 'rest'   as ActionType, icon: '◎', label: 'Rest',   sub: '+1 each',  color: '#4A8030', disabled: false },
               ]).map(a => {

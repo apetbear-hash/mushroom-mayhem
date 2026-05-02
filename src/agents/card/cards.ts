@@ -218,7 +218,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['decay', 'tree'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[On Draw] Draw 1 extra card for free.',
+    power: '[On Draw] Once per turn, your first Draw action draws 1 extra card for free.',
   },
   {
     id: 19,
@@ -230,7 +230,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['wet'],
     type: 'saprophytic',
     isOngoing: false,
-    power: '[Passive] Not affected by negative season effects. Generates 2 moisture per turn.',
+    power: '[Passive] Not affected by negative season effects.',
   },
   {
     id: 31,
@@ -364,7 +364,7 @@ export const CARDS: CardDefinition[] = [
     habitats: ['shade'],
     type: 'symbiotic',
     isOngoing: true,
-    power: '[Passive] Immune to all negative season effects. Generates 2 moisture per turn.',
+    power: '[Passive] Immune to all negative season effects.',
   },
   {
     id: 7,

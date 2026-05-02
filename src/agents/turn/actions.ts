@@ -64,8 +64,8 @@ export function resolveDrawAction(
     throw new Error('Not enough sunlight to draw.');
   }
 
-  // Lion's Mane: draw 1 extra free card alongside each paid draw.
-  const extraFree = hasLionsMane ? 1 : 0;
+  // Lion's Mane: draw 1 extra free card on the first draw of the turn only.
+  const extraFree = hasLionsMane && drawn === 0 ? 1 : 0;
   const totalDraw = count + extraFree;
 
   const working = refreshDeck(state);
