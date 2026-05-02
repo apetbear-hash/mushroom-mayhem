@@ -69,6 +69,8 @@ export function resolveDrawAction(
   const totalDraw = count + extraFree;
 
   const working = refreshDeck(state);
+  if (working.deck.length === 0) throw new Error('No cards left to draw.');
+
   const { updatedPlayer, updatedDeck } = drawCards(
     { ...player, resources: { ...player.resources, sunlight: player.resources.sunlight - sunlightCost } },
     Math.min(totalDraw, working.deck.length),
