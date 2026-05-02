@@ -224,7 +224,9 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
     ? computeSpreadTiles(state, currentPlayer.id) : new Set<string>();
   const spreadTileCount = spreadTiles.size;
   const minSpreadCost = spreadTileCount > 0
-    ? Math.min(...Array.from(spreadTiles).map(id => calculateSpreadCost(id, currentPlayer.id, state)))
+    ? Math.min(...Array.from(spreadTiles).map(id => {
+        try { return calculateSpreadCost(id, currentPlayer.id, state); } catch { return 1; }
+      }))
     : 0;
   const pendingFreeSpread = state.pendingFreeSpreads.find(
     ps => ps.playerId === currentPlayer.id && ps.spreadsRemaining > 0,
@@ -385,21 +387,22 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
 
   const handleConfirmDraw = useCallback(() => {
     try {
-      setState(prev => resolveDrawAction(prev, currentPlayer.id, { count: 1 }));
+      const next = resolveDrawAction(state, currentPlayer.id, { count: 1 });
+      setState(next);
       setUndoState(null);
       setFeedback('Drew 1 card.');
     } catch (e: unknown) {
       setFeedback(e instanceof Error ? e.message : 'Cannot draw.');
     }
-  }, [currentPlayer]);
+  }, [state, currentPlayer]);
 
   const handleConfirmRest = useCallback(() => {
     try {
+      const next = resolveRestAction(state, currentPlayer.id);
       setUndoState(state);
-      setState(prev => resolveRestAction(prev, currentPlayer.id));
+      setState(next);
       setFeedback('Rested. +1🍄💧☀️');
     } catch (e: unknown) {
-      setUndoState(null);
       setFeedback(e instanceof Error ? e.message : 'Cannot rest.');
     }
   }, [state, currentPlayer]);
