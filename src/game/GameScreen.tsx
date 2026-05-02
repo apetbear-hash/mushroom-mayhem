@@ -580,14 +580,6 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
     }
   }, [isHumanTurn, currentPlayer, state]);
 
-  const handleCancel = useCallback(() => {
-    setSelectedAction(null);
-    setSelectedCardId(null);
-    setHighlightedTiles(new Set());
-    setFeedback('');
-    setPlantSecondary(null);
-  }, []);
-
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
