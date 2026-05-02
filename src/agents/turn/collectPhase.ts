@@ -79,8 +79,8 @@ function resolveMushroomGeneration(
       if (suppression === Infinity) { val = 0; break; }
       val -= suppression;
 
-      // Sluggish Soil: −1 per resource type (min 1)
-      if (effect === 'sluggish_soil' && !isSeasonImmune) val = clamp(val - 1, 1);
+      // Sluggish Soil: wet/shade tiles −1 per resource type (min 0)
+      if (effect === 'sluggish_soil' && !isSeasonImmune && (tile?.habitat === 'wet' || tile?.habitat === 'shade')) val = clamp(val - 1, 0);
 
       // Drought: no moisture from any source (immune cards unaffected)
       if (effect === 'drought' && res === 'moisture' && !isSeasonImmune) val = 0;

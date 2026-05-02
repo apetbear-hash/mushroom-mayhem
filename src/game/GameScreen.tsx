@@ -45,7 +45,7 @@ const EFFECT_INFO: Record<string, { label: string; kind: string; desc: string }>
   spring_rain:        { label: 'Spring Rain',         kind: 'positive', desc: 'Turn start: all players gain +3 💧' },
   germination_gamble: { label: 'Germination Gamble',  kind: 'risk',     desc: 'Your turn start: discard your hand & redraw freely' },
   creeping_mist:      { label: 'Creeping Mist',       kind: 'risk',     desc: 'Shade/Wet spread −1 💧, but no resource gain on those tiles' },
-  sluggish_soil:      { label: 'Sluggish Soil',       kind: 'negative', desc: 'All players lose 1 of each resource per turn (min 1)' },
+  sluggish_soil:      { label: 'Sluggish Soil',       kind: 'negative', desc: 'Mushrooms on wet or shade tiles generate 1 less of each resource (min 0)' },
   long_days:          { label: 'Long Days',           kind: 'positive', desc: 'All mushrooms generate +1 🍄 per harvest' },
   abundant_canopy:    { label: 'Abundant Canopy',     kind: 'positive', desc: 'Shade mushrooms earn +1 ⭐ per turn' },
   drought:            { label: 'Drought',             kind: 'negative', desc: 'Turn start: 💧→0. No moisture gain this season' },

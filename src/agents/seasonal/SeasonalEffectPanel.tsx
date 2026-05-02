@@ -20,7 +20,7 @@ const EFFECT_META: Record<string, EffectMeta> = {
   spring_rain:        { name: 'Spring Rain',         type: 'positive', lines: ['Start: all gain +3 💧'] },
   germination_gamble: { name: 'Germination Gamble',  type: 'risk',     lines: ['Your turn start: discard', '& redraw freely'] },
   creeping_mist:      { name: 'Creeping Mist',       type: 'risk',     lines: ['Shade/Wet spread −1 💧', 'but no resources there'] },
-  sluggish_soil:      { name: 'Sluggish Soil',       type: 'negative', lines: ['All −1 resource/turn (min 1)'] },
+  sluggish_soil:      { name: 'Sluggish Soil',       type: 'negative', lines: ['Wet/shade tiles −1 resource (min 0)'] },
   long_days:          { name: 'Long Days',           type: 'positive', lines: ['All mushrooms +1 🍄/harvest'] },
   abundant_canopy:    { name: 'Abundant Canopy',     type: 'positive', lines: ['Shade mushrooms +1 ⭐/turn'] },
   drought:            { name: 'Drought',             type: 'negative', lines: ['Start: 💧→0. No 💧 gain'] },
