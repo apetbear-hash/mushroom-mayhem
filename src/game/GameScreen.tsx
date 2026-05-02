@@ -550,12 +550,20 @@ export function GameScreen({ initialState, onNewGame }: GameScreenProps) {
   }, [currentPlayer]);
 
   const handleActionSelect = useCallback((action: ActionType) => {
-    if (action === 'draw' && selectedAction === 'draw' && state.turnState.cardsDrawnThisTurn > 0) {
-      handleDrawAgain();
-    } else {
-      handleSelectAction(action);
+    if (action === 'draw' && selectedAction === 'draw') {
+      if (state.turnState.cardsDrawnThisTurn > 0) {
+        handleDrawAgain();
+      } else {
+        setSelectedAction(null); // cancel pending draw
+      }
+      return;
     }
-  }, [selectedAction, state.turnState.cardsDrawnThisTurn, handleDrawAgain, handleSelectAction]);
+    if (action === 'rest' && selectedAction === 'rest' && !state.turnState.restUsed) {
+      setSelectedAction(null); // cancel pending rest
+      return;
+    }
+    handleSelectAction(action);
+  }, [selectedAction, state.turnState.cardsDrawnThisTurn, state.turnState.restUsed, handleDrawAgain, handleSelectAction]);
 
   const handleSkipTurn = useCallback(() => {
     if (!isHumanTurn || state.isOver) return;
