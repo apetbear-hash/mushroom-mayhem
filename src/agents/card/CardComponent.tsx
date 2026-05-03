@@ -1,6 +1,26 @@
 import type { CardDefinition } from '../../shared/types';
 import { TYPE_COLORS, RESOURCE_COLORS, HABITAT_COLORS } from '../../shared/constants';
 
+const BASE = import.meta.env.BASE_URL;
+
+// Card IDs that have photo art in public/cards/
+const CARD_ART: Record<number, string> = {
+  1:  `${BASE}cards/chanterelle.png`,
+  8:  `${BASE}cards/chaga.png`,
+  10: `${BASE}cards/saffron-milk-cap.png`,
+  11: `${BASE}cards/morel.png`,
+  12: `${BASE}cards/king-bolete.png`,
+  13: `${BASE}cards/black-truffle.png`,
+  14: `${BASE}cards/matsutake.png`,
+  15: `${BASE}cards/golden-chanterelle.png`,
+  17: `${BASE}cards/hedgehog-mushroom.png`,
+  20: `${BASE}cards/coral-mushroom.png`,
+  38: `${BASE}cards/indigo-milky-cap.png`,
+  41: `${BASE}cards/amanita-caesar.png`,
+  43: `${BASE}cards/old-man-of-the-woods.png`,
+  45: `${BASE}cards/hen-egg-bolete.png`,
+};
+
 interface CardProps {
   card: CardDefinition;
   isSelected?: boolean;
@@ -156,6 +176,7 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
   const cardBg     = HABITAT_CARD_BG[primaryH]  ?? '#0E0A06';
   const [artFrom, artTo] = HABITAT_ART_GRADIENT[primaryH] ?? ['#1A1008', '#2A1808'];
   const resourceEntries = Object.entries(card.generates).filter(([, v]) => (v ?? 0) > 0);
+  const photoArt = CARD_ART[card.id];
 
   const ART_H = 172;
   const CARD_W = 200;
@@ -190,28 +211,51 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
         position: 'relative', height: ART_H, flexShrink: 0, overflow: 'hidden',
         background: `linear-gradient(170deg, ${artFrom} 0%, ${artTo} 100%)`,
       }}>
-        {/* Radial glow behind mushroom */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: `radial-gradient(ellipse at 60% 80%, ${typeColor}55 0%, transparent 65%)`,
-        }}/>
+        {photoArt ? (
+          /* Photo art — fills the area, darkened at bottom for overlay legibility */
+          <>
+            <img
+              src={photoArt}
+              alt={card.name}
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'center top',
+                display: 'block',
+              }}
+            />
+            {/* Bottom fade so cost/resource badges stay readable */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.72) 100%)',
+            }}/>
+          </>
+        ) : (
+          <>
+            {/* Radial glow behind mushroom */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: `radial-gradient(ellipse at 60% 80%, ${typeColor}55 0%, transparent 65%)`,
+            }}/>
 
-        {/* Mushroom illustration */}
-        <svg
-          width={CARD_W} height={ART_H}
-          viewBox={`0 0 ${CARD_W} ${ART_H}`}
-          style={{ position: 'absolute', inset: 0, display: 'block' }}
-        >
-          {/* Ambient spores */}
-          {[[22,18],[170,24],[50,12],[155,44],[30,60],[185,70],[140,14]].map(([x,y],i) => (
-            <circle key={i} cx={x} cy={y} r={1.2 + (i%3)*0.6} fill={typeColor} opacity={0.18 + (i%4)*0.06}/>
-          ))}
-          {/* Ground strip */}
-          <path d={`M 0 ${ART_H - 22} Q ${CARD_W/2} ${ART_H - 30} ${CARD_W} ${ART_H - 22} L ${CARD_W} ${ART_H} L 0 ${ART_H} Z`}
-            fill="#1A0A06" opacity={0.45}/>
-          {/* Mushroom */}
-          <MushroomArt typeColor={typeColor} type={card.type}/>
-        </svg>
+            {/* Mushroom illustration */}
+            <svg
+              width={CARD_W} height={ART_H}
+              viewBox={`0 0 ${CARD_W} ${ART_H}`}
+              style={{ position: 'absolute', inset: 0, display: 'block' }}
+            >
+              {/* Ambient spores */}
+              {[[22,18],[170,24],[50,12],[155,44],[30,60],[185,70],[140,14]].map(([x,y],i) => (
+                <circle key={i} cx={x} cy={y} r={1.2 + (i%3)*0.6} fill={typeColor} opacity={0.18 + (i%4)*0.06}/>
+              ))}
+              {/* Ground strip */}
+              <path d={`M 0 ${ART_H - 22} Q ${CARD_W/2} ${ART_H - 30} ${CARD_W} ${ART_H - 22} L ${CARD_W} ${ART_H} L 0 ${ART_H} Z`}
+                fill="#1A0A06" opacity={0.45}/>
+              {/* Mushroom */}
+              <MushroomArt typeColor={typeColor} type={card.type}/>
+            </svg>
+          </>
+        )}
 
         {/* Habitat affinity icons — left side */}
         <div style={{
