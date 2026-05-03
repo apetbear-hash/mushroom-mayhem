@@ -67,7 +67,7 @@ export function HandDisplay({
             style={{
               flexShrink: 0,
               zoom: CARD_SCALE,
-              marginRight: isLast ? 0 : -48,
+              marginRight: isLast ? 0 : -82,
               opacity: plantMode && !plantable ? 0.35 : 1,
               transform,
               transformOrigin: origin,

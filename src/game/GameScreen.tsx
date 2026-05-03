@@ -1028,7 +1028,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
         <div
           ref={boardContainerRef}
           style={{
-            flex: 1, overflow: 'hidden', position: 'relative',
+            flex: 1, position: 'relative',
             cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none',
           }}
           onMouseDown={handleBoardMouseDown}
@@ -1036,18 +1036,20 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
           onMouseUp={handleBoardMouseUp}
           onMouseLeave={handleBoardMouseUp}
         >
-          {/* Pan + zoom wrapper */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0,
-            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-            transformOrigin: '0 0',
-          }}>
-            <BoardComponent
-              state={state}
-              highlightedTileIds={highlightedTiles}
-              onTileClick={isHumanTurn ? handleTileClick : undefined}
-              recentlyPlantedTileId={recentlyPlantedTileId}
-            />
+          {/* Pan + zoom — clipped separately so hand cards can overflow upward */}
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+            <div style={{
+              position: 'absolute', top: 0, left: 0,
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              transformOrigin: '0 0',
+            }}>
+              <BoardComponent
+                state={state}
+                highlightedTileIds={highlightedTiles}
+                onTileClick={isHumanTurn ? handleTileClick : undefined}
+                recentlyPlantedTileId={recentlyPlantedTileId}
+              />
+            </div>
           </div>
 
           {/* Action hint */}
@@ -1102,12 +1104,12 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
               padding: '4px 16px 6px',
             }}>
               <div style={{ height: 2, width: 28, background: currentPlayer.color, borderRadius: 1, flexShrink: 0 }}/>
-              <span style={{ fontSize: 11, letterSpacing: 1, color: '#F2ECD8', textTransform: 'uppercase', fontWeight: 700 }}>
+              <span style={{ fontSize: 11, letterSpacing: 1, color: '#3A1808', textTransform: 'uppercase', fontWeight: 700 }}>
                 {currentPlayer.name}
               </span>
               <span style={{
-                fontSize: 10, color: '#C8B88A', padding: '1px 6px',
-                border: '1px solid rgba(200,184,138,0.3)', borderRadius: 2,
+                fontSize: 10, color: '#6A3C18', padding: '1px 6px',
+                border: '1px solid rgba(106,60,24,0.4)', borderRadius: 2,
               }}>{currentPlayer.hand.length} cards</span>
 
               {plantSecondary && (
