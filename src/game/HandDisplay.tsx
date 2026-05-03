@@ -36,8 +36,8 @@ export function HandDisplay({
 
   return (
     <div style={{
-      display: 'flex', gap: 8, overflowX: 'auto',
-      padding: '48px 0 4px', alignItems: 'flex-end',
+      display: 'flex', overflowX: 'auto',
+      padding: '52px 8px 4px', alignItems: 'flex-end',
     }}>
       {player.hand.map((cardId, idx) => {
         const card = getCard(cardId);
@@ -50,16 +50,13 @@ export function HandDisplay({
 
         const isSelected = selectedCardId === cardId;
         const isHovered = hoveredCardId === cardId;
-
-        const isFirst = idx === 0;
         const isLast = idx === player.hand.length - 1;
-        const origin = isFirst ? 'bottom left' : isLast ? 'bottom right' : 'bottom center';
+        const origin = idx === 0 ? 'bottom left' : isLast ? 'bottom right' : 'bottom center';
 
-        // Compute transform: hovered → scale up to full size; selected → lift; both → combine
         let transform = 'none';
-        if (isHovered && isSelected) transform = `scale(${HOVER_SCALE}) translateY(-14px)`;
-        else if (isHovered)          transform = `scale(${HOVER_SCALE}) translateY(-4px)`;
-        else if (isSelected)         transform = 'translateY(-10px)';
+        if (isHovered && isSelected) transform = `scale(${HOVER_SCALE}) translateY(-18px)`;
+        else if (isHovered)          transform = `scale(${HOVER_SCALE}) translateY(-8px)`;
+        else if (isSelected)         transform = 'translateY(-12px)';
 
         return (
           <div
@@ -70,6 +67,7 @@ export function HandDisplay({
             style={{
               flexShrink: 0,
               zoom: CARD_SCALE,
+              marginRight: isLast ? 0 : -48,
               opacity: plantMode && !plantable ? 0.35 : 1,
               transform,
               transformOrigin: origin,
@@ -77,7 +75,7 @@ export function HandDisplay({
               cursor: plantMode && plantable ? 'pointer' : 'default',
               outline: isSelected ? `2px solid #1A1408` : 'none',
               borderRadius: 14,
-              zIndex: isHovered ? 20 : isSelected ? 10 : 1,
+              zIndex: isHovered ? 20 : isSelected ? 10 : idx,
               position: 'relative',
             }}
           >

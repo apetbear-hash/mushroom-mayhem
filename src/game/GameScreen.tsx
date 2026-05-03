@@ -1082,100 +1082,9 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
             }}
             onMouseDown={e => e.stopPropagation()}
           >
-            <div style={{ height: 2, background: `linear-gradient(90deg, ${currentPlayer.color}, ${currentPlayer.color}44, transparent 70%)` }}/>
-
-            {/* Tray header */}
-            <div style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '5px 16px 4px', borderBottom: '1px solid rgba(200,184,138,0.2)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: currentPlayer.color }}/>
-                <span style={{ fontSize: 12, letterSpacing: 1, color: '#F2ECD8', textTransform: 'uppercase', fontWeight: 700 }}>
-                  {currentPlayer.name}'s Hand
-                </span>
-                <span style={{
-                  fontSize: 11, color: '#C8B88A', padding: '2px 7px',
-                  border: '1px solid rgba(200,184,138,0.3)', borderRadius: 2,
-                }}>{currentPlayer.hand.length} cards</span>
-
-                {plantSecondary && (
-                  <>
-                    <span style={{ fontStyle: 'italic', fontSize: 13, color: '#D4B070' }}>
-                      {secondaryPrompt(plantSecondary.type)}
-                    </span>
-                    <button onClick={handleSkipSecondary} style={{
-                      background: 'transparent', border: '1px solid rgba(200,184,138,0.35)', color: '#C8A870',
-                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
-                    }}>Skip</button>
-                  </>
-                )}
-                {inkyCapPendingTileId && !plantSecondary && (
-                  <>
-                    <span style={{ fontStyle: 'italic', fontSize: 13, color: '#D4A828' }}>
-                      Inky Cap: discard for +3 🍄?
-                    </span>
-                    <button onClick={handleInkyCapConfirm} style={{
-                      background: '#C84820', border: 'none', color: '#F2EAD8',
-                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
-                      fontFamily: 'inherit', borderRadius: 3,
-                    }}>Discard +3🍄</button>
-                    <button onClick={() => setInkyCapPendingTileId(null)} style={{
-                      background: 'transparent', border: '1px solid rgba(200,184,138,0.35)', color: '#C8A870',
-                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
-                    }}>Cancel</button>
-                  </>
-                )}
-                {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
-                  <>
-                    <span style={{ fontStyle: 'italic', fontSize: 13, color: '#5A9EC8' }}>Shiitake: 1💧 → 1☀️</span>
-                    <button onClick={handleShiitakeSwap} style={{
-                      background: '#2A6888', border: 'none', color: '#F2EAD8',
-                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
-                      fontFamily: 'inherit', borderRadius: 3,
-                    }}>Swap</button>
-                  </>
-                )}
-                {selectedAction === 'plant' && !plantSecondary && !inkyCapPendingTileId && isHumanTurn && (
-                  <span style={{ fontStyle: 'italic', fontSize: 13, color: selectedCardId != null ? '#C8A870' : '#9A8858' }}>
-                    {selectedCardId != null ? '✓ Card selected — click an owned tile' : 'Click a card to select for planting'}
-                  </span>
-                )}
-                {feedback && !plantSecondary && !inkyCapPendingTileId && selectedAction !== 'plant' && (
-                  <span style={{ fontStyle: 'italic', fontSize: 13, color: '#9A8858' }}>{feedback}</span>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-                {selectedAction === 'draw' && isHumanTurn && state.turnState.cardsDrawnThisTurn > 0 && (
-                  <button
-                    onClick={handleDrawAgain}
-                    disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
-                    style={{
-                      padding: '5px 14px', background: 'rgba(196,136,32,0.2)',
-                      border: '1px solid #C48820', color: '#D4A030', cursor: 'pointer',
-                      fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
-                    }}
-                  >+ Draw Card ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
-                )}
-                {isHumanTurn && !state.isOver && (
-                  <button
-                    onClick={handleSkipTurn}
-                    style={{
-                      padding: '5px 14px',
-                      background: 'rgba(200,72,32,0.15)',
-                      border: '1px solid rgba(200,72,32,0.5)',
-                      color: '#E86840', cursor: 'pointer',
-                      fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
-                    }}
-                  >Skip Turn</button>
-                )}
-              </div>
-            </div>
-
             {/* Hand cards */}
             <div style={{
-              padding: '8px 12px', overflowX: 'auto', overflowY: 'visible',
+              padding: '0 12px', overflowX: 'auto', overflowY: 'visible',
               scrollbarWidth: 'thin', scrollbarColor: 'rgba(200,180,130,0.35) transparent',
             }}>
               <HandDisplay
@@ -1186,7 +1095,94 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
                 onSelectCard={handleSelectCard}
               />
             </div>
+
+            {/* Player name + prompts footer */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+              padding: '4px 16px 6px',
+            }}>
+              <div style={{ height: 2, width: 28, background: currentPlayer.color, borderRadius: 1, flexShrink: 0 }}/>
+              <span style={{ fontSize: 11, letterSpacing: 1, color: '#F2ECD8', textTransform: 'uppercase', fontWeight: 700 }}>
+                {currentPlayer.name}
+              </span>
+              <span style={{
+                fontSize: 10, color: '#C8B88A', padding: '1px 6px',
+                border: '1px solid rgba(200,184,138,0.3)', borderRadius: 2,
+              }}>{currentPlayer.hand.length} cards</span>
+
+              {plantSecondary && (
+                <>
+                  <span style={{ fontStyle: 'italic', fontSize: 12, color: '#D4B070' }}>
+                    {secondaryPrompt(plantSecondary.type)}
+                  </span>
+                  <button onClick={handleSkipSecondary} style={{
+                    background: 'transparent', border: '1px solid rgba(200,184,138,0.35)', color: '#C8A870',
+                    padding: '2px 8px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
+                  }}>Skip</button>
+                </>
+              )}
+              {inkyCapPendingTileId && !plantSecondary && (
+                <>
+                  <span style={{ fontStyle: 'italic', fontSize: 12, color: '#D4A828' }}>Inky Cap: discard for +3 🍄?</span>
+                  <button onClick={handleInkyCapConfirm} style={{
+                    background: '#C84820', border: 'none', color: '#F2EAD8',
+                    padding: '2px 8px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                    fontFamily: 'inherit', borderRadius: 3,
+                  }}>Discard +3🍄</button>
+                  <button onClick={() => setInkyCapPendingTileId(null)} style={{
+                    background: 'transparent', border: '1px solid rgba(200,184,138,0.35)', color: '#C8A870',
+                    padding: '2px 8px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
+                  }}>Cancel</button>
+                </>
+              )}
+              {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
+                <>
+                  <span style={{ fontStyle: 'italic', fontSize: 12, color: '#5A9EC8' }}>Shiitake: 1💧 → 1☀️</span>
+                  <button onClick={handleShiitakeSwap} style={{
+                    background: '#2A6888', border: 'none', color: '#F2EAD8',
+                    padding: '2px 8px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                    fontFamily: 'inherit', borderRadius: 3,
+                  }}>Swap</button>
+                </>
+              )}
+              {selectedAction === 'plant' && !plantSecondary && !inkyCapPendingTileId && isHumanTurn && (
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: selectedCardId != null ? '#C8A870' : '#9A8858' }}>
+                  {selectedCardId != null ? '✓ Selected — click a tile' : 'Pick a card'}
+                </span>
+              )}
+              {feedback && !plantSecondary && !inkyCapPendingTileId && selectedAction !== 'plant' && (
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: '#9A8858' }}>{feedback}</span>
+              )}
+              {selectedAction === 'draw' && isHumanTurn && state.turnState.cardsDrawnThisTurn > 0 && (
+                <button
+                  onClick={handleDrawAgain}
+                  disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
+                  style={{
+                    padding: '3px 10px', background: 'rgba(196,136,32,0.2)',
+                    border: '1px solid #C48820', color: '#D4A030', cursor: 'pointer',
+                    fontFamily: 'inherit', fontSize: 11, fontWeight: 700, borderRadius: 3,
+                  }}
+                >+ Draw ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
+              )}
+            </div>
           </div>
+
+          {/* Skip Turn — floating bottom-right */}
+          {isHumanTurn && !state.isOver && (
+            <button
+              data-hand=""
+              onClick={handleSkipTurn}
+              onMouseDown={e => e.stopPropagation()}
+              style={{
+                position: 'absolute', bottom: 10, right: 12, zIndex: 25,
+                padding: '7px 16px',
+                background: 'rgba(200,72,32,0.18)',
+                border: '1px solid rgba(200,72,32,0.55)',
+                color: '#E86840', cursor: 'pointer',
+                fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 4,
+              }}
+            >Skip Turn</button>
+          )}
         </div>
 
         {/* RIGHT: Forecast panel */}
