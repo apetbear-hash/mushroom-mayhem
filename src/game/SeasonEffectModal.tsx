@@ -61,7 +61,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
         background: '#F2ECD8',
         border: '2px solid #4A8030',
         borderRadius: 20, padding: '28px 32px',
-        maxWidth: 580, width: '100%',
+        maxWidth: 'min(92vw, 1100px)', width: '100%',
         boxShadow: '0 8px 48px rgba(26,20,8,0.25)',
       }}>
         <div style={{ marginBottom: 20, textAlign: 'center' }}>
@@ -84,8 +84,10 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
 
         {maxSwap > 0 && (
           <div style={{
-            display: 'flex', gap: 8, justifyContent: 'center',
-            flexWrap: 'wrap', marginBottom: 16,
+            display: 'flex', gap: 8,
+            overflowX: 'auto', marginBottom: 16,
+            padding: '4px 2px',
+            scrollbarWidth: 'thin', scrollbarColor: '#C8B88A transparent',
           }}>
             {player.hand.map(cardId => {
               const isSelected = selectedCards.has(cardId);
