@@ -220,7 +220,7 @@ export function CardComponent({ card, isSelected = false, isPlayable = true, onC
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%',
-                objectFit: 'contain', objectPosition: 'center',
+                objectFit: 'cover', objectPosition: 'center center',
                 display: 'block',
               }}
             />
