@@ -204,6 +204,15 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
   const [forecastOpen, setForecastOpen] = useState(true);
   const [recentlyPlantedTileId, setRecentlyPlantedTileId] = useState<string | null>(null);
 
+  // ── Board zoom + pan ────────────────────────────────────────────────────────
+  const [zoom, setZoom] = useState(1.0);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const boardContainerRef = useRef<HTMLDivElement>(null);
+  const zoomRef = useRef(1.0);
+  const panRef = useRef({ x: 0, y: 0 });
+  const dragStartRef = useRef<{ mx: number; my: number; px: number; py: number } | null>(null);
+
   const seasonModalShownForTurn = useRef<number>(-1);
 
   useEffect(() => {
@@ -655,6 +664,100 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
     }
   }, [isHumanTurn, currentPlayer, state]);
 
+  // Fit board on first render
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      const container = boardContainerRef.current;
+      const svg = container?.querySelector('svg');
+      if (!container || !svg) return;
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const bw = svg.clientWidth;
+      const bh = svg.clientHeight;
+      if (!bw || !bh) return;
+      const fitZoom = Math.min(cw / bw, (ch - 160) / bh) * 0.95;
+      const clampedZoom = Math.min(1.2, Math.max(0.3, fitZoom));
+      const initPan = {
+        x: (cw - bw * clampedZoom) / 2,
+        y: ((ch - 160) - bh * clampedZoom) / 2,
+      };
+      zoomRef.current = clampedZoom;
+      panRef.current = initPan;
+      setZoom(clampedZoom);
+      setPan(initPan);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Non-passive wheel listener for zoom-toward-cursor
+  useEffect(() => {
+    const el = boardContainerRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      if ((e.target as HTMLElement).closest('[data-hand]')) return;
+      e.preventDefault();
+      const curZoom = zoomRef.current;
+      const curPan = panRef.current;
+      const factor = e.deltaY > 0 ? 0.92 : 1.09;
+      const next = Math.min(2.5, Math.max(0.3, curZoom * factor));
+      const rect = el.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      const newPan = {
+        x: cx - (cx - curPan.x) * (next / curZoom),
+        y: cy - (cy - curPan.y) * (next / curZoom),
+      };
+      zoomRef.current = next;
+      panRef.current = newPan;
+      setZoom(next);
+      setPan(newPan);
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, []);
+
+  function handleZoomBtn(direction: 1 | -1) {
+    const curZoom = zoomRef.current;
+    const curPan = panRef.current;
+    const next = Math.min(2.5, Math.max(0.3, curZoom + direction * 0.2));
+    const container = boardContainerRef.current;
+    if (!container) return;
+    const cx = container.clientWidth / 2;
+    const cy = container.clientHeight / 2;
+    const newPan = {
+      x: cx - (cx - curPan.x) * (next / curZoom),
+      y: cy - (cy - curPan.y) * (next / curZoom),
+    };
+    zoomRef.current = next;
+    panRef.current = newPan;
+    setZoom(next);
+    setPan(newPan);
+  }
+
+  function handleBoardMouseDown(e: React.MouseEvent) {
+    if ((e.target as HTMLElement).closest('[data-hand]')) return;
+    if ((e.target as HTMLElement).closest('button')) return;
+    setIsDragging(true);
+    dragStartRef.current = { mx: e.clientX, my: e.clientY, px: panRef.current.x, py: panRef.current.y };
+  }
+  function handleBoardMouseMove(e: React.MouseEvent) {
+    if (!dragStartRef.current) return;
+    const { mx, my, px, py } = dragStartRef.current;
+    const newPan = { x: px + e.clientX - mx, y: py + e.clientY - my };
+    panRef.current = newPan;
+    setPan(newPan);
+  }
+  function handleBoardMouseUp() {
+    setIsDragging(false);
+    dragStartRef.current = null;
+  }
+
+  const zoomBtnStyle: React.CSSProperties = {
+    width: 30, height: 30, fontSize: 18, fontWeight: 700, lineHeight: 1,
+    background: 'rgba(221,208,176,0.88)', border: '1px solid #C8B88A',
+    cursor: 'pointer', borderRadius: 4, display: 'flex', alignItems: 'center',
+    justifyContent: 'center', fontFamily: 'inherit', color: '#3A2810',
+  };
+
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
@@ -913,18 +1016,31 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
           )}
         </div>
 
-        {/* CENTER: Board */}
-        <div style={{
-          flex: 1, overflow: 'auto',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          position: 'relative',
-        }}>
-          <BoardComponent
-            state={state}
-            highlightedTileIds={highlightedTiles}
-            onTileClick={isHumanTurn ? handleTileClick : undefined}
-            recentlyPlantedTileId={recentlyPlantedTileId}
-          />
+        {/* CENTER: Board + Hand overlay */}
+        <div
+          ref={boardContainerRef}
+          style={{
+            flex: 1, overflow: 'hidden', position: 'relative',
+            cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none',
+          }}
+          onMouseDown={handleBoardMouseDown}
+          onMouseMove={handleBoardMouseMove}
+          onMouseUp={handleBoardMouseUp}
+          onMouseLeave={handleBoardMouseUp}
+        >
+          {/* Pan + zoom wrapper */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: '0 0',
+          }}>
+            <BoardComponent
+              state={state}
+              highlightedTileIds={highlightedTiles}
+              onTileClick={isHumanTurn ? handleTileClick : undefined}
+              recentlyPlantedTileId={recentlyPlantedTileId}
+            />
+          </div>
 
           {/* Action hint */}
           {selectedAction && isHumanTurn && !showAnnouncement && (
@@ -942,6 +1058,127 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
               {selectedAction === 'rest'   && 'Rested — gained +1 of each resource'}
             </div>
           )}
+
+          {/* Zoom controls */}
+          <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 20, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <button style={zoomBtnStyle} onClick={() => handleZoomBtn(1)}>+</button>
+            <button style={zoomBtnStyle} onClick={() => handleZoomBtn(-1)}>−</button>
+          </div>
+
+          {/* ══ HAND TRAY — overlaid at bottom ══ */}
+          <div
+            data-hand=""
+            style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 10,
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(20,16,8,0.85) 32%, #181208 58%)',
+            }}
+            onMouseDown={e => e.stopPropagation()}
+          >
+            <div style={{ height: 2, background: `linear-gradient(90deg, ${currentPlayer.color}, ${currentPlayer.color}44, transparent 70%)` }}/>
+
+            {/* Tray header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '5px 16px 4px', borderBottom: '1px solid rgba(200,184,138,0.2)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: currentPlayer.color }}/>
+                <span style={{ fontSize: 12, letterSpacing: 1, color: '#F2ECD8', textTransform: 'uppercase', fontWeight: 700 }}>
+                  {currentPlayer.name}'s Hand
+                </span>
+                <span style={{
+                  fontSize: 11, color: '#C8B88A', padding: '2px 7px',
+                  border: '1px solid rgba(200,184,138,0.3)', borderRadius: 2,
+                }}>{currentPlayer.hand.length} cards</span>
+
+                {plantSecondary && (
+                  <>
+                    <span style={{ fontStyle: 'italic', fontSize: 13, color: '#D4B070' }}>
+                      {secondaryPrompt(plantSecondary.type)}
+                    </span>
+                    <button onClick={handleSkipSecondary} style={{
+                      background: 'transparent', border: '1px solid rgba(200,184,138,0.35)', color: '#C8A870',
+                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
+                    }}>Skip</button>
+                  </>
+                )}
+                {inkyCapPendingTileId && !plantSecondary && (
+                  <>
+                    <span style={{ fontStyle: 'italic', fontSize: 13, color: '#D4A828' }}>
+                      Inky Cap: discard for +3 🍄?
+                    </span>
+                    <button onClick={handleInkyCapConfirm} style={{
+                      background: '#C84820', border: 'none', color: '#F2EAD8',
+                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                      fontFamily: 'inherit', borderRadius: 3,
+                    }}>Discard +3🍄</button>
+                    <button onClick={() => setInkyCapPendingTileId(null)} style={{
+                      background: 'transparent', border: '1px solid rgba(200,184,138,0.35)', color: '#C8A870',
+                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
+                    }}>Cancel</button>
+                  </>
+                )}
+                {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
+                  <>
+                    <span style={{ fontStyle: 'italic', fontSize: 13, color: '#5A9EC8' }}>Shiitake: 1💧 → 1☀️</span>
+                    <button onClick={handleShiitakeSwap} style={{
+                      background: '#2A6888', border: 'none', color: '#F2EAD8',
+                      padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
+                      fontFamily: 'inherit', borderRadius: 3,
+                    }}>Swap</button>
+                  </>
+                )}
+                {selectedAction === 'plant' && !plantSecondary && !inkyCapPendingTileId && isHumanTurn && (
+                  <span style={{ fontStyle: 'italic', fontSize: 13, color: selectedCardId != null ? '#C8A870' : '#9A8858' }}>
+                    {selectedCardId != null ? '✓ Card selected — click an owned tile' : 'Click a card to select for planting'}
+                  </span>
+                )}
+                {feedback && !plantSecondary && !inkyCapPendingTileId && selectedAction !== 'plant' && (
+                  <span style={{ fontStyle: 'italic', fontSize: 13, color: '#9A8858' }}>{feedback}</span>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+                {selectedAction === 'draw' && isHumanTurn && state.turnState.cardsDrawnThisTurn > 0 && (
+                  <button
+                    onClick={handleDrawAgain}
+                    disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
+                    style={{
+                      padding: '5px 14px', background: 'rgba(196,136,32,0.2)',
+                      border: '1px solid #C48820', color: '#D4A030', cursor: 'pointer',
+                      fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
+                    }}
+                  >+ Draw Card ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
+                )}
+                {isHumanTurn && !state.isOver && (
+                  <button
+                    onClick={handleSkipTurn}
+                    style={{
+                      padding: '5px 14px',
+                      background: 'rgba(200,72,32,0.15)',
+                      border: '1px solid rgba(200,72,32,0.5)',
+                      color: '#E86840', cursor: 'pointer',
+                      fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
+                    }}
+                  >Skip Turn</button>
+                )}
+              </div>
+            </div>
+
+            {/* Hand cards */}
+            <div style={{
+              padding: '8px 12px', overflowX: 'auto', overflowY: 'visible',
+              scrollbarWidth: 'thin', scrollbarColor: 'rgba(200,180,130,0.35) transparent',
+            }}>
+              <HandDisplay
+                state={state}
+                playerId={currentPlayer.id}
+                selectedCardId={selectedCardId}
+                plantMode={selectedAction === 'plant' && !plantSecondary && isHumanTurn}
+                onSelectCard={handleSelectCard}
+              />
+            </div>
+          </div>
         </div>
 
         {/* RIGHT: Forecast panel */}
@@ -1008,113 +1245,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
         </div>
       </div>
 
-      {/* ══ BOTTOM: Hand tray (always visible) ══ */}
-      <div style={{
-        flexShrink: 0, background: '#DDD0B0',
-        borderTop: `2px solid ${currentPlayer.color}`,
-      }}>
-        <div style={{ height: 2, background: `linear-gradient(90deg, ${currentPlayer.color}, ${currentPlayer.color}44, transparent 70%)` }}/>
-
-        {/* Tray header */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '5px 16px 4px', borderBottom: '1px solid #C8B88A',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: currentPlayer.color }}/>
-            <span style={{ fontSize: 12, letterSpacing: 1, color: '#1A1408', textTransform: 'uppercase', fontWeight: 700 }}>
-              {currentPlayer.name}'s Hand
-            </span>
-            <span style={{
-              fontSize: 11, color: '#8A7848', padding: '2px 7px',
-              border: '1px solid #C8B88A', borderRadius: 2,
-            }}>{currentPlayer.hand.length} cards</span>
-
-            {plantSecondary && (
-              <>
-                <span style={{ fontStyle: 'italic', fontSize: 13, color: '#6A5030' }}>
-                  {secondaryPrompt(plantSecondary.type)}
-                </span>
-                <button onClick={handleSkipSecondary} style={{
-                  background: 'transparent', border: '1px solid #C8B88A', color: '#6A5030',
-                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
-                }}>Skip</button>
-              </>
-            )}
-            {inkyCapPendingTileId && !plantSecondary && (
-              <>
-                <span style={{ fontStyle: 'italic', fontSize: 13, color: '#C89028' }}>
-                  Inky Cap: discard for +3 🍄?
-                </span>
-                <button onClick={handleInkyCapConfirm} style={{
-                  background: '#C84820', border: 'none', color: '#F2EAD8',
-                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
-                  fontFamily: 'inherit', borderRadius: 3,
-                }}>Discard +3🍄</button>
-                <button onClick={() => setInkyCapPendingTileId(null)} style={{
-                  background: 'transparent', border: '1px solid #C8B88A', color: '#6A5030',
-                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', borderRadius: 3,
-                }}>Cancel</button>
-              </>
-            )}
-            {canShiitakeSwap && !inkyCapPendingTileId && !plantSecondary && (
-              <>
-                <span style={{ fontStyle: 'italic', fontSize: 13, color: '#3A6EA8' }}>Shiitake: 1💧 → 1☀️</span>
-                <button onClick={handleShiitakeSwap} style={{
-                  background: '#2A6888', border: 'none', color: '#F2EAD8',
-                  padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 700,
-                  fontFamily: 'inherit', borderRadius: 3,
-                }}>Swap</button>
-              </>
-            )}
-            {selectedAction === 'plant' && !plantSecondary && !inkyCapPendingTileId && isHumanTurn && (
-              <span style={{ fontStyle: 'italic', fontSize: 13, color: selectedCardId != null ? '#8B6F47' : '#8A7848' }}>
-                {selectedCardId != null ? '✓ Card selected — click an owned tile' : 'Click a card to select for planting'}
-              </span>
-            )}
-            {feedback && !plantSecondary && !inkyCapPendingTileId && selectedAction !== 'plant' && (
-              <span style={{ fontStyle: 'italic', fontSize: 13, color: '#8A7848' }}>{feedback}</span>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-            {selectedAction === 'draw' && isHumanTurn && state.turnState.cardsDrawnThisTurn > 0 && (
-              <button
-                onClick={handleDrawAgain}
-                disabled={currentPlayer.resources.sunlight < state.turnState.cardsDrawnThisTurn + 1}
-                style={{
-                  padding: '5px 14px', background: 'rgba(196,136,32,0.15)',
-                  border: '1px solid #C48820', color: '#8A5C10', cursor: 'pointer',
-                  fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
-                }}
-              >+ Draw Card ({state.turnState.cardsDrawnThisTurn + 1}☀)</button>
-            )}
-            {isHumanTurn && !state.isOver && (
-              <button
-                onClick={handleSkipTurn}
-                style={{
-                  padding: '5px 14px',
-                  background: 'rgba(200,72,32,0.12)',
-                  border: '1px solid rgba(200,72,32,0.45)',
-                  color: '#C84820', cursor: 'pointer',
-                  fontFamily: 'inherit', fontSize: 12, fontWeight: 700, borderRadius: 3,
-                }}
-              >Skip Turn</button>
-            )}
-          </div>
-        </div>
-
-        {/* Hand cards */}
-        <div style={{ padding: '8px 12px', overflowX: 'auto', overflowY: 'visible' }}>
-          <HandDisplay
-            state={state}
-            playerId={currentPlayer.id}
-            selectedCardId={selectedCardId}
-            plantMode={selectedAction === 'plant' && !plantSecondary && isHumanTurn}
-            onSelectCard={handleSelectCard}
-          />
-        </div>
-      </div>
 
       {/* ══ OVERLAYS ══ */}
       {showAnnouncement && !state.isOver && (

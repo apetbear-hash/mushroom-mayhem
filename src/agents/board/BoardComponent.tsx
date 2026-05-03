@@ -6,7 +6,7 @@ import { getSeason } from '../seasonal';
 import { hexToPixel, hexPolygonPoints } from './hexMath';
 
 const EMPTY_STROKE = '#7A6040';
-const TILE_SIZE = 54; // 50% bigger than original 36
+const TILE_SIZE = 72;
 
 const BASE = import.meta.env.BASE_URL;
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { GameState } from './shared/types';
 import { PlayerSetup } from './agents/turn/PlayerSetup';
 import type { PlayerDraft } from './agents/turn/PlayerSetup';
@@ -17,6 +17,15 @@ export function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [orderCards, setOrderCards] = useState<OrderEntry[]>([]);
   const [devMode, setDevMode] = useState(false);
+
+  // Block browser back after the game has been set up — spawn positions are fixed once assigned.
+  useEffect(() => {
+    if (screen === 'landing' || screen === 'setup') return;
+    window.history.pushState(null, '', window.location.href);
+    const handler = () => window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, [screen]);
 
   function handleSetupConfirm(players: PlayerDraft[], isDevMode: boolean) {
     const { state, orderCards: cards } = createInitialGameState(players);

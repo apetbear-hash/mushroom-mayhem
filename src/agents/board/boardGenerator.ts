@@ -70,7 +70,7 @@ function tileAtAngle(coords: HexCoord[], angleDeg: number): HexCoord {
 
 // Angles from origin for each player count.
 const SPAWN_ANGLES: Record<number, number[]> = {
-  2: [30, 210],
+  2: [315, 135],
   3: [90, 210, 330],
   4: [30, 150, 210, 330],
 };
