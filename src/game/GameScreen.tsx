@@ -419,9 +419,10 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
   }, [state, currentPlayer]);
 
   const handleSelectCard = useCallback((cardId: number) => {
+    const tiles = computePlantTiles(state, currentPlayer.id, cardId);
     setSelectedCardId(cardId);
-    setHighlightedTiles(computePlantTiles(state, currentPlayer.id, cardId));
-    setFeedback('');
+    setHighlightedTiles(tiles);
+    setFeedback(tiles.size === 0 ? 'No valid tiles — tap Spawn again to cancel.' : '');
   }, [state, currentPlayer]);
 
   const handleSkipSecondary = useCallback(() => {
@@ -589,6 +590,13 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
     if (action === 'spread' && selectedAction === 'spread') {
       setSelectedAction(null); // cancel spread mode
       setHighlightedTiles(new Set());
+      return;
+    }
+    if (action === 'plant' && selectedAction === 'plant') {
+      setSelectedAction(null); // cancel spawn mode
+      setSelectedCardId(null);
+      setHighlightedTiles(new Set());
+      setFeedback('');
       return;
     }
     handleSelectAction(action);
@@ -1070,7 +1078,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
             data-hand=""
             style={{
               position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 10,
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(20,16,8,0.85) 32%, #181208 58%)',
+              background: 'transparent',
             }}
             onMouseDown={e => e.stopPropagation()}
           >
