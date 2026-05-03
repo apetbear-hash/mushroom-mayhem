@@ -36,8 +36,8 @@ export function HandDisplay({
 
   return (
     <div style={{
-      display: 'flex', overflowX: 'auto',
-      padding: '52px 8px 4px', alignItems: 'flex-end',
+      display: 'flex',
+      padding: '0 8px 4px', alignItems: 'flex-end',
     }}>
       {player.hand.map((cardId, idx) => {
         const card = getCard(cardId);

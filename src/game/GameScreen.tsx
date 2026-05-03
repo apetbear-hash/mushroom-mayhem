@@ -900,6 +900,9 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
           background: '#DDD0B0', borderRight: '1px solid #C8B88A',
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
         }}>
+          {/* Spacer — pushes resources + actions to the bottom near the hand */}
+          <div style={{ flex: 1 }}/>
+
           {/* Active player + resources */}
           <div style={{ padding: '10px 10px 8px', flexShrink: 0 }}>
             <div style={{
@@ -987,8 +990,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
               </button>
             </div>
           )}
-
-          <div style={{ flex: 1 }}/>
 
           {/* Undo / Cancel / End Turn */}
           {isHumanTurn && !state.isOver && (undoState || selectedAction !== null || hasActionThisTurn) && (
@@ -1084,9 +1085,11 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
             }}
             onMouseDown={e => e.stopPropagation()}
           >
-            {/* Hand cards */}
+            {/* Hand cards — paddingTop + negative marginTop gives the overflowX:auto clip
+                  region enough headroom for the card hover-zoom without a visible gap */}
             <div style={{
-              padding: '0 12px', overflowX: 'auto', overflowY: 'visible',
+              paddingTop: 120, marginTop: -120,
+              padding: '120px 12px 0', overflowX: 'auto',
               scrollbarWidth: 'thin', scrollbarColor: 'rgba(200,180,130,0.35) transparent',
             }}>
               <HandDisplay
