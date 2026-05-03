@@ -5,20 +5,20 @@ const BASE = import.meta.env.BASE_URL;
 
 // Card IDs that have photo art in public/cards/
 const CARD_ART: Record<number, string> = {
-  1:  `${BASE}cards/chanterelle.png`,
-  8:  `${BASE}cards/chaga.png`,
-  10: `${BASE}cards/saffron-milk-cap.png`,
-  11: `${BASE}cards/morel.png`,
-  12: `${BASE}cards/king-bolete.png`,
-  13: `${BASE}cards/black-truffle.png`,
-  14: `${BASE}cards/matsutake.png`,
-  15: `${BASE}cards/golden-chanterelle.png`,
-  17: `${BASE}cards/hedgehog-mushroom.png`,
-  20: `${BASE}cards/coral-mushroom.png`,
-  38: `${BASE}cards/indigo-milky-cap.png`,
-  41: `${BASE}cards/amanita-caesar.png`,
-  43: `${BASE}cards/old-man-of-the-woods.png`,
-  45: `${BASE}cards/hen-egg-bolete.png`,
+  1:  `${BASE}cards/chanterelle.jpg`,
+  8:  `${BASE}cards/chaga.jpg`,
+  10: `${BASE}cards/saffron-milk-cap.jpg`,
+  11: `${BASE}cards/morel.jpg`,
+  12: `${BASE}cards/king-bolete.jpg`,
+  13: `${BASE}cards/black-truffle.jpg`,
+  14: `${BASE}cards/matsutake.jpg`,
+  15: `${BASE}cards/golden-chanterelle.jpg`,
+  17: `${BASE}cards/hedgehog-mushroom.jpg`,
+  20: `${BASE}cards/coral-mushroom.jpg`,
+  38: `${BASE}cards/indigo-milky-cap.jpg`,
+  41: `${BASE}cards/amanita-caesar.jpg`,
+  43: `${BASE}cards/old-man-of-the-woods.jpg`,
+  45: `${BASE}cards/hen-egg-bolete.jpg`,
 };
 
 interface CardProps {
