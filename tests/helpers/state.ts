@@ -11,8 +11,8 @@ const PLAIN_DECK = [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 13, 14, 15, 16, 17, 18, 19, 
 
 export function makeBase2PState(): GameState {
   const { state } = createInitialGameState([
-    { name: 'P1', color: '#5c9ee0', portrait: 'fox' },
-    { name: 'P2', color: '#e05c5c', portrait: 'badger' },
+    { name: 'P1', color: '#5c9ee0', portrait: 'fox', isHuman: true },
+    { name: 'P2', color: '#e05c5c', portrait: 'badger', isHuman: false },
   ]);
   return {
     ...state,

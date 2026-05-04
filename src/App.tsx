@@ -17,10 +17,12 @@ export function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [orderCards, setOrderCards] = useState<OrderEntry[]>([]);
   const [devMode, setDevMode] = useState(false);
+  const [humanPlayerIds, setHumanPlayerIds] = useState<string[]>(['player_0']);
 
   function handleSetupConfirm(players: PlayerDraft[], isDevMode: boolean) {
     const { state, orderCards: cards } = createInitialGameState(players);
     setDevMode(isDevMode);
+    setHumanPlayerIds(players.map((p, i) => p.isHuman ? `player_${i}` : null).filter((id): id is string => id !== null));
     setGameState(state);
     setOrderCards(cards);
     setScreen('order-reveal');
@@ -65,7 +67,7 @@ export function App() {
   }
 
   if (screen === 'draft' && gameState) {
-    return <DraftPhaseScreen state={gameState} onConfirm={handleDraftConfirm} />;
+    return <DraftPhaseScreen state={gameState} onConfirm={handleDraftConfirm} humanPlayerIds={humanPlayerIds} />;
   }
 
   if (screen === 'game' && gameState) {
@@ -73,6 +75,7 @@ export function App() {
       <GameScreen
         initialState={gameState}
         devMode={devMode}
+        humanPlayerIds={humanPlayerIds}
         onNewGame={() => setScreen('setup')}
       />
     );

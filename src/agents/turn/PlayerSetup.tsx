@@ -5,6 +5,7 @@ export interface PlayerDraft {
   name: string;
   portrait: string;
   color: string;
+  isHuman: boolean;
 }
 
 interface PlayerSetupProps {
@@ -17,6 +18,7 @@ interface SlotState {
   active: boolean;
   portrait: string;
   color: string;
+  isHuman: boolean;
 }
 
 function buildInitialSlots(): SlotState[] {
@@ -24,6 +26,7 @@ function buildInitialSlots(): SlotState[] {
     active: i < 2,
     portrait: PORTRAITS[i % PORTRAITS.length].id,
     color: COLOR_OPTIONS[i % COLOR_OPTIONS.length].hex,
+    isHuman: true,
   }));
 }
 
@@ -80,6 +83,23 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
       }}>
         {portrait.emoji}
       </div>
+
+      {slot.active && (
+        <button
+          onClick={() => onChange({ ...slot, isHuman: !slot.isHuman })}
+          style={{
+            width: '100%',
+            background: slot.isHuman ? `${slot.color}18` : '#1A0808',
+            border: `1px solid ${slot.isHuman ? slot.color + '88' : '#8A3A20'}`,
+            color: slot.isHuman ? slot.color : '#C85830',
+            borderRadius: 6, padding: '5px 0',
+            cursor: 'pointer', fontSize: 11, fontWeight: 700,
+            letterSpacing: 1, fontFamily: 'sans-serif',
+          }}
+        >
+          {slot.isHuman ? '👤 HUMAN' : '🤖 CPU'}
+        </button>
+      )}
 
       <div>
         <div style={{ color: '#8A7848', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>PORTRAIT</div>
@@ -154,6 +174,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
       name: `Player ${i + 1}`,
       portrait: s.portrait,
       color: s.color,
+      isHuman: s.isHuman,
     })), devMode);
   }
 

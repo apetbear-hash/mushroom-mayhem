@@ -68,10 +68,8 @@ interface GameScreenProps {
   initialState: GameState;
   onNewGame: () => void;
   devMode?: boolean;
+  humanPlayerIds?: string[];
 }
-
-// Human player is always the first draft entry — id 'player_0' regardless of turn order.
-const HUMAN_PLAYER_ID = 'player_0';
 
 // Planting this card cannot be undone (immediately blocks other players from spreading).
 const NON_UNDOABLE_PLANT_CARDS = new Set([30]); // Pigskin Puffball
@@ -182,7 +180,7 @@ function hasAnyValidAction(state: GameState, playerId: string): boolean {
   return false;
 }
 
-export function GameScreen({ initialState, onNewGame, devMode = false }: GameScreenProps) {
+export function GameScreen({ initialState, onNewGame, devMode = false, humanPlayerIds = ['player_0'] }: GameScreenProps) {
   const [state, setState] = useState<GameState>(() => {
     if (isSeasonStart(initialState.currentTurn)) {
       return applySeasonStart(initialState);
@@ -203,6 +201,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
   const [showAlmanac, setShowAlmanac] = useState(false);
   const [forecastOpen, setForecastOpen] = useState(true);
   const [recentlyPlantedTileId, setRecentlyPlantedTileId] = useState<string | null>(null);
+  const [showPassHandoff, setShowPassHandoff] = useState(false);
 
   // ── Board zoom + pan ────────────────────────────────────────────────────────
   const [zoom, setZoom] = useState(1.0);
@@ -222,7 +221,8 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
   }, [recentlyPlantedTileId]);
 
   const currentPlayer = state.players[state.currentPlayerIndex];
-  const isHumanTurn = currentPlayer.id === HUMAN_PLAYER_ID;
+  const isHumanTurn = humanPlayerIds.includes(currentPlayer.id);
+  const isMultiHuman = humanPlayerIds.length > 1;
 
   const season = getSeason(state.currentTurn);
   const sm = SEASON_UI[season];
@@ -293,7 +293,12 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
     setHighlightedTiles(new Set());
     setFeedback('');
     setUndoState(null);
-    setShowAnnouncement(true);
+    // In a mixed game, show handoff when a human player's turn is up next.
+    if (isMultiHuman && humanPlayerIds.includes(currentPlayer.id)) {
+      setShowPassHandoff(true);
+    } else {
+      setShowAnnouncement(true);
+    }
   }
 
   // Auto-rest when human player has no valid actions and hasn't acted yet.
@@ -604,6 +609,8 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
 
   const handleSkipTurn = useCallback(() => {
     if (!isHumanTurn || state.isOver) return;
+    const nextIdx = (state.currentPlayerIndex + 1) % state.players.length;
+    const nextIsHuman = humanPlayerIds.includes(state.players[nextIdx].id);
     try {
       setState(prev => {
         let s = resolveCollectPhase(prev, currentPlayer.id, {});
@@ -621,14 +628,20 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
       setHighlightedTiles(new Set());
       setFeedback('');
       setUndoState(null);
-      setShowAnnouncement(true);
+      if (isMultiHuman && nextIsHuman) {
+        setShowPassHandoff(true);
+      } else {
+        setShowAnnouncement(true);
+      }
     } catch (e: unknown) {
       setFeedback(e instanceof Error ? e.message : 'Error skipping turn.');
     }
-  }, [isHumanTurn, state, currentPlayer]);
+  }, [isHumanTurn, state, currentPlayer, isMultiHuman, humanPlayerIds]);
 
   const handleEndTurn = useCallback(() => {
     if (!isHumanTurn) return;
+    const nextIdx = (state.currentPlayerIndex + 1) % state.players.length;
+    const nextIsHuman = humanPlayerIds.includes(state.players[nextIdx].id);
 
     // Auto-pick best adjacent target for Lobster Mushroom (id 16) collect bonus
     const lobsterMushroom = state.placedMushrooms.find(
@@ -666,11 +679,15 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
       setHighlightedTiles(new Set());
       setFeedback('');
       setUndoState(null);
-      setShowAnnouncement(true);
+      if (isMultiHuman && nextIsHuman) {
+        setShowPassHandoff(true);
+      } else {
+        setShowAnnouncement(true);
+      }
     } catch (e: unknown) {
       setFeedback(e instanceof Error ? e.message : 'Error ending turn.');
     }
-  }, [isHumanTurn, currentPlayer, state]);
+  }, [isHumanTurn, currentPlayer, state, isMultiHuman, humanPlayerIds]);
 
   // Fit board on first render
   useEffect(() => {
@@ -1256,6 +1273,53 @@ export function GameScreen({ initialState, onNewGame, devMode = false }: GameScr
 
 
       {/* ══ OVERLAYS ══ */}
+
+      {/* Pass-and-play handoff screen — shown after each human turn */}
+      {showPassHandoff && !state.isOver && (
+        <div style={{
+          position: 'fixed', inset: 0, background: '#0E0A04',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          zIndex: 300, fontFamily: "'Cormorant Garamond', Georgia, serif",
+        }}>
+          <div style={{ textAlign: 'center', padding: '0 24px' }}>
+            <div style={{ fontSize: 11, letterSpacing: 3, color: '#4A3820', marginBottom: 24, textTransform: 'uppercase' }}>
+              Turn Complete
+            </div>
+            <div style={{ fontSize: 24, color: '#8A7848', marginBottom: 12 }}>
+              Pass the device to
+            </div>
+            <div style={{
+              width: 72, height: 72, borderRadius: '50%', margin: '0 auto 16px',
+              background: `radial-gradient(circle at 35% 35%, ${currentPlayer.color}cc, ${currentPlayer.color}44)`,
+              border: `3px solid ${currentPlayer.color}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 30, boxShadow: `0 0 32px ${currentPlayer.color}44`,
+            }}>
+              <span style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{currentPlayer.name[0]}</span>
+            </div>
+            <div style={{ fontSize: 48, fontWeight: 700, color: currentPlayer.color, marginBottom: 12, lineHeight: 1 }}>
+              {currentPlayer.name}
+            </div>
+            <div style={{ fontStyle: 'italic', fontSize: 16, color: '#4A3820', marginBottom: 48 }}>
+              Don't look — pass it over.
+            </div>
+            <button
+              onClick={() => { setShowPassHandoff(false); setShowAnnouncement(true); }}
+              style={{
+                background: currentPlayer.color, color: '#F2ECD8',
+                border: 'none', borderRadius: 10,
+                padding: '16px 56px', fontSize: 20, fontWeight: 700,
+                cursor: 'pointer', letterSpacing: 1,
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                boxShadow: `0 4px 32px ${currentPlayer.color}66`,
+              }}
+            >
+              I'm {currentPlayer.name} →
+            </button>
+          </div>
+        </div>
+      )}
+
       {showAnnouncement && !state.isOver && (
         <TurnAnnouncement
           player={currentPlayer}

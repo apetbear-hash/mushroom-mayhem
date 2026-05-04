@@ -7,15 +7,15 @@ import { portraitEmoji } from '../agents/turn/playerSetupData';
 interface DraftPhaseScreenProps {
   state: GameState;
   onConfirm: (finalState: GameState) => void;
+  humanPlayerIds: string[];
 }
 
 const MAX_DISCARD = 4;
-const HUMAN_PLAYER_ID = 'player_0';
 
-function applyAIDraft(state: GameState): GameState {
+function applyAIDraft(state: GameState, humanPlayerIds: string[]): GameState {
   let s = state;
   for (const p of s.players) {
-    if (p.id === HUMAN_PLAYER_ID) continue;
+    if (humanPlayerIds.includes(p.id)) continue;
     const toDiscard = p.hand
       .filter(id => {
         const c = getCard(id);
@@ -39,12 +39,21 @@ function applyAIDraft(state: GameState): GameState {
   return s;
 }
 
-export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
-  const humanPlayer = state.players.find(p => p.id === HUMAN_PLAYER_ID)!;
+export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhaseScreenProps) {
+  const humanPlayers = state.players.filter(p => humanPlayerIds.includes(p.id));
+  const isMultiHuman = humanPlayers.length > 1;
+
+  const [draftIdx, setDraftIdx] = useState(0);
+  const [builtState, setBuiltState] = useState(state);
   const [markedForDiscard, setMarkedForDiscard] = useState<Set<number>>(new Set());
+  const [showHandoff, setShowHandoff] = useState(false);
+
+  const currentDraftPlayer = humanPlayers.length > 0
+    ? builtState.players.find(p => p.id === humanPlayers[draftIdx].id)!
+    : builtState.players[0];
 
   const sporesGained = markedForDiscard.size;
-  const startingSpores = humanPlayer.resources.spore + sporesGained;
+  const startingSpores = currentDraftPlayer.resources.spore + sporesGained;
 
   function toggleCard(cardId: number) {
     setMarkedForDiscard(prev => {
@@ -57,9 +66,9 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
 
   function handleConfirm() {
     const discardIds = Array.from(markedForDiscard);
-    let s = {
-      ...state,
-      players: state.players.map(p => p.id === HUMAN_PLAYER_ID
+    const updatedState: GameState = {
+      ...builtState,
+      players: builtState.players.map(p => p.id === currentDraftPlayer.id
         ? {
           ...p,
           hand: p.hand.filter(id => !discardIds.includes(id)),
@@ -67,13 +76,74 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
         }
         : p,
       ),
-      discard: [...state.discard, ...discardIds],
+      discard: [...builtState.discard, ...discardIds],
     };
-    s = applyAIDraft(s);
-    onConfirm(s);
+
+    if (isMultiHuman && draftIdx < humanPlayers.length - 1) {
+      setBuiltState(updatedState);
+      setMarkedForDiscard(new Set());
+      setShowHandoff(true);
+    } else {
+      onConfirm(applyAIDraft(updatedState, humanPlayerIds));
+    }
+  }
+
+  function handleHandoffContinue() {
+    setShowHandoff(false);
+    setDraftIdx(prev => prev + 1);
   }
 
   const canDiscard = markedForDiscard.size < MAX_DISCARD;
+  const nextDraftPlayer = isMultiHuman && draftIdx < humanPlayers.length - 1
+    ? builtState.players.find(p => p.id === humanPlayers[draftIdx + 1].id)!
+    : null;
+
+  if (showHandoff && nextDraftPlayer) {
+    return (
+      <div style={{
+        minHeight: '100vh', background: '#1A1408',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 11, letterSpacing: 3, color: '#6A5030', marginBottom: 20, textTransform: 'uppercase' }}>
+            Starting Draft
+          </div>
+          <div style={{ fontSize: 22, color: '#C8B88A', marginBottom: 8 }}>
+            Pass the device to
+          </div>
+          <div style={{
+            width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px',
+            background: `radial-gradient(circle at 35% 35%, ${nextDraftPlayer.color}cc, ${nextDraftPlayer.color}55)`,
+            border: `3px solid ${nextDraftPlayer.color}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 28,
+          }}>
+            {portraitEmoji(nextDraftPlayer.portrait)}
+          </div>
+          <div style={{ fontSize: 40, fontWeight: 700, color: nextDraftPlayer.color, marginBottom: 10 }}>
+            {nextDraftPlayer.name}
+          </div>
+          <div style={{ fontStyle: 'italic', fontSize: 15, color: '#6A5030', marginBottom: 40 }}>
+            Don't look — let {nextDraftPlayer.name} take over.
+          </div>
+          <button
+            onClick={handleHandoffContinue}
+            style={{
+              background: nextDraftPlayer.color, color: '#F2ECD8',
+              border: 'none', borderRadius: 10,
+              padding: '14px 48px', fontSize: 18, fontWeight: 700,
+              cursor: 'pointer', letterSpacing: 1,
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              boxShadow: `0 4px 24px ${nextDraftPlayer.color}55`,
+            }}
+          >
+            I'm {nextDraftPlayer.name} →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -83,13 +153,12 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
     }}>
       <div style={{ maxWidth: 1060, width: '100%' }}>
 
-        {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             fontSize: 11, letterSpacing: 3, color: '#8A7848',
             textTransform: 'uppercase', marginBottom: 12,
           }}>
-            Starting Draft
+            {isMultiHuman ? `Starting Draft — Player ${draftIdx + 1} of ${humanPlayers.length}` : 'Starting Draft'}
           </div>
           <div style={{ fontSize: 40, fontWeight: 700, color: '#1A1408', lineHeight: 1, letterSpacing: -1 }}>
             Choose your starting hand
@@ -100,26 +169,25 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
           </div>
         </div>
 
-        {/* Player badge */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 10,
           marginBottom: 28, padding: '8px 20px',
-          border: `1px solid ${humanPlayer.color}55`,
-          background: `${humanPlayer.color}10`,
+          border: `1px solid ${currentDraftPlayer.color}55`,
+          background: `${currentDraftPlayer.color}10`,
           marginLeft: '50%', transform: 'translateX(-50%)',
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: '50%',
-            background: `radial-gradient(circle at 35% 35%, ${humanPlayer.color}cc, ${humanPlayer.color}55)`,
-            border: `2px solid ${humanPlayer.color}`,
+            background: `radial-gradient(circle at 35% 35%, ${currentDraftPlayer.color}cc, ${currentDraftPlayer.color}55)`,
+            border: `2px solid ${currentDraftPlayer.color}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 18, flexShrink: 0,
           }}>
-            {portraitEmoji(humanPlayer.portrait)}
+            {portraitEmoji(currentDraftPlayer.portrait)}
           </div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: humanPlayer.color, lineHeight: 1 }}>
-              {humanPlayer.name}
+            <div style={{ fontSize: 16, fontWeight: 700, color: currentDraftPlayer.color, lineHeight: 1 }}>
+              {currentDraftPlayer.name}
             </div>
             <div style={{ fontSize: 13, color: '#6A5030', marginTop: 3, fontStyle: 'italic' }}>
               Starting with {startingSpores} 🍄
@@ -130,61 +198,48 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
           </div>
         </div>
 
-        {/* Cards */}
         <div style={{ overflowX: 'auto', marginBottom: 20, paddingBottom: 8 }}>
-          <div style={{
-            display: 'flex', gap: 14, justifyContent: 'center',
-            minWidth: 'max-content',
-          }}>
-          {humanPlayer.hand.map(cardId => {
-            const card = getCard(cardId);
-            const isMarked = markedForDiscard.has(cardId);
-            const isDisabled = !isMarked && !canDiscard;
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', minWidth: 'max-content' }}>
+            {currentDraftPlayer.hand.map(cardId => {
+              const card = getCard(cardId);
+              const isMarked = markedForDiscard.has(cardId);
+              const isDisabled = !isMarked && !canDiscard;
 
-            return (
-              <div
-                key={cardId}
-                onClick={() => !isDisabled && toggleCard(cardId)}
-                style={{
-                  position: 'relative',
-                  zoom: 0.9,
-                  transform: isMarked ? 'translateY(10px)' : 'none',
-                  transition: 'transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s',
-                  opacity: isDisabled ? 0.3 : 1,
-                  cursor: isDisabled ? 'default' : 'pointer',
-                  outline: isMarked ? '2px solid #C84820' : 'none',
-                  outlineOffset: 3,
-                  borderRadius: 14,
-                  boxShadow: isMarked
-                    ? '0 4px 16px rgba(200,72,32,0.3)'
-                    : '0 4px 12px rgba(26,20,8,0.12)',
-                }}
-              >
-                <CardComponent card={card} isPlayable={!isMarked} />
-                {isMarked && (
-                  <div style={{
-                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                    borderRadius: 14,
-                    background: 'rgba(200,72,32,0.45)',
-                    display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center', gap: 4,
-                  }}>
-                    <div style={{ fontSize: 22 }}>🍄</div>
+              return (
+                <div
+                  key={cardId}
+                  onClick={() => !isDisabled && toggleCard(cardId)}
+                  style={{
+                    position: 'relative', zoom: 0.9,
+                    transform: isMarked ? 'translateY(10px)' : 'none',
+                    transition: 'transform 0.15s ease, opacity 0.15s',
+                    opacity: isDisabled ? 0.3 : 1,
+                    cursor: isDisabled ? 'default' : 'pointer',
+                    outline: isMarked ? '2px solid #C84820' : 'none',
+                    outlineOffset: 3, borderRadius: 14,
+                    boxShadow: isMarked ? '0 4px 16px rgba(200,72,32,0.3)' : '0 4px 12px rgba(26,20,8,0.12)',
+                  }}
+                >
+                  <CardComponent card={card} isPlayable={!isMarked} />
+                  {isMarked && (
                     <div style={{
-                      fontSize: 11, color: '#F2ECD8', fontWeight: 700,
-                      letterSpacing: 1, textTransform: 'uppercase',
+                      position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                      borderRadius: 14, background: 'rgba(200,72,32,0.45)',
+                      display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', justifyContent: 'center', gap: 4,
                     }}>
-                      Trade +1
+                      <div style={{ fontSize: 22 }}>🍄</div>
+                      <div style={{ fontSize: 11, color: '#F2ECD8', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
+                        Trade +1
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Status line */}
         <div style={{ textAlign: 'center', marginBottom: 28, minHeight: 22 }}>
           {markedForDiscard.size === 0 && (
             <span style={{ fontStyle: 'italic', fontSize: 15, color: '#8A7848' }}>
@@ -203,7 +258,6 @@ export function DraftPhaseScreen({ state, onConfirm }: DraftPhaseScreenProps) {
           )}
         </div>
 
-        {/* Actions */}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           {markedForDiscard.size > 0 && (
             <button

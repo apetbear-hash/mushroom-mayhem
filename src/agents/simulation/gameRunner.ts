@@ -14,6 +14,7 @@ export function buildAIDrafts(count: number): PlayerDraft[] {
     name: `AI ${i + 1}`,
     portrait: PORTRAITS[i % PORTRAITS.length].id,
     color: COLOR_OPTIONS[i % COLOR_OPTIONS.length].hex,
+    isHuman: false,
   }));
 }
 
