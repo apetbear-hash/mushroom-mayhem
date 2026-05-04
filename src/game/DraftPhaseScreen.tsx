@@ -106,7 +106,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
         fontFamily: "'Cormorant Garamond', Georgia, serif",
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 11, letterSpacing: 3, color: '#6A5030', marginBottom: 20, textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 11, letterSpacing: 3, color: '#8A7060', marginBottom: 20, textTransform: 'uppercase' }}>
             Starting Draft
           </div>
           <div style={{ fontSize: 22, color: '#C8B88A', marginBottom: 8 }}>
@@ -124,7 +124,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
           <div style={{ fontSize: 40, fontWeight: 700, color: nextDraftPlayer.color, marginBottom: 10 }}>
             {nextDraftPlayer.name}
           </div>
-          <div style={{ fontStyle: 'italic', fontSize: 15, color: '#6A5030', marginBottom: 40 }}>
+          <div style={{ fontStyle: 'italic', fontSize: 15, color: '#8A7060', marginBottom: 40 }}>
             Don't look — let {nextDraftPlayer.name} take over.
           </div>
           <button
@@ -155,7 +155,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
 
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
-            fontSize: 11, letterSpacing: 3, color: '#8A7848',
+            fontSize: 11, letterSpacing: 3, color: '#4A2E08',
             textTransform: 'uppercase', marginBottom: 12,
           }}>
             {isMultiHuman ? `Starting Draft — Player ${draftIdx + 1} of ${humanPlayers.length}` : 'Starting Draft'}
@@ -163,7 +163,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
           <div style={{ fontSize: 40, fontWeight: 700, color: '#1A1408', lineHeight: 1, letterSpacing: -1 }}>
             Choose your starting hand
           </div>
-          <div style={{ fontStyle: 'italic', fontSize: 16, color: '#6A5030', marginTop: 10, maxWidth: 480, margin: '10px auto 0' }}>
+          <div style={{ fontStyle: 'italic', fontSize: 16, color: '#3A1E08', marginTop: 10, maxWidth: 480, margin: '10px auto 0' }}>
             Trade up to {MAX_DISCARD} cards for spores. Traded cards go to the discard pile —
             you will not draw them again.
           </div>
@@ -189,7 +189,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
             <div style={{ fontSize: 16, fontWeight: 700, color: currentDraftPlayer.color, lineHeight: 1 }}>
               {currentDraftPlayer.name}
             </div>
-            <div style={{ fontSize: 13, color: '#6A5030', marginTop: 3, fontStyle: 'italic' }}>
+            <div style={{ fontSize: 13, color: '#3A1E08', marginTop: 3, fontStyle: 'italic' }}>
               Starting with {startingSpores} 🍄
               {sporesGained > 0 && (
                 <span style={{ color: '#C84820' }}> (+{sporesGained} from trade)</span>
@@ -242,12 +242,12 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
 
         <div style={{ textAlign: 'center', marginBottom: 28, minHeight: 22 }}>
           {markedForDiscard.size === 0 && (
-            <span style={{ fontStyle: 'italic', fontSize: 15, color: '#8A7848' }}>
+            <span style={{ fontStyle: 'italic', fontSize: 15, color: '#4A2E08' }}>
               Click a card to trade it for 1 spore — up to {MAX_DISCARD} cards
             </span>
           )}
           {markedForDiscard.size > 0 && markedForDiscard.size < MAX_DISCARD && (
-            <span style={{ fontStyle: 'italic', fontSize: 15, color: '#6A5030' }}>
+            <span style={{ fontStyle: 'italic', fontSize: 15, color: '#3A1E08' }}>
               Trading {markedForDiscard.size} card{markedForDiscard.size > 1 ? 's' : ''} — you can trade {MAX_DISCARD - markedForDiscard.size} more
             </span>
           )}
@@ -264,7 +264,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
               onClick={() => setMarkedForDiscard(new Set())}
               style={{
                 background: 'transparent', border: '1px solid #C8B88A',
-                color: '#6A5030', padding: '13px 28px',
+                color: '#3A1E08', padding: '13px 28px',
                 cursor: 'pointer', fontSize: 15,
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
               }}

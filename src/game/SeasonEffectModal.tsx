@@ -71,7 +71,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
           <div style={{ fontSize: 22, color: '#1A1408', fontWeight: 800, marginBottom: 6 }}>
             Germination Gamble
           </div>
-          <div style={{ fontSize: 14, color: '#6A5030', maxWidth: 380, margin: '0 auto', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 14, color: '#3A1E08', maxWidth: 380, margin: '0 auto', lineHeight: 1.5 }}>
             Swap unwanted cards for fresh draws. Select cards to replace,
             then draw the same number from the deck.
             {maxSwap === 0 && (
@@ -137,7 +137,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
           </div>
         )}
 
-        <div style={{ textAlign: 'center', fontSize: 13, color: '#8A7848', marginBottom: 20, minHeight: 16 }}>
+        <div style={{ textAlign: 'center', fontSize: 13, color: '#4A2E08', marginBottom: 20, minHeight: 16 }}>
           {swapCount === 0 && maxSwap > 0 && 'Click cards to swap them out — or skip to keep your hand'}
           {swapCount > 0 && `Swapping ${swapCount} card${swapCount > 1 ? 's' : ''} — draw ${swapCount} fresh`}
         </div>
@@ -147,7 +147,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
             onClick={onSkip}
             style={{
               background: 'transparent', border: '1px solid #C8B88A',
-              color: '#6A5030', borderRadius: 8, padding: '10px 22px',
+              color: '#3A1E08', borderRadius: 8, padding: '10px 22px',
               cursor: 'pointer', fontSize: 14,
               fontFamily: "'Cormorant Garamond', Georgia, serif",
             }}
@@ -159,7 +159,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
             disabled={maxSwap === 0}
             style={{
               background: swapCount > 0 ? '#C84820' : '#DDD0B0',
-              color: swapCount > 0 ? '#F2ECD8' : '#8A7848',
+              color: swapCount > 0 ? '#F2ECD8' : '#4A2E08',
               border: 'none',
               borderRadius: 8, padding: '10px 28px',
               cursor: swapCount > 0 ? 'pointer' : 'default',

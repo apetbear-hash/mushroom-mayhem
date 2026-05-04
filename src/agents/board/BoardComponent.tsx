@@ -515,7 +515,7 @@ function TileTooltip({
       <div style={{ padding: '8px 10px 4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6, background: '#F2EAD8' }}>
         <div>
           <div style={{ fontWeight: 700, fontSize: 13, color: '#1A140F', lineHeight: 1.3 }}>{card.name}</div>
-          <div style={{ color: '#8A7848', fontSize: 10, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
+          <div style={{ color: '#4A2E08', fontSize: 10, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
         </div>
         {card.pts > 0 && (
           <div style={{ background: '#D4A04A', color: '#1A0A00', borderRadius: 4, padding: '2px 7px', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>

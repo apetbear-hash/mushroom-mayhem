@@ -56,7 +56,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
     }}>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ color: slot.active ? slot.color : '#8A7848', fontWeight: 700, fontSize: 12, letterSpacing: 1, fontFamily: 'sans-serif' }}>
+        <span style={{ color: slot.active ? slot.color : '#4A2E08', fontWeight: 700, fontSize: 12, letterSpacing: 1, fontFamily: 'sans-serif' }}>
           PLAYER {index + 1}
         </span>
         <button
@@ -65,7 +65,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
             background: slot.active ? slot.color : '#DDD0B0',
             border: `1px solid ${slot.active ? slot.color : '#C8B88A'}`,
             borderRadius: 20,
-            color: slot.active ? '#F2ECD8' : '#8A7848',
+            color: slot.active ? '#F2ECD8' : '#4A2E08',
             fontSize: 10, fontWeight: 700,
             padding: '3px 10px',
             cursor: 'pointer', letterSpacing: 0.5, fontFamily: 'sans-serif',
@@ -102,7 +102,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
       )}
 
       <div>
-        <div style={{ color: '#8A7848', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>PORTRAIT</div>
+        <div style={{ color: '#4A2E08', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>PORTRAIT</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {PORTRAITS.map(p => {
             const taken = takenPortraits.has(p.id) && p.id !== slot.portrait;
@@ -129,7 +129,7 @@ function PlayerSlot({ index, slot, takenPortraits, takenColors, onChange }: Slot
       </div>
 
       <div>
-        <div style={{ color: '#8A7848', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>COLOUR</div>
+        <div style={{ color: '#4A2E08', fontSize: 10, marginBottom: 5, letterSpacing: 1, fontFamily: 'sans-serif' }}>COLOUR</div>
         <div style={{ display: 'flex', gap: 6 }}>
           {COLOR_OPTIONS.map(c => {
             const taken = takenColors.has(c.hex) && c.hex !== slot.color;
@@ -190,7 +190,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
       <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: 3, marginBottom: 6, color: '#C84820' }}>
         MUSHROOM MAYHEM
       </h1>
-      <p style={{ color: '#8A7848', fontSize: 14, marginBottom: 32, letterSpacing: 1, fontFamily: 'sans-serif' }}>
+      <p style={{ color: '#4A2E08', fontSize: 14, marginBottom: 32, letterSpacing: 1, fontFamily: 'sans-serif' }}>
         Toggle players active, then pick a portrait and colour.
       </p>
 
@@ -204,7 +204,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
         ))}
       </div>
 
-      <div style={{ marginTop: 16, color: '#8A7848', fontSize: 13, fontFamily: 'sans-serif' }}>
+      <div style={{ marginTop: 16, color: '#4A2E08', fontSize: 13, fontFamily: 'sans-serif' }}>
         {activeSlots.length < 2
           ? 'Activate at least 2 players to start.'
           : activeSlots.length > 4
@@ -218,7 +218,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
           marginTop: 24,
           background: devMode ? '#1A2A0A' : 'transparent',
           border: `1px solid ${devMode ? '#3A6A10' : '#C8B88A'}`,
-          color: devMode ? '#7AC840' : '#8A7848',
+          color: devMode ? '#7AC840' : '#4A2E08',
           borderRadius: 6,
           padding: '6px 18px',
           fontSize: 10,
@@ -236,7 +236,7 @@ export function PlayerSetup({ onConfirm }: PlayerSetupProps) {
         style={{
           marginTop: 16,
           background: canStart ? '#C84820' : '#DDD0B0',
-          color: canStart ? '#F2ECD8' : '#8A7848',
+          color: canStart ? '#F2ECD8' : '#4A2E08',
           border: 'none', borderRadius: 10,
           padding: '14px 48px', fontSize: 18, fontWeight: 700,
           cursor: canStart ? 'pointer' : 'not-allowed',

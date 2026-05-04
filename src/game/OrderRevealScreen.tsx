@@ -17,7 +17,7 @@ export function OrderRevealScreen({ orderCards, onContinue }: OrderRevealScreenP
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
         <div style={{
-          fontSize: 11, letterSpacing: 3, color: '#8A7848',
+          fontSize: 11, letterSpacing: 3, color: '#4A2E08',
           textTransform: 'uppercase', marginBottom: 12,
         }}>
           Turn Order Determined
@@ -25,7 +25,7 @@ export function OrderRevealScreen({ orderCards, onContinue }: OrderRevealScreenP
         <div style={{ fontSize: 40, fontWeight: 700, color: '#1A1408', lineHeight: 1, letterSpacing: -1 }}>
           Highest card plays first
         </div>
-        <div style={{ fontStyle: 'italic', fontSize: 16, color: '#6A5030', marginTop: 10 }}>
+        <div style={{ fontStyle: 'italic', fontSize: 16, color: '#3A1E08', marginTop: 10 }}>
           Each player revealed one card from the deck. Tiebreak: highest cost.
         </div>
       </div>
@@ -58,7 +58,7 @@ export function OrderRevealScreen({ orderCards, onContinue }: OrderRevealScreenP
                 </div>
                 <span style={{
                   fontSize: 13, letterSpacing: 1.5, fontWeight: 700,
-                  color: isFirst ? entry.color : '#6A5030', textTransform: 'uppercase',
+                  color: isFirst ? entry.color : '#3A1E08', textTransform: 'uppercase',
                 }}>
                   {entry.name}
                   {isFirst && <span style={{ marginLeft: 6, fontSize: 10 }}>▶ first</span>}
@@ -78,7 +78,7 @@ export function OrderRevealScreen({ orderCards, onContinue }: OrderRevealScreenP
 
               {/* Score label */}
               <div style={{
-                marginTop: 10, fontSize: 13, color: '#6A5030', fontStyle: 'italic',
+                marginTop: 10, fontSize: 13, color: '#3A1E08', fontStyle: 'italic',
               }}>
                 {card.pts} pt{card.pts !== 1 ? 's' : ''} · {card.cost} 🍄 cost
               </div>

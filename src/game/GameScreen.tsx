@@ -38,7 +38,7 @@ const SEASON_UI = {
 } as const;
 
 const KIND_COLOR: Record<string, string> = {
-  positive: '#3A6828', negative: '#B83818', risk: '#A07010', neutral: '#8A7848',
+  positive: '#3A6828', negative: '#B83818', risk: '#A07010', neutral: '#4A2E08',
 };
 
 const EFFECT_INFO: Record<string, { label: string; kind: string; desc: string }> = {
@@ -811,7 +811,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
           }}>{sm.icon}</div>
           <div>
             <div style={{ fontSize: 20, fontWeight: 700, color: sm.color, lineHeight: 1 }}>{sm.label}</div>
-            <div style={{ fontStyle: 'italic', fontSize: 13, color: '#6A5030', marginTop: 2 }}>{effectInfo.label}</div>
+            <div style={{ fontStyle: 'italic', fontSize: 13, color: '#3A1E08', marginTop: 2 }}>{effectInfo.label}</div>
           </div>
         </div>
 
@@ -822,9 +822,9 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
         }}>
           <div style={{ flexShrink: 0, textAlign: 'center' }}>
             <div style={{ fontSize: 26, fontWeight: 700, color: '#1A1408', lineHeight: 1, letterSpacing: -1 }}>
-              {state.currentTurn}<span style={{ fontSize: 14, color: '#8A7848', fontWeight: 400 }}>/20</span>
+              {state.currentTurn}<span style={{ fontSize: 14, color: '#4A2E08', fontWeight: 400 }}>/20</span>
             </div>
-            <div style={{ fontStyle: 'italic', fontSize: 13, color: '#8A7848' }}>
+            <div style={{ fontStyle: 'italic', fontSize: 13, color: '#4A2E08' }}>
               Turn {turnInSeasonNum} of 5
             </div>
           </div>
@@ -850,7 +850,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
                       );
                     })}
                   </div>
-                  <span style={{ fontSize: 9, letterSpacing: 1, color: isCur ? sc : '#8A7848', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 9, letterSpacing: 1, color: isCur ? sc : '#4A2E08', textTransform: 'uppercase' }}>
                     {s.slice(0, 3)}
                   </span>
                 </div>
@@ -883,13 +883,13 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
                 <div>
                   <div style={{
                     fontSize: 11, letterSpacing: 1, fontWeight: 700, lineHeight: 1,
-                    color: isActive ? '#1A1408' : '#6A5030', textTransform: 'uppercase',
+                    color: isActive ? '#1A1408' : '#3A1E08', textTransform: 'uppercase',
                   }}>
                     {pp.name}{isActive && <span style={{ marginLeft: 4, fontSize: 9 }}>▶</span>}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginTop: 2 }}>
                     <span style={{ fontSize: 22, fontWeight: 700, color: '#1A1408', lineHeight: 1 }}>{pp.score}</span>
-                    <span style={{ fontSize: 10, color: '#8A7848' }}>pts</span>
+                    <span style={{ fontSize: 10, color: '#4A2E08' }}>pts</span>
                   </div>
                 </div>
               </div>
@@ -900,7 +900,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
             style={{
               borderLeft: '1px solid #C8B88A', padding: '0 16px',
               background: 'transparent', border: 'none',
-              fontSize: 12, letterSpacing: 1, color: '#6A5030',
+              fontSize: 12, letterSpacing: 1, color: '#3A1E08',
               cursor: 'pointer', textTransform: 'uppercase',
               fontFamily: 'inherit', fontWeight: 600,
             }}
@@ -1017,7 +1017,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
               {undoState && (
                 <button onClick={handleUndo} style={{
                   padding: '6px 6px', background: 'transparent',
-                  border: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
+                  border: '1px solid #C8B88A', color: '#3A1E08', cursor: 'pointer',
                   fontFamily: 'inherit', fontSize: 12, width: '100%', borderRadius: 3,
                 }}>↩ Undo</button>
               )}
@@ -1037,7 +1037,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
               <div style={{ fontSize: 11, letterSpacing: 1, color: currentPlayer.color, textTransform: 'uppercase', fontWeight: 700 }}>
                 {currentPlayer.name}
               </div>
-              <div style={{ fontStyle: 'italic', fontSize: 12, color: '#8A7848', marginTop: 2 }}>thinking…</div>
+              <div style={{ fontStyle: 'italic', fontSize: 12, color: '#4A2E08', marginTop: 2 }}>thinking…</div>
             </div>
           )}
         </div>
@@ -1076,7 +1076,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
               position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
               background: 'rgba(221,208,176,0.96)', border: '1px solid #C8B88A',
               borderRadius: 20, padding: '8px 20px',
-              fontStyle: 'italic', fontSize: 15, color: '#6A5030',
+              fontStyle: 'italic', fontSize: 15, color: '#3A1E08',
               pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 10,
               boxShadow: '0 2px 10px rgba(26,20,8,0.12)',
             }}>
@@ -1168,12 +1168,12 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
                 </>
               )}
               {selectedAction === 'plant' && !plantSecondary && !inkyCapPendingTileId && isHumanTurn && (
-                <span style={{ fontStyle: 'italic', fontSize: 12, color: selectedCardId != null ? '#C8A870' : '#9A8858' }}>
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: selectedCardId != null ? '#C8A870' : '#4A2E08' }}>
                   {selectedCardId != null ? '✓ Selected — click a tile' : 'Pick a card'}
                 </span>
               )}
               {feedback && !plantSecondary && !inkyCapPendingTileId && selectedAction !== 'plant' && (
-                <span style={{ fontStyle: 'italic', fontSize: 12, color: '#9A8858' }}>{feedback}</span>
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: '#4A2E08' }}>{feedback}</span>
               )}
               {selectedAction === 'draw' && isHumanTurn && state.turnState.cardsDrawnThisTurn > 0 && (
                 <button
@@ -1218,7 +1218,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
             onClick={() => setForecastOpen(o => !o)}
             style={{
               height: 36, flexShrink: 0, background: 'transparent', border: 'none',
-              borderBottom: '1px solid #C8B88A', color: '#6A5030', cursor: 'pointer',
+              borderBottom: '1px solid #C8B88A', color: '#3A1E08', cursor: 'pointer',
               fontFamily: 'inherit', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '0 10px', width: '100%', fontWeight: 600,
@@ -1257,10 +1257,10 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
                     <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1408', lineHeight: 1.2, marginBottom: 3 }}>
                       {e.label}
                     </div>
-                    <div style={{ fontStyle: 'italic', fontSize: 12, color: past ? '#8A7848' : '#6A5030', lineHeight: 1.4, marginBottom: 4 }}>
+                    <div style={{ fontStyle: 'italic', fontSize: 12, color: past ? '#4A2E08' : '#3A1E08', lineHeight: 1.4, marginBottom: 4 }}>
                       {e.desc}
                     </div>
-                    <div style={{ fontSize: 10, color: KIND_COLOR[e.kind] ?? '#8A7848', textTransform: 'uppercase', letterSpacing: 1 }}>
+                    <div style={{ fontSize: 10, color: KIND_COLOR[e.kind] ?? '#4A2E08', textTransform: 'uppercase', letterSpacing: 1 }}>
                       {e.kind}
                     </div>
                   </div>
@@ -1282,10 +1282,10 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
           zIndex: 300, fontFamily: "'Cormorant Garamond', Georgia, serif",
         }}>
           <div style={{ textAlign: 'center', padding: '0 24px' }}>
-            <div style={{ fontSize: 11, letterSpacing: 3, color: '#4A3820', marginBottom: 24, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 11, letterSpacing: 3, color: '#8A7060', marginBottom: 24, textTransform: 'uppercase' }}>
               Turn Complete
             </div>
-            <div style={{ fontSize: 24, color: '#8A7848', marginBottom: 12 }}>
+            <div style={{ fontSize: 24, color: '#C8B88A', marginBottom: 12 }}>
               Pass the device to
             </div>
             <div style={{
@@ -1300,7 +1300,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
             <div style={{ fontSize: 48, fontWeight: 700, color: currentPlayer.color, marginBottom: 12, lineHeight: 1 }}>
               {currentPlayer.name}
             </div>
-            <div style={{ fontStyle: 'italic', fontSize: 16, color: '#4A3820', marginBottom: 48 }}>
+            <div style={{ fontStyle: 'italic', fontSize: 16, color: '#8A7060', marginBottom: 48 }}>
               Don't look — pass it over.
             </div>
             <button
@@ -1372,14 +1372,14 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <div>
-                <div style={{ fontSize: 11, letterSpacing: 3, color: '#8A7848', textTransform: 'uppercase' }}>Seasonal</div>
+                <div style={{ fontSize: 11, letterSpacing: 3, color: '#4A2E08', textTransform: 'uppercase' }}>Seasonal</div>
                 <div style={{ fontSize: 36, fontWeight: 700, color: '#1A1408' }}>Almanac</div>
               </div>
               <button
                 onClick={() => setShowAlmanac(false)}
                 style={{
                   background: 'transparent', border: '1px solid #C8B88A',
-                  color: '#6A5030', cursor: 'pointer', width: 38, height: 38,
+                  color: '#3A1E08', cursor: 'pointer', width: 38, height: 38,
                   fontFamily: 'inherit', fontSize: 20,
                 }}
               >×</button>
@@ -1410,10 +1410,10 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
                       <span style={{ fontSize: 11, letterSpacing: 1.5, color: smeta.color, textTransform: 'uppercase', fontWeight: 700 }}>{smeta.label}</span>
                     </div>
                     <div style={{ fontSize: 18, fontWeight: 700, color: '#1A1408', marginBottom: 8, lineHeight: 1.2 }}>{e.label}</div>
-                    <div style={{ fontStyle: 'italic', fontSize: 14, color: '#6A5030', lineHeight: 1.5 }}>{e.desc}</div>
+                    <div style={{ fontStyle: 'italic', fontSize: 14, color: '#3A1E08', lineHeight: 1.5 }}>{e.desc}</div>
                     <div style={{
                       marginTop: 12, fontSize: 10, letterSpacing: 1.5, fontWeight: 600,
-                      color: KIND_COLOR[e.kind] ?? '#8A7848',
+                      color: KIND_COLOR[e.kind] ?? '#4A2E08',
                       textTransform: 'uppercase', padding: '4px 0', borderTop: '1px solid #C8B88A',
                     }}>{e.kind}</div>
                   </div>

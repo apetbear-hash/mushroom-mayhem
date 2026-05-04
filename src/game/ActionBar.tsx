@@ -149,7 +149,7 @@ export function ActionBar({
           disabled={!actionTaken}
           style={{
             background: actionTaken ? '#C84820' : '#C8B88A',
-            color: actionTaken ? '#F2EAD8' : '#8A7848',
+            color: actionTaken ? '#F2EAD8' : '#4A2E08',
             border: 'none',
             borderRadius: 6, padding: '9px', fontWeight: 700, fontSize: 19,
             cursor: actionTaken ? 'pointer' : 'not-allowed', width: '100%',

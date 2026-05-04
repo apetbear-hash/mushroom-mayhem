@@ -42,7 +42,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 10, color: '#8A7848', letterSpacing: 3, marginBottom: 14, fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: 10, color: '#4A2E08', letterSpacing: 3, marginBottom: 14, fontFamily: 'sans-serif' }}>
             GAME OVER — TURN 20
           </div>
 
@@ -63,13 +63,13 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
             {isTie ? "It's a Tie!" : `${winner.name} Wins!`}
           </div>
           <div style={{ color: '#C84820', fontSize: 30, fontWeight: 800 }}>
-            {winner.score} <span style={{ fontSize: 14, color: '#8A7848', fontWeight: 400 }}>symbiosis pts</span>
+            {winner.score} <span style={{ fontSize: 14, color: '#4A2E08', fontWeight: 400 }}>symbiosis pts</span>
           </div>
         </div>
 
         {/* Bar graph */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 10, color: '#8A7848', letterSpacing: 2, marginBottom: 12, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: 10, color: '#4A2E08', letterSpacing: 2, marginBottom: 12, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
             Final Scores
           </div>
 
@@ -89,7 +89,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
                   }}>
                     {p.name}
                   </span>
-                  <span style={{ color: '#8A7848', fontSize: 10, flexShrink: 0, fontFamily: 'sans-serif' }}>
+                  <span style={{ color: '#4A2E08', fontSize: 10, flexShrink: 0, fontFamily: 'sans-serif' }}>
                     {p.networkTileIds.length}🌐 · {mushroomCount}🍄
                   </span>
                   <span style={{
@@ -129,7 +129,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
             {[0, 25, 50, 75, 100].map(pct => (
-              <div key={pct} style={{ fontSize: 10, color: '#8A7848', textAlign: 'center', fontFamily: 'sans-serif' }}>
+              <div key={pct} style={{ fontSize: 10, color: '#4A2E08', textAlign: 'center', fontFamily: 'sans-serif' }}>
                 {Math.round((pct / 100) * maxScore)}
               </div>
             ))}
@@ -157,7 +157,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
                   {p.name}
                 </div>
                 <div style={{ color: '#1A1408', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>{p.score}</div>
-                <div style={{ color: '#8A7848', fontSize: 10, fontWeight: 700, marginBottom: 6, fontFamily: 'sans-serif' }}>pts</div>
+                <div style={{ color: '#4A2E08', fontSize: 10, fontWeight: 700, marginBottom: 6, fontFamily: 'sans-serif' }}>pts</div>
                 <div style={{ color: '#4A3820', fontSize: 10, fontFamily: 'sans-serif' }}>{p.networkTileIds.length} tiles</div>
                 <div style={{ color: '#4A3820', fontSize: 10, fontFamily: 'sans-serif' }}>{mushroomCount} mushrooms</div>
               </div>
