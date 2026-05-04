@@ -106,7 +106,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
         fontFamily: "'Cormorant Garamond', Georgia, serif",
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 11, letterSpacing: 3, color: '#8A7060', marginBottom: 20, textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 13, letterSpacing: 3, color: '#8A7060', marginBottom: 20, textTransform: 'uppercase' }}>
             Starting Draft
           </div>
           <div style={{ fontSize: 22, color: '#C8B88A', marginBottom: 8 }}>
@@ -155,7 +155,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
 
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
-            fontSize: 11, letterSpacing: 3, color: '#4A2E08',
+            fontSize: 13, letterSpacing: 3, color: '#4A2E08',
             textTransform: 'uppercase', marginBottom: 12,
           }}>
             {isMultiHuman ? `Starting Draft — Player ${draftIdx + 1} of ${humanPlayers.length}` : 'Starting Draft'}
@@ -189,7 +189,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
             <div style={{ fontSize: 16, fontWeight: 700, color: currentDraftPlayer.color, lineHeight: 1 }}>
               {currentDraftPlayer.name}
             </div>
-            <div style={{ fontSize: 13, color: '#3A1E08', marginTop: 3, fontStyle: 'italic' }}>
+            <div style={{ fontSize: 15, color: '#3A1E08', marginTop: 3, fontStyle: 'italic' }}>
               Starting with {startingSpores} 🍄
               {sporesGained > 0 && (
                 <span style={{ color: '#C84820' }}> (+{sporesGained} from trade)</span>
@@ -229,7 +229,7 @@ export function DraftPhaseScreen({ state, onConfirm, humanPlayerIds }: DraftPhas
                       alignItems: 'center', justifyContent: 'center', gap: 4,
                     }}>
                       <div style={{ fontSize: 22 }}>🍄</div>
-                      <div style={{ fontSize: 11, color: '#F2ECD8', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
+                      <div style={{ fontSize: 13, color: '#F2ECD8', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
                         Trade +1
                       </div>
                     </div>

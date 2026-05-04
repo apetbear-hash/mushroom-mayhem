@@ -65,7 +65,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
         boxShadow: '0 8px 48px rgba(26,20,8,0.25)',
       }}>
         <div style={{ marginBottom: 20, textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: '#4A8030', letterSpacing: 3, marginBottom: 6, fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: 12, color: '#4A8030', letterSpacing: 3, marginBottom: 6, fontFamily: 'sans-serif' }}>
             🌿 SPRING EFFECT
           </div>
           <div style={{ fontSize: 22, color: '#1A1408', fontWeight: 800, marginBottom: 6 }}>
@@ -75,7 +75,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
             Swap unwanted cards for fresh draws. Select cards to replace,
             then draw the same number from the deck.
             {maxSwap === 0 && (
-              <span style={{ color: '#C84820', display: 'block', marginTop: 4, fontSize: 13 }}>
+              <span style={{ color: '#C84820', display: 'block', marginTop: 4, fontSize: 15 }}>
                 Deck is empty — no swaps available.
               </span>
             )}
@@ -116,7 +116,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
                       position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                       borderRadius: 14, background: 'rgba(26,20,8,0.5)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 10, color: '#F2ECD8', fontWeight: 700, letterSpacing: 1,
+                      fontSize: 12, color: '#F2ECD8', fontWeight: 700, letterSpacing: 1,
                       fontFamily: 'sans-serif',
                     }}>
                       SWAP OUT
@@ -125,7 +125,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
                   {!isSelected && recommended && (
                     <div style={{
                       position: 'absolute', bottom: 4, left: 0, right: 0,
-                      textAlign: 'center', fontSize: 10, color: '#4A8030', letterSpacing: 0.5,
+                      textAlign: 'center', fontSize: 12, color: '#4A8030', letterSpacing: 0.5,
                       fontFamily: 'sans-serif',
                     }}>
                       ↑ low value
@@ -137,7 +137,7 @@ export function SeasonEffectModal({ state, playerId, onConfirm, onSkip }: Season
           </div>
         )}
 
-        <div style={{ textAlign: 'center', fontSize: 13, color: '#4A2E08', marginBottom: 20, minHeight: 16 }}>
+        <div style={{ textAlign: 'center', fontSize: 15, color: '#4A2E08', marginBottom: 20, minHeight: 16 }}>
           {swapCount === 0 && maxSwap > 0 && 'Click cards to swap them out — or skip to keep your hand'}
           {swapCount > 0 && `Swapping ${swapCount} card${swapCount > 1 ? 's' : ''} — draw ${swapCount} fresh`}
         </div>

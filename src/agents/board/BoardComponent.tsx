@@ -458,10 +458,10 @@ function BlightTooltip({ pos }: { pos: { x: number; y: number } }) {
       boxShadow: '0 8px 32px rgba(14,9,7,0.55)',
       fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
-      <div style={{ background: '#9933cc', padding: '5px 10px', fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
+      <div style={{ background: '#9933cc', padding: '5px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
         Blighted
       </div>
-      <div style={{ padding: '8px 10px', fontSize: 12, color: '#3A2810', lineHeight: 1.4, fontStyle: 'italic' }}>
+      <div style={{ padding: '8px 10px', fontSize: 14, color: '#3A2810', lineHeight: 1.4, fontStyle: 'italic' }}>
         Mushrooms cannot grow on blight tiles.
       </div>
     </div>
@@ -497,9 +497,9 @@ function TileTooltip({
       border: `1.5px solid ${typeColor}99`,
       background: '#F2EAD8',
       boxShadow: `0 8px 32px rgba(14,9,7,0.55), 0 0 0 1px ${typeColor}22`,
-      fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 11, color: '#1A140F',
+      fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 13, color: '#1A140F',
     }}>
-      <div style={{ background: typeColor, padding: '5px 10px', fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
+      <div style={{ background: typeColor, padding: '5px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
         {card.type}{card.isOngoing && <span style={{ marginLeft: 6, opacity: 0.85 }}>· Ongoing</span>}
       </div>
 
@@ -514,8 +514,8 @@ function TileTooltip({
       {/* Name + pts */}
       <div style={{ padding: '8px 10px 4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6, background: '#F2EAD8' }}>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 13, color: '#1A140F', lineHeight: 1.3 }}>{card.name}</div>
-          <div style={{ color: '#4A2E08', fontSize: 10, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
+          <div style={{ fontWeight: 700, fontSize: 15, color: '#1A140F', lineHeight: 1.3 }}>{card.name}</div>
+          <div style={{ color: '#4A2E08', fontSize: 12, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
         </div>
         {card.pts > 0 && (
           <div style={{ background: '#D4A04A', color: '#1A0A00', borderRadius: 4, padding: '2px 7px', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
@@ -527,7 +527,7 @@ function TileTooltip({
       {/* Habitats */}
       <div style={{ padding: '2px 10px', display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         {card.habitats.map(h => (
-          <span key={h} style={{ background: HABITAT_COLORS[h]+'33', border: `1px solid ${HABITAT_COLORS[h]}88`, color: '#2A1810', borderRadius: 4, padding: '1px 5px', fontSize: 10, fontWeight: 600 }}>
+          <span key={h} style={{ background: HABITAT_COLORS[h]+'33', border: `1px solid ${HABITAT_COLORS[h]}88`, color: '#2A1810', borderRadius: 4, padding: '1px 5px', fontSize: 12, fontWeight: 600 }}>
             {HABITAT_LABELS[h]}
           </span>
         ))}
@@ -536,15 +536,15 @@ function TileTooltip({
       {/* Cost + generates */}
       <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #D8C8A0', borderBottom: '1px solid #D8C8A0', marginTop: 4 }}>
         <span style={{ color: '#8B6F47', fontWeight: 700 }}>{card.cost}🍄 cost</span>
-        {resourceEntries.length > 0 && <span style={{ color: '#A89060', fontSize: 10 }}>·</span>}
+        {resourceEntries.length > 0 && <span style={{ color: '#A89060', fontSize: 12 }}>·</span>}
         {resourceEntries.map(([res, amt]) => (
           <span key={res} style={{ color: RESOURCE_COLORS[res], fontWeight: 600 }}>+{amt}{RESOURCE_ICONS[res]}</span>
         ))}
-        {resourceEntries.length === 0 && <span style={{ color: '#A89060', fontSize: 10 }}>no generation</span>}
+        {resourceEntries.length === 0 && <span style={{ color: '#A89060', fontSize: 12 }}>no generation</span>}
       </div>
 
       {/* Power */}
-      <div style={{ padding: '7px 10px 9px', color: card.isOngoing ? '#2A6858' : '#3A2810', fontSize: 10, lineHeight: 1.5, fontStyle: 'italic' }}>
+      <div style={{ padding: '7px 10px 9px', color: card.isOngoing ? '#2A6858' : '#3A2810', fontSize: 12, lineHeight: 1.5, fontStyle: 'italic' }}>
         {card.power}
       </div>
     </div>

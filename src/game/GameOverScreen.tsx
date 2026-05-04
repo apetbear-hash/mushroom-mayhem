@@ -42,7 +42,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 10, color: '#4A2E08', letterSpacing: 3, marginBottom: 14, fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: 12, color: '#4A2E08', letterSpacing: 3, marginBottom: 14, fontFamily: 'sans-serif' }}>
             GAME OVER — TURN 20
           </div>
 
@@ -69,7 +69,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
 
         {/* Bar graph */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 10, color: '#4A2E08', letterSpacing: 2, marginBottom: 12, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: 12, color: '#4A2E08', letterSpacing: 2, marginBottom: 12, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
             Final Scores
           </div>
 
@@ -83,13 +83,13 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 16, flexShrink: 0 }}>{portraitEmoji(p.portrait)}</span>
                   <span style={{
-                    color: p.color, fontWeight: 700, fontSize: 12,
+                    color: p.color, fontWeight: 700, fontSize: 14,
                     flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     fontFamily: 'sans-serif',
                   }}>
                     {p.name}
                   </span>
-                  <span style={{ color: '#4A2E08', fontSize: 10, flexShrink: 0, fontFamily: 'sans-serif' }}>
+                  <span style={{ color: '#4A2E08', fontSize: 12, flexShrink: 0, fontFamily: 'sans-serif' }}>
                     {p.networkTileIds.length}🌐 · {mushroomCount}🍄
                   </span>
                   <span style={{
@@ -129,7 +129,7 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
             {[0, 25, 50, 75, 100].map(pct => (
-              <div key={pct} style={{ fontSize: 10, color: '#4A2E08', textAlign: 'center', fontFamily: 'sans-serif' }}>
+              <div key={pct} style={{ fontSize: 12, color: '#4A2E08', textAlign: 'center', fontFamily: 'sans-serif' }}>
                 {Math.round((pct / 100) * maxScore)}
               </div>
             ))}
@@ -150,16 +150,16 @@ export function GameOverScreen({ state, onNewGame }: GameOverScreenProps) {
                 border: `1px solid ${p.color}44`,
                 borderRadius: 10, padding: '10px 8px', textAlign: 'center',
               }}>
-                <div style={{ fontSize: 11, marginBottom: 2 }}>{portraitEmoji(p.portrait)}</div>
-                <div style={{ color: p.color, fontWeight: 700, fontSize: 10, marginBottom: 6,
+                <div style={{ fontSize: 13, marginBottom: 2 }}>{portraitEmoji(p.portrait)}</div>
+                <div style={{ color: p.color, fontWeight: 700, fontSize: 12, marginBottom: 6,
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'sans-serif',
                 }}>
                   {p.name}
                 </div>
                 <div style={{ color: '#1A1408', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>{p.score}</div>
-                <div style={{ color: '#4A2E08', fontSize: 10, fontWeight: 700, marginBottom: 6, fontFamily: 'sans-serif' }}>pts</div>
-                <div style={{ color: '#4A3820', fontSize: 10, fontFamily: 'sans-serif' }}>{p.networkTileIds.length} tiles</div>
-                <div style={{ color: '#4A3820', fontSize: 10, fontFamily: 'sans-serif' }}>{mushroomCount} mushrooms</div>
+                <div style={{ color: '#4A2E08', fontSize: 12, fontWeight: 700, marginBottom: 6, fontFamily: 'sans-serif' }}>pts</div>
+                <div style={{ color: '#4A3820', fontSize: 12, fontFamily: 'sans-serif' }}>{p.networkTileIds.length} tiles</div>
+                <div style={{ color: '#4A3820', fontSize: 12, fontFamily: 'sans-serif' }}>{mushroomCount} mushrooms</div>
               </div>
             );
           })}

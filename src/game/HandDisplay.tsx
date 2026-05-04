@@ -26,7 +26,7 @@ export function HandDisplay({
   if (player.hand.length === 0) {
     return (
       <div style={{
-        color: '#8A7848', fontSize: 13, padding: '8px 0',
+        color: '#8A7848', fontSize: 15, padding: '8px 0',
         fontStyle: 'italic', fontFamily: "'Cormorant Garamond', Georgia, serif",
       }}>
         Hand is empty
