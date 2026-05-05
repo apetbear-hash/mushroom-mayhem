@@ -66,7 +66,7 @@ const TYPE_ICON: Record<string, string> = {
   opportunistic: '◈',
 };
 
-function MushroomArt({ typeColor, type }: { typeColor: string; type: string }) {
+export function MushroomArt({ typeColor, type }: { typeColor: string; type: string }) {
   // Large illustrated mushroom centered in art area
   const cx = 110, cy = 120, stemH = 54, stemW = 14;
   const capRx = type === 'saprophytic' ? 52 : type === 'parasitic' ? 44 : 50;

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import type { GameState, Habitat, MushroomType, Season, Tile } from '../../shared/types';
-import { TYPE_COLORS, RESOURCE_COLORS, HABITAT_COLORS } from '../../shared/constants';
+import type { GameState, Habitat, Season, Tile } from '../../shared/types';
+import { TYPE_COLORS, HABITAT_COLORS } from '../../shared/constants';
 import { getCard } from '../card/cards';
+import { CardComponent, MushroomArt } from '../card/CardComponent';
 import { getSeason } from '../seasonal';
 import { hexToPixel, hexPolygonPoints } from './hexMath';
 
@@ -37,11 +38,16 @@ const HABITAT_TINTS: Record<Habitat, string> = {
   open:  '#C8A010',
 };
 
-const RESOURCE_ICONS: Record<string, string> = {
-  spore: '🍄', moisture: '💧', sunlight: '☀️',
-};
 const HABITAT_LABELS: Record<string, string> = {
   tree: 'Tree', decay: 'Decay', shade: 'Shade', wet: 'Wet', open: 'Open',
+};
+
+const HABITAT_DESCRIPTIONS: Record<string, string> = {
+  tree:  'Dense woodland — mycorrhizal and opportunistic species thrive here.',
+  decay: 'Rotting organic matter — ideal for saprophytic fungi.',
+  shade: 'Dark undergrowth — favours symbiotic and parasitic types.',
+  wet:   'Moist, boggy ground — most mushroom types can grow here.',
+  open:  'Exposed meadow — opportunistic fungi; high sunlight yield.',
 };
 
 interface BoardProps {
@@ -273,171 +279,6 @@ function BlightArt({ cx, cy, s }: { cx: number; cy: number; s: number }) {
   );
 }
 
-// ── Mushroom tile art (per type) ──────────────────────────────────────────────
-// Painted silhouettes rendered at the center of the tile when a mushroom is placed.
-
-function MushroomTileArt({
-  type, cx, cy, s, color,
-}: {
-  type: MushroomType; cx: number; cy: number; s: number; color: string;
-}) {
-  const ms = s * 0.46; // mushroom scale relative to tile size
-  const bx = cx;        // base x (center)
-  const by = cy + ms * 0.25; // base y (slightly below tile center)
-
-  // Darker and lighter variants of the type color for shading
-  const capColor  = color;
-  const darkColor = color + 'bb';
-  const rimColor  = '#ffffff44';
-
-  if (type === 'mycorrhizal') {
-    // Classic dome cap (Amanita/Chanterelle) — tall stem, wide dome
-    const stemH = ms * 0.55;
-    const stemW = ms * 0.18;
-    const capRx  = ms * 0.52;
-    const capRy  = ms * 0.3;
-    const capY   = by - stemH;
-    return (
-      <g>
-        {/* Stem */}
-        <rect x={bx - stemW/2} y={capY} width={stemW} height={stemH} fill="#c8a870" rx={stemW*0.3} />
-        {/* Gill underside */}
-        <ellipse cx={bx} cy={capY} rx={capRx*0.9} ry={capRy*0.35} fill={darkColor} />
-        {/* Cap */}
-        <ellipse cx={bx} cy={capY} rx={capRx} ry={capRy} fill={capColor} />
-        {/* Cap highlight */}
-        <ellipse cx={bx - capRx*0.2} cy={capY - capRy*0.3} rx={capRx*0.35} ry={capRy*0.3} fill={rimColor} />
-        {/* Skirt (veil ring) */}
-        <ellipse cx={bx} cy={capY + stemH*0.35} rx={stemW*1.8} ry={stemW*0.6} fill="#c8a870" fillOpacity={0.7} />
-      </g>
-    );
-  }
-
-  if (type === 'saprophytic') {
-    // Shelf/bracket fungus — stacked fan arcs
-    const bW = ms * 0.55;
-    const layerY = [by - ms*0.0, by - ms*0.28, by - ms*0.52];
-    const layerRx = [bW, bW*0.8, bW*0.58];
-    const layerRy = [ms*0.18, ms*0.15, ms*0.13];
-    return (
-      <g>
-        {layerY.map((ly, i) => (
-          <g key={i}>
-            <ellipse cx={bx} cy={ly} rx={layerRx[i]} ry={layerRy[i]*0.5} fill={darkColor} />
-            <path
-              d={`M ${bx - layerRx[i]} ${ly} A ${layerRx[i]} ${layerRy[i]} 0 0 1 ${bx + layerRx[i]} ${ly} Z`}
-              fill={capColor}
-            />
-            {/* Rim highlight */}
-            <path
-              d={`M ${bx - layerRx[i]*0.6} ${ly - layerRy[i]*0.5} A ${layerRx[i]*0.5} ${layerRy[i]*0.4} 0 0 1 ${bx + layerRx[i]*0.2} ${ly - layerRy[i]*0.55}`}
-              stroke={rimColor} strokeWidth={ms*0.04} fill="none"
-            />
-          </g>
-        ))}
-        {/* Base attachment point */}
-        <circle cx={bx} cy={by} r={ms*0.1} fill={darkColor} />
-      </g>
-    );
-  }
-
-  if (type === 'parasitic') {
-    // Coral/hedgehog — central blob with radiating spines
-    const spines = 14;
-    const innerR = ms * 0.22;
-    const outerR = ms * 0.52;
-    return (
-      <g>
-        {/* Spine layer */}
-        {Array.from({ length: spines }, (_, i) => {
-          const ang = (i / spines) * Math.PI * 2 - Math.PI / 2;
-          const ox = bx - ms*0.05 + Math.cos(ang) * outerR;
-          const oy = (by - ms*0.25) + Math.sin(ang) * outerR * 0.75;
-          const ix = bx - ms*0.05 + Math.cos(ang) * innerR;
-          const iy = (by - ms*0.25) + Math.sin(ang) * innerR * 0.75;
-          return (
-            <line key={i} x1={ix} y1={iy} x2={ox} y2={oy}
-              stroke={capColor} strokeWidth={ms*0.07} strokeLinecap="round" />
-          );
-        })}
-        {/* Central body */}
-        <ellipse cx={bx - ms*0.05} cy={by - ms*0.25} rx={innerR*1.1} ry={innerR*0.85} fill={capColor} />
-        {/* Highlight */}
-        <ellipse cx={bx - ms*0.15} cy={by - ms*0.38} rx={innerR*0.5} ry={innerR*0.35} fill={rimColor} />
-        {/* Base */}
-        <ellipse cx={bx} cy={by} rx={ms*0.15} ry={ms*0.06} fill={darkColor} />
-      </g>
-    );
-  }
-
-  if (type === 'symbiotic') {
-    // Oyster mushroom cluster — overlapping fan shapes
-    const fans = [
-      { ox: bx - ms*0.28, oy: by - ms*0.1, rx: ms*0.42, ry: ms*0.2, angle: -20 },
-      { ox: bx + ms*0.1,  oy: by - ms*0.2, rx: ms*0.48, ry: ms*0.22, angle: 10 },
-      { ox: bx - ms*0.08, oy: by - ms*0.45, rx: ms*0.35, ry: ms*0.18, angle: -5 },
-    ];
-    return (
-      <g>
-        {fans.map((f, i) => (
-          <g key={i} transform={`rotate(${f.angle} ${f.ox} ${f.oy})`}>
-            {/* Underside */}
-            <ellipse cx={f.ox} cy={f.oy + f.ry*0.3} rx={f.rx*0.9} ry={f.ry*0.4} fill={darkColor} />
-            {/* Cap face */}
-            <path
-              d={`M ${f.ox - f.rx} ${f.oy} A ${f.rx} ${f.ry} 0 0 1 ${f.ox + f.rx} ${f.oy} Z`}
-              fill={capColor}
-            />
-            {/* Rim shimmer */}
-            <path
-              d={`M ${f.ox - f.rx*0.5} ${f.oy - f.ry*0.45} A ${f.rx*0.4} ${f.ry*0.35} 0 0 1 ${f.ox + f.rx*0.3} ${f.oy - f.ry*0.42}`}
-              stroke={rimColor} strokeWidth={ms*0.04} fill="none"
-            />
-          </g>
-        ))}
-        {/* Gills hint */}
-        {[-ms*0.12, 0, ms*0.12].map((dx, i) => (
-          <line key={i}
-            x1={bx + dx} y1={by - ms*0.18}
-            x2={bx + dx - ms*0.04} y2={by + ms*0.05}
-            stroke={darkColor} strokeWidth={ms*0.025} strokeOpacity={0.6}
-          />
-        ))}
-      </g>
-    );
-  }
-
-  if (type === 'opportunistic') {
-    // Honey mushroom cluster — 3 caps at different heights
-    const caps = [
-      { x: bx - ms*0.28, y: by - ms*0.18, r: ms*0.26, stemH: ms*0.32 },
-      { x: bx + ms*0.04, y: by - ms*0.38, r: ms*0.3,  stemH: ms*0.52 },
-      { x: bx + ms*0.3,  y: by - ms*0.12, r: ms*0.22, stemH: ms*0.26 },
-    ];
-    return (
-      <g>
-        {caps.map((c, i) => (
-          <g key={i}>
-            {/* Stem */}
-            <rect x={c.x - c.r*0.18} y={c.y} width={c.r*0.36} height={c.stemH}
-              fill="#c8a070" rx={c.r*0.12} />
-            {/* Ring on stem */}
-            <ellipse cx={c.x} cy={c.y + c.stemH*0.4} rx={c.r*0.35} ry={c.r*0.1} fill="#b89060" fillOpacity={0.7} />
-            {/* Gill underside */}
-            <ellipse cx={c.x} cy={c.y} rx={c.r*0.88} ry={c.r*0.28} fill={darkColor} />
-            {/* Cap */}
-            <ellipse cx={c.x} cy={c.y} rx={c.r} ry={c.r*0.36} fill={capColor} />
-            {/* Highlight */}
-            <ellipse cx={c.x - c.r*0.2} cy={c.y - c.r*0.15} rx={c.r*0.3} ry={c.r*0.12} fill={rimColor} />
-          </g>
-        ))}
-      </g>
-    );
-  }
-
-  return null;
-}
-
 // ── Blight tooltip ────────────────────────────────────────────────────────────
 
 function BlightTooltip({ pos }: { pos: { x: number; y: number } }) {
@@ -470,22 +311,36 @@ function BlightTooltip({ pos }: { pos: { x: number; y: number } }) {
 
 // ── Hover tooltip ─────────────────────────────────────────────────────────────
 
-function TileTooltip({
-  cardId, habitat, pos,
+function TileHoverTooltip({
+  tile, owner, mushroomCardId, pos,
 }: {
-  cardId: number; habitat: Habitat; pos: { x: number; y: number };
+  tile: Tile;
+  owner: { name: string; color: string } | null;
+  mushroomCardId: number | null;
+  pos: { x: number; y: number };
 }) {
-  const card = getCard(cardId);
-  const typeColor = TYPE_COLORS[card.type] ?? '#888';
-  const resourceEntries = Object.entries(card.generates).filter(([, v]) => (v ?? 0) > 0);
+  const card = mushroomCardId !== null ? getCard(mushroomCardId) : null;
 
-  const TW = 210, TH = 295, margin = 12;
+  const margin = 12;
+  const TW = card ? 200 : 210;
+  const TH = card ? 330 : 160;
   let tx = pos.x + 18;
   let ty = pos.y - TH / 2;
   if (tx + TW > window.innerWidth  - margin) tx = pos.x - TW - 8;
   if (ty < margin)                           ty = margin;
   if (ty + TH > window.innerHeight - margin) ty = window.innerHeight - TH - margin;
 
+  // Mushroom tile — render the actual card
+  if (card) {
+    return (
+      <div style={{ position: 'fixed', left: tx, top: ty, zIndex: 300, pointerEvents: 'none' }}>
+        <CardComponent card={card} />
+      </div>
+    );
+  }
+
+  // Empty tile — habitat info
+  const typeColor = HABITAT_TINTS[tile.habitat];
   const artS  = 52;
   const artVB = `${-artS*0.866} ${-artS*0.9} ${artS*1.732} ${artS*1.4}`;
 
@@ -499,53 +354,42 @@ function TileTooltip({
       boxShadow: `0 8px 32px rgba(14,9,7,0.55), 0 0 0 1px ${typeColor}22`,
       fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 13, color: '#1A140F',
     }}>
-      <div style={{ background: typeColor, padding: '5px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
-        {card.type}{card.isOngoing && <span style={{ marginLeft: 6, opacity: 0.85 }}>· Ongoing</span>}
-      </div>
-
-      {/* Habitat art */}
-      <div style={{ overflow: 'hidden', height: 90 }}>
-        <svg width="100%" height="90" viewBox={artVB} preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
-          <HabitatDefs prefix="tt" />
-          <HabitatArt habitat={habitat} cx={0} cy={0} s={artS} gp="tt" />
-        </svg>
-      </div>
-
-      {/* Name + pts */}
-      <div style={{ padding: '8px 10px 4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6, background: '#F2EAD8' }}>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 15, color: '#1A140F', lineHeight: 1.3 }}>{card.name}</div>
-          <div style={{ color: '#4A2E08', fontSize: 12, fontStyle: 'italic', marginTop: 1 }}>{card.scientificName}</div>
-        </div>
-        {card.pts > 0 && (
-          <div style={{ background: '#D4A04A', color: '#1A0A00', borderRadius: 4, padding: '2px 7px', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
-            {card.pts}
-          </div>
+      {/* Header: habitat label + owner badge */}
+      <div style={{ background: typeColor, padding: '5px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#fff', fontFamily: 'sans-serif' }}>
+          {HABITAT_LABELS[tile.habitat]}
+        </span>
+        {owner && (
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: owner.color, display: 'inline-block', border: '1px solid rgba(255,255,255,0.5)', flexShrink: 0 }} />
+            <span style={{ fontSize: 11, color: '#fff', opacity: 0.9, fontFamily: 'sans-serif' }}>{owner.name}</span>
+          </span>
         )}
       </div>
 
-      {/* Habitats */}
-      <div style={{ padding: '2px 10px', display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-        {card.habitats.map(h => (
-          <span key={h} style={{ background: HABITAT_COLORS[h]+'33', border: `1px solid ${HABITAT_COLORS[h]}88`, color: '#2A1810', borderRadius: 4, padding: '1px 5px', fontSize: 12, fontWeight: 600 }}>
-            {HABITAT_LABELS[h]}
+      {/* Habitat art strip */}
+      <div style={{ overflow: 'hidden', height: 80 }}>
+        <svg width="100%" height="80" viewBox={artVB} preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+          <HabitatDefs prefix="tt" />
+          <HabitatArt habitat={tile.habitat} cx={0} cy={0} s={artS} gp="tt" />
+        </svg>
+      </div>
+
+      {/* Habitat badge + spawn badge */}
+      <div style={{ padding: '5px 10px 4px', display: 'flex', gap: 5, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ background: HABITAT_COLORS[tile.habitat]+'33', border: `1px solid ${HABITAT_COLORS[tile.habitat]}88`, color: '#2A1810', borderRadius: 4, padding: '1px 6px', fontSize: 12, fontWeight: 600 }}>
+          {HABITAT_LABELS[tile.habitat]}
+        </span>
+        {tile.isSpawn && (
+          <span style={{ background: '#D4A04A33', border: '1px solid #D4A04A88', color: '#5A3000', borderRadius: 4, padding: '1px 6px', fontSize: 12, fontWeight: 600 }}>
+            Spawn
           </span>
-        ))}
+        )}
       </div>
 
-      {/* Cost + generates */}
-      <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #D8C8A0', borderBottom: '1px solid #D8C8A0', marginTop: 4 }}>
-        <span style={{ color: '#8B6F47', fontWeight: 700 }}>{card.cost}🍄 cost</span>
-        {resourceEntries.length > 0 && <span style={{ color: '#A89060', fontSize: 12 }}>·</span>}
-        {resourceEntries.map(([res, amt]) => (
-          <span key={res} style={{ color: RESOURCE_COLORS[res], fontWeight: 600 }}>+{amt}{RESOURCE_ICONS[res]}</span>
-        ))}
-        {resourceEntries.length === 0 && <span style={{ color: '#A89060', fontSize: 12 }}>no generation</span>}
-      </div>
-
-      {/* Power */}
-      <div style={{ padding: '7px 10px 9px', color: card.isOngoing ? '#2A6858' : '#3A2810', fontSize: 12, lineHeight: 1.5, fontStyle: 'italic' }}>
-        {card.power}
+      {/* Habitat description */}
+      <div style={{ padding: '3px 10px 10px', color: '#3A2810', fontSize: 13, lineHeight: 1.5, fontStyle: 'italic' }}>
+        {HABITAT_DESCRIPTIONS[tile.habitat]}
       </div>
     </div>
   );
@@ -579,6 +423,9 @@ export function BoardComponent({
   const hoveredTile     = hoveredTileId ? (state.tiles[hoveredTileId] ?? null) : null;
   const hoveredMushroom = hoveredTileId
     ? (state.placedMushrooms.find(m => m.tileId === hoveredTileId) ?? null)
+    : null;
+  const hoveredOwner = hoveredTile?.ownerId
+    ? (state.players.find(p => p.id === hoveredTile.ownerId) ?? null)
     : null;
 
   const pad = seasonBg ? SEASON_BORDER : 0;
@@ -705,13 +552,23 @@ export function BoardComponent({
 
                 {/* Mushroom art on top of habitat */}
                 {card && !tile.isBlight && (
-                  <MushroomTileArt
-                    type={card.type}
-                    cx={center.x}
-                    cy={center.y}
-                    s={TILE_SIZE}
-                    color={TYPE_COLORS[card.type] ?? '#888'}
+                  <ellipse
+                    cx={center.x} cy={center.y - TILE_SIZE * 0.05}
+                    rx={TILE_SIZE * 0.38} ry={TILE_SIZE * 0.36}
+                    fill={color ?? '#ffffff'}
+                    fillOpacity={color ? 0.28 : 0.12}
                   />
+                )}
+                {card && !tile.isBlight && (
+                  <svg
+                    x={center.x - 36}
+                    y={center.y - 58}
+                    width={72}
+                    height={67}
+                    viewBox="35 25 150 140"
+                  >
+                    <MushroomArt typeColor={TYPE_COLORS[card.type] ?? '#888'} type={card.type} />
+                  </svg>
                 )}
 
                 {/* Plant animation flash */}
@@ -775,10 +632,11 @@ export function BoardComponent({
         })}
       </svg>
 
-      {hoveredTile && hoveredMushroom && !hoveredTile.isBlight && (
-        <TileTooltip
-          cardId={hoveredMushroom.cardId}
-          habitat={hoveredTile.habitat}
+      {hoveredTile && !hoveredTile.isBlight && (
+        <TileHoverTooltip
+          tile={hoveredTile}
+          owner={hoveredOwner ? { name: hoveredOwner.name, color: hoveredOwner.color } : null}
+          mushroomCardId={hoveredMushroom?.cardId ?? null}
           pos={tooltipPos}
         />
       )}
