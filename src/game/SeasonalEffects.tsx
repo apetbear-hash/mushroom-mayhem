@@ -66,16 +66,14 @@ const KEYFRAMES_CSS = `
   92%  { opacity: 0.9; }
   100% { transform: translateY(110vh) translateX(var(--sw)); opacity: 0; }
 }
-@keyframes sCardIn {
-  0%   { opacity: 0; transform: translateY(24px) scale(0.92); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes sSeasonIn {
+  0%   { opacity: 0; transform: scale(0.68); }
+  100% { opacity: 1; transform: scale(1); }
 }
-@keyframes sCardOut {
-  0%   { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-16px) scale(0.96); }
+@keyframes sSeasonOut {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.1); }
 }
-@keyframes sBgIn  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes sBgOut { from { opacity: 1; } to { opacity: 0; } }
 `;
 
 type P = {
@@ -119,9 +117,9 @@ function pStyle(season: Season, p: P, color: string): React.CSSProperties {
   return { ...base, borderRadius: '50%' };
 }
 
-const IN_MS   = 450;
+const IN_MS   = 1600;
 const HOLD_MS = 2200;
-const OUT_MS  = 500;
+const OUT_MS  = 900;
 
 export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
   const cfg = CFG[season];
@@ -185,15 +183,15 @@ export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.32) 0%, transparent 68%)',
           animation: phase === 'in'
-            ? `sCardIn ${IN_MS}ms cubic-bezier(0.22,1,0.36,1) forwards`
+            ? `sSeasonIn ${IN_MS}ms cubic-bezier(0.22,1,0.36,1) forwards`
             : phase === 'out'
-            ? `sCardOut ${OUT_MS}ms ease-in forwards`
+            ? `sSeasonOut ${OUT_MS}ms ease-in forwards`
             : undefined,
           opacity: phase === 'hold' ? 1 : undefined,
         }}>
-          <div style={{ textAlign: 'center', transform: 'translateY(-160px)' }}>
+          <div style={{ textAlign: 'center', transform: 'translateY(-80px)' }}>
             <div style={{
-              fontSize: 60, fontWeight: 400,
+              fontSize: 110, fontWeight: 400,
               fontFamily: "'Times New Roman', Times, serif",
               color: accent,
               textTransform: 'uppercase',
