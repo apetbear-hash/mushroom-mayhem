@@ -192,7 +192,6 @@ export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
           opacity: phase === 'hold' ? 1 : undefined,
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 56, lineHeight: 1, marginBottom: 14 }}>{cfg.emoji}</div>
             <div style={{
               fontSize: 48, fontWeight: 700,
               fontFamily: "'Times New Roman', Times, serif",
