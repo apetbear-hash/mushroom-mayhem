@@ -191,14 +191,15 @@ export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
             : undefined,
           opacity: phase === 'hold' ? 1 : undefined,
         }}>
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', transform: 'translateY(-160px)' }}>
             <div style={{
-              fontSize: 48, fontWeight: 700,
+              fontSize: 60, fontWeight: 400,
               fontFamily: "'Times New Roman', Times, serif",
               color: accent,
               textTransform: 'uppercase',
               letterSpacing: 10,
-              textShadow: `0 2px 24px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,1), 0 0 48px ${accent}66`,
+              WebkitTextStroke: '1.5px black',
+              textShadow: `0 2px 24px rgba(0,0,0,0.95), 0 0 48px ${accent}66`,
             }}>
               {cfg.label}
             </div>
