@@ -27,6 +27,7 @@ import { GameOverScreen } from './GameOverScreen';
 import { SeasonEffectModal } from './SeasonEffectModal';
 import { AISummaryOverlay, generateAISummary } from './AISummaryOverlay';
 import { DevPanel } from './DevPanel';
+import { SeasonalEffects } from './SeasonalEffects';
 import type { AISummary } from './AISummaryOverlay';
 import { SEASONS, SEASON_TURNS } from '../shared/constants';
 
@@ -789,6 +790,8 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
       height: '100vh', background: '#EAE0C8',
       overflow: 'hidden', fontFamily: "'Cormorant Garamond', Georgia, serif",
     }}>
+
+      <SeasonalEffects season={season} />
 
       {/* ══ HEADER ══ */}
       <header style={{
