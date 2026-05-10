@@ -2,10 +2,10 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { Season } from '../shared/types';
 
-interface Props { season: Season; }
+interface Props { season: Season; onAnnouncementEnd?: () => void; }
 
 type Cfg = {
-  label: string; emoji: string; tagline: string;
+  label: string; emoji: string;
   accent: string;
   colors: readonly string[];
   count: number; animName: string;
@@ -15,28 +15,24 @@ type Cfg = {
 const CFG: Record<Season, Cfg> = {
   spring: {
     label: 'Spring', emoji: '🌸',
-    tagline: 'New growth stirs beneath the soil.',
     accent: '#FF8AAA',
     colors: ['#FFB7C5', '#FF9EBB', '#FFC8D8', '#FFAEC9', '#FFE4F0', '#ffffff'],
     count: 22, animName: 'sPetal', minSz: 5, maxSz: 9, minDur: 7, maxDur: 12,
   },
   summer: {
     label: 'Summer', emoji: '☀️',
-    tagline: 'The canopy blazes with light and life.',
     accent: '#F5C020',
     colors: ['#FFFDE7', '#FFF176', '#FFE082', '#FFD54F', '#FFF9C4'],
     count: 18, animName: 'sMote', minSz: 3, maxSz: 6, minDur: 9, maxDur: 15,
   },
   autumn: {
     label: 'Autumn', emoji: '🍂',
-    tagline: 'The forest exhales in amber and gold.',
     accent: '#E06820',
     colors: ['#FF6B2B', '#D4420A', '#E87A30', '#C8A010', '#8B3A0A', '#E8B820'],
     count: 28, animName: 'sLeaf', minSz: 7, maxSz: 13, minDur: 5, maxDur: 9,
   },
   winter: {
     label: 'Winter', emoji: '❄️',
-    tagline: 'Frost claims the silent woodland floor.',
     accent: '#88BBDD',
     colors: ['#E3F2FD', '#BBDEFB', '#E1F5FE', '#ffffff', '#B3E5FC'],
     count: 32, animName: 'sSnow', minSz: 3, maxSz: 7, minDur: 8, maxDur: 15,
@@ -127,11 +123,13 @@ const IN_MS   = 450;
 const HOLD_MS = 2200;
 const OUT_MS  = 500;
 
-export function SeasonalEffects({ season }: Props) {
+export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
   const cfg = CFG[season];
   const prevRef = useRef<Season | null>(null);
   const [phase, setPhase] = useState<'in' | 'hold' | 'out' | null>('in');
   const particles = useMemo(() => gen(cfg), [season]);
+  const onAnnouncementEndRef = useRef(onAnnouncementEnd);
+  useEffect(() => { onAnnouncementEndRef.current = onAnnouncementEnd; }, [onAnnouncementEnd]);
 
   // Inject keyframes once into <head> — more reliable than a <style> in the render tree
   useEffect(() => {
@@ -161,7 +159,10 @@ export function SeasonalEffects({ season }: Props) {
       return () => clearTimeout(t);
     }
     if (phase === 'out') {
-      const t = setTimeout(() => setPhase(null), OUT_MS);
+      const t = setTimeout(() => {
+        setPhase(null);
+        onAnnouncementEndRef.current?.();
+      }, OUT_MS);
       return () => clearTimeout(t);
     }
   }, [phase]);
@@ -182,44 +183,25 @@ export function SeasonalEffects({ season }: Props) {
         <div style={{
           position: 'fixed', inset: 0, zIndex: 500, pointerEvents: 'none',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'rgba(10,6,2,0.28)',
+          background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.32) 0%, transparent 68%)',
           animation: phase === 'in'
-            ? `sBgIn ${IN_MS}ms ease-out forwards`
+            ? `sCardIn ${IN_MS}ms cubic-bezier(0.22,1,0.36,1) forwards`
             : phase === 'out'
-            ? `sBgOut ${OUT_MS}ms ease-in forwards`
+            ? `sCardOut ${OUT_MS}ms ease-in forwards`
             : undefined,
           opacity: phase === 'hold' ? 1 : undefined,
         }}>
-          <div style={{
-            background: 'rgba(16,10,4,0.90)',
-            border: `1.5px solid ${accent}AA`,
-            backdropFilter: 'blur(18px)',
-            WebkitBackdropFilter: 'blur(18px)',
-            borderRadius: 16,
-            padding: '32px 60px',
-            textAlign: 'center',
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            boxShadow: `0 16px 64px rgba(0,0,0,0.65), 0 0 56px ${accent}28`,
-            minWidth: 280,
-            animation: phase === 'in'
-              ? `sCardIn ${IN_MS}ms cubic-bezier(0.22,1,0.36,1) forwards`
-              : phase === 'out'
-              ? `sCardOut ${OUT_MS}ms ease-in forwards`
-              : undefined,
-          }}>
-            <div style={{ fontSize: 52, lineHeight: 1, marginBottom: 10 }}>{cfg.emoji}</div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 56, lineHeight: 1, marginBottom: 14 }}>{cfg.emoji}</div>
             <div style={{
-              fontSize: 34, fontWeight: 700, color: accent,
-              letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8,
+              fontSize: 48, fontWeight: 700,
+              fontFamily: "'Times New Roman', Times, serif",
+              color: accent,
+              textTransform: 'uppercase',
+              letterSpacing: 10,
+              textShadow: `0 2px 24px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,1), 0 0 48px ${accent}66`,
             }}>
               {cfg.label}
-            </div>
-            <div style={{
-              width: 36, height: 1.5, background: accent,
-              margin: '0 auto 10px', opacity: 0.45,
-            }} />
-            <div style={{ fontSize: 15, color: '#C8B88A', fontStyle: 'italic', lineHeight: 1.6 }}>
-              {cfg.tagline}
             </div>
           </div>
         </div>
