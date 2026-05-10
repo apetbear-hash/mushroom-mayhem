@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import type { Season } from '../shared/types';
 
 interface Props { season: Season; }
@@ -42,7 +43,7 @@ const CFG: Record<Season, Cfg> = {
   },
 };
 
-const KEYFRAMES = `
+const KEYFRAMES_CSS = `
 @keyframes sPetal {
   0%   { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
   5%   { opacity: 0.9; }
@@ -111,7 +112,7 @@ function pStyle(season: Season, p: P, color: string): React.CSSProperties {
     opacity: 0,
     animation: `${CFG[season].animName} ${p.dur}s ${p.delay}s infinite linear`,
     pointerEvents: 'none',
-    zIndex: 4,
+    zIndex: 6,
     ['--sw' as string]: `${p.sw}px`,
     ['--rt' as string]: `${p.rt}deg`,
     ['--ms' as string]: `${p.ms}px`,
@@ -122,19 +123,26 @@ function pStyle(season: Season, p: P, color: string): React.CSSProperties {
   return { ...base, borderRadius: '50%' };
 }
 
-// Two-phase announcement: fade in (450ms) → hold → fade out (500ms)
-const IN_MS  = 450;
+const IN_MS   = 450;
 const HOLD_MS = 2200;
-const OUT_MS = 500;
+const OUT_MS  = 500;
 
 export function SeasonalEffects({ season }: Props) {
   const cfg = CFG[season];
   const prevRef = useRef<Season | null>(null);
-  // phase: 'in' | 'hold' | 'out' | null
   const [phase, setPhase] = useState<'in' | 'hold' | 'out' | null>('in');
   const particles = useMemo(() => gen(cfg), [season]);
 
-  // Trigger announcement on season change (first mount shows spring)
+  // Inject keyframes once into <head> — more reliable than a <style> in the render tree
+  useEffect(() => {
+    const el = document.createElement('style');
+    el.setAttribute('data-seasonal-effects', '');
+    el.textContent = KEYFRAMES_CSS;
+    document.head.appendChild(el);
+    return () => { document.head.removeChild(el); };
+  }, []);
+
+  // Show announcement on season change; first mount always shows
   useEffect(() => {
     if (prevRef.current !== null && prevRef.current !== season) {
       setPhase('in');
@@ -142,7 +150,7 @@ export function SeasonalEffects({ season }: Props) {
     prevRef.current = season;
   }, [season]);
 
-  // Drive the in → hold → out → null state machine
+  // Phase state machine: in → hold → out → null
   useEffect(() => {
     if (phase === 'in') {
       const t = setTimeout(() => setPhase('hold'), IN_MS);
@@ -161,10 +169,9 @@ export function SeasonalEffects({ season }: Props) {
   const accent = cfg.accent;
   const showing = phase !== null;
 
-  return (
+  // Everything goes into document.body via portal — bypasses any overflow/transform ancestor
+  return createPortal(
     <>
-      <style>{KEYFRAMES}</style>
-
       {/* Ambient particles */}
       {particles.map(p => (
         <div key={`${season}-${p.id}`} style={pStyle(season, p, cfg.colors[p.ci])} />
@@ -217,6 +224,7 @@ export function SeasonalEffects({ season }: Props) {
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 }
