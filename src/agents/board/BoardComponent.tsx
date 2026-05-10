@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { GameState, Habitat, Season, Tile } from '../../shared/types';
 import { TYPE_COLORS, HABITAT_COLORS } from '../../shared/constants';
 import { getCard } from '../card/cards';
@@ -289,7 +290,7 @@ function BlightTooltip({ pos }: { pos: { x: number; y: number } }) {
   if (ty < margin)                           ty = margin;
   if (ty + TH > window.innerHeight - margin) ty = window.innerHeight - TH - margin;
 
-  return (
+  return createPortal(
     <div style={{
       position: 'fixed', left: tx, top: ty, width: TW,
       zIndex: 300, pointerEvents: 'none',
@@ -305,7 +306,8 @@ function BlightTooltip({ pos }: { pos: { x: number; y: number } }) {
       <div style={{ padding: '8px 10px', fontSize: 14, color: '#3A2810', lineHeight: 1.4, fontStyle: 'italic' }}>
         Mushrooms cannot grow on blight tiles.
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -332,10 +334,11 @@ function TileHoverTooltip({
 
   // Mushroom tile — render the actual card
   if (card) {
-    return (
+    return createPortal(
       <div style={{ position: 'fixed', left: tx, top: ty, zIndex: 300, pointerEvents: 'none' }}>
         <CardComponent card={card} />
-      </div>
+      </div>,
+      document.body
     );
   }
 
@@ -344,7 +347,7 @@ function TileHoverTooltip({
   const artS  = 52;
   const artVB = `${-artS*0.866} ${-artS*0.9} ${artS*1.732} ${artS*1.4}`;
 
-  return (
+  return createPortal(
     <div style={{
       position: 'fixed', left: tx, top: ty, width: TW,
       zIndex: 300, pointerEvents: 'none',
@@ -391,7 +394,8 @@ function TileHoverTooltip({
       <div style={{ padding: '3px 10px 10px', color: '#3A2810', fontSize: 13, lineHeight: 1.5, fontStyle: 'italic' }}>
         {HABITAT_DESCRIPTIONS[tile.habitat]}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
