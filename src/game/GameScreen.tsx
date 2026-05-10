@@ -190,7 +190,8 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
   });
 
   const [showAnnouncement, setShowAnnouncement] = useState(false);
-  const pendingAnnouncementRef = useRef(true);
+  const [seasonAnnouncementActive, setSeasonAnnouncementActive] = useState(true);
+  const firstAnnouncementRef = useRef(true);
   const [showSeasonModal, setShowSeasonModal] = useState(false);
   const [aiSummary, setAiSummary] = useState<AISummary | null>(null);
   const [selectedAction, setSelectedAction] = useState<ActionType | null>(null);
@@ -215,7 +216,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
   const dragStartRef = useRef<{ mx: number; my: number; px: number; py: number } | null>(null);
 
   const seasonModalShownForTurn = useRef<number>(-1);
-  const aiCausedSeasonChange = useRef(false);
 
   useEffect(() => {
     if (!recentlyPlantedTileId) return;
@@ -268,7 +268,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
       let s = aiTakeTurn(stateBefore);
       const summary = generateAISummary(stateBefore, s, aiPlayerId);
       const endedTurn = s.currentTurn;
-      const oldSeason = getSeason(stateBefore.currentTurn);
       s = advanceTurn(s);
       if (s.currentPlayerIndex === 0 && isSeasonEnd(endedTurn)) {
         s = applySeasonEnd(s, endedTurn);
@@ -279,7 +278,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
       if (isSeasonStart(s.currentTurn) && s.currentPlayerIndex === 0) {
         s = applySeasonStart(s);
       }
-      aiCausedSeasonChange.current = oldSeason !== getSeason(s.currentTurn);
 
       setState(s);
       setAiSummary(summary);
@@ -301,9 +299,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
     // In a mixed game, show handoff when a human player's turn is up next.
     if (isMultiHuman && humanPlayerIds.includes(currentPlayer.id)) {
       setShowPassHandoff(true);
-    } else if (aiCausedSeasonChange.current) {
-      aiCausedSeasonChange.current = false;
-      pendingAnnouncementRef.current = true;
     } else {
       setShowAnnouncement(true);
     }
@@ -620,14 +615,12 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
     const nextIdx = (state.currentPlayerIndex + 1) % state.players.length;
     const nextIsHuman = humanPlayerIds.includes(state.players[nextIdx].id);
     try {
-      const oldSeason = getSeason(state.currentTurn);
       let s = resolveCollectPhase(state, currentPlayer.id, {});
       const endedTurn = s.currentTurn;
       s = advanceTurn(s);
       if (s.currentPlayerIndex === 0 && isSeasonEnd(endedTurn)) s = applySeasonEnd(s, endedTurn);
       if (s.isOver) s = resolveFinalHarvestBonus(s);
       if (isSeasonStart(s.currentTurn) && s.currentPlayerIndex === 0) s = applySeasonStart(s);
-      const seasonChanged = oldSeason !== getSeason(s.currentTurn);
       setState(s);
       setSelectedAction(null);
       setSelectedCardId(null);
@@ -638,8 +631,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
       setUndoState(null);
       if (isMultiHuman && nextIsHuman) {
         setShowPassHandoff(true);
-      } else if (seasonChanged) {
-        pendingAnnouncementRef.current = true;
       } else {
         setShowAnnouncement(true);
       }
@@ -667,14 +658,12 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
     }
 
     try {
-      const oldSeason = getSeason(state.currentTurn);
       let s = resolveCollectPhase(state, currentPlayer.id, { lobsterTargetTileId });
       const endedTurn = s.currentTurn;
       s = advanceTurn(s);
       if (s.currentPlayerIndex === 0 && isSeasonEnd(endedTurn)) s = applySeasonEnd(s, endedTurn);
       if (s.isOver) s = resolveFinalHarvestBonus(s);
       if (isSeasonStart(s.currentTurn) && s.currentPlayerIndex === 0) s = applySeasonStart(s);
-      const seasonChanged = oldSeason !== getSeason(s.currentTurn);
       setState(s);
       setSelectedAction(null);
       setSelectedCardId(null);
@@ -685,8 +674,6 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
       setUndoState(null);
       if (isMultiHuman && nextIsHuman) {
         setShowPassHandoff(true);
-      } else if (seasonChanged) {
-        pendingAnnouncementRef.current = true;
       } else {
         setShowAnnouncement(true);
       }
@@ -798,9 +785,10 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
 
       <SeasonalEffects
         season={season}
-        onAnnouncementEnd={() => {
-          if (pendingAnnouncementRef.current) {
-            pendingAnnouncementRef.current = false;
+        onAnnouncementActiveChange={(active) => {
+          setSeasonAnnouncementActive(active);
+          if (!active && firstAnnouncementRef.current) {
+            firstAnnouncementRef.current = false;
             setShowAnnouncement(true);
           }
         }}
@@ -1336,7 +1324,7 @@ export function GameScreen({ initialState, onNewGame, devMode = false, humanPlay
         </div>
       )}
 
-      {showAnnouncement && !state.isOver && (
+      {showAnnouncement && !seasonAnnouncementActive && !state.isOver && (
         <TurnAnnouncement
           player={currentPlayer}
           currentTurn={state.currentTurn}

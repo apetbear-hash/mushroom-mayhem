@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { Season } from '../shared/types';
 
-interface Props { season: Season; onAnnouncementEnd?: () => void; }
+interface Props { season: Season; onAnnouncementActiveChange?: (active: boolean) => void; }
 
 type Cfg = {
   label: string; emoji: string;
@@ -121,13 +121,13 @@ const IN_MS   = 1600;
 const HOLD_MS = 2200;
 const OUT_MS  = 900;
 
-export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
+export function SeasonalEffects({ season, onAnnouncementActiveChange }: Props) {
   const cfg = CFG[season];
   const prevRef = useRef<Season | null>(null);
   const [phase, setPhase] = useState<'in' | 'hold' | 'out' | null>('in');
   const particles = useMemo(() => gen(cfg), [season]);
-  const onAnnouncementEndRef = useRef(onAnnouncementEnd);
-  useEffect(() => { onAnnouncementEndRef.current = onAnnouncementEnd; }, [onAnnouncementEnd]);
+  const onChangeRef = useRef(onAnnouncementActiveChange);
+  useEffect(() => { onChangeRef.current = onAnnouncementActiveChange; }, [onAnnouncementActiveChange]);
 
   // Inject keyframes once into <head> — more reliable than a <style> in the render tree
   useEffect(() => {
@@ -149,6 +149,7 @@ export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
   // Phase state machine: in → hold → out → null
   useEffect(() => {
     if (phase === 'in') {
+      onChangeRef.current?.(true);
       const t = setTimeout(() => setPhase('hold'), IN_MS);
       return () => clearTimeout(t);
     }
@@ -159,7 +160,7 @@ export function SeasonalEffects({ season, onAnnouncementEnd }: Props) {
     if (phase === 'out') {
       const t = setTimeout(() => {
         setPhase(null);
-        onAnnouncementEndRef.current?.();
+        onChangeRef.current?.(false);
       }, OUT_MS);
       return () => clearTimeout(t);
     }
