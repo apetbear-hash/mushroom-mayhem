@@ -739,6 +739,385 @@ function HowToPlay({ vp }: { vp: ReturnType<typeof useViewport> }) {
   );
 }
 
+function Rulebook({ vp }: { vp: ReturnType<typeof useViewport> }) {
+  const { isNarrow } = vp;
+
+  const badgeBase: React.CSSProperties = {
+    display: 'inline-block', padding: '3px 8px', borderRadius: 3,
+    fontSize: 10, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase',
+  };
+  const badges: Record<string, React.CSSProperties> = {
+    positive: { ...badgeBase, background: 'rgba(92,115,56,0.15)', color: '#2E3A1B' },
+    negative: { ...badgeBase, background: 'rgba(158,42,32,0.15)', color: '#4A0E0A' },
+    risk:     { ...badgeBase, background: 'rgba(232,154,58,0.15)', color: '#A55818' },
+    neutral:  { ...badgeBase, background: 'rgba(24,18,13,0.08)',   color: '#18120D' },
+    mirror:   { ...badgeBase, background: 'rgba(154,127,184,0.15)',color: '#5A3A60' },
+  };
+
+  const cardStyle: React.CSSProperties = {
+    background: '#fff', border: '1px solid rgba(24,18,13,0.1)',
+    borderRadius: 8, padding: 28, marginBottom: 24,
+    boxShadow: '0 8px 24px -8px rgba(14,9,7,0.12)',
+  };
+  const calloutStyle: React.CSSProperties = {
+    background: 'linear-gradient(135deg, rgba(92,115,56,0.04), rgba(232,154,58,0.04))',
+    borderLeft: '4px solid #5C7338', padding: 24, margin: '28px 0', borderRadius: '0 6px 6px 0',
+  };
+  const secNum: React.CSSProperties = { ...txt.mono, fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: PALETTE.amberDeep, marginBottom: 10, fontWeight: 600 };
+  const secTitle: React.CSSProperties = { ...txt.serif, fontSize: 36, fontWeight: 700, letterSpacing: -0.5, marginBottom: 8, color: PALETTE.inkSoft };
+  const secIntro: React.CSSProperties = { ...txt.serif, fontSize: 17, fontStyle: 'italic', color: 'rgba(24,18,13,0.78)', marginBottom: 28, paddingLeft: 20, borderLeft: `3px solid ${PALETTE.amber}`, lineHeight: 1.6 };
+  const cardTitle: React.CSSProperties = { ...txt.serif, fontSize: 21, fontWeight: 600, marginBottom: 16, color: PALETTE.inkSoft };
+  const calloutTitle: React.CSSProperties = { ...txt.mono, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1.5, color: PALETTE.mossDeep, marginBottom: 10 };
+  const costPill: React.CSSProperties = { ...txt.mono, display: 'inline-block', background: PALETTE.moss, color: PALETTE.paper, padding: '3px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600, marginLeft: 8 };
+  const sec: React.CSSProperties = { marginBottom: 60 };
+
+  const setupSteps: { n: string; title: string; desc: React.ReactNode }[] = [
+    { n: '1', title: 'Build the Board', desc: <>Randomly draw and arrange hex tiles: <strong>2p = 24 tiles</strong>, <strong>3p = 30</strong>, <strong>4p = 35</strong>. Create a connected landscape—no isolated tiles.</> },
+    { n: '2', title: 'Draw Season Effects', desc: <>Shuffle each season's effect deck separately. Draw 1 effect per season and place them face-up. This is the <strong>forecast</strong>—all players know what's coming all year.</> },
+    { n: '3', title: 'Determine Turn Order', desc: <>Each player draws 1 card. The player with the <strong>highest symbiosis point value</strong> goes first. Tiebreaker: highest spore cost. Shuffle all cards back.</> },
+    { n: '4', title: 'Claim Starting Networks', desc: <>Each player spawns at a corner tile. Starting network = <strong>spawn tile + 2 adjacent tiles</strong>. Mark with your network tokens.</> },
+    { n: '5', title: 'Draft Starting Hands', desc: <>Deal 5 cards to each player. Keep as many as you like (minimum 1). For each card discarded, gain <strong>1 spore</strong>.</> },
+    { n: '6', title: 'Starting Resources', desc: <>Each player begins with <strong>1 spore, 1 moisture, and 1 sunlight</strong>, plus any spores gained from the draft. Spring begins!</> },
+  ];
+
+  const seasons = [
+    { name: 'Spring', turns: 'Turns 1–5', effects: [
+      { name: 'Thaw',                badge: 'positive', desc: 'All spread costs reduced by 1 (minimum 1).' },
+      { name: 'Spring Rain',         badge: 'positive', desc: 'All players gain 3 moisture at the start of the season.' },
+      { name: 'Germination Gamble',  badge: 'risk',     desc: 'At the start of each turn this season, the active player may discard any number of cards and draw that many replacements before taking actions.' },
+      { name: 'Creeping Mist',       badge: 'risk',     desc: 'Shade and Wet tiles cost 1 less to spread into (minimum 1). But all mushrooms on Shade and Wet tiles produce no resources this season.' },
+      { name: 'Sluggish Soil',       badge: 'negative', desc: 'All mushrooms produce 1 fewer resource of each type this season (minimum 1). Symbiosis points are unaffected.' },
+    ]},
+    { name: 'Summer', turns: 'Turns 6–10', effects: [
+      { name: 'Long Days',       badge: 'positive', desc: 'All mushrooms produce +1 bonus spore on each harvest.' },
+      { name: 'Abundant Canopy',badge: 'positive', desc: 'Each turn this season, Shade-habitat mushrooms score +1 bonus symbiosis point per turn.' },
+      { name: 'Drought',        badge: 'negative', desc: "All players' moisture drops to 0 at start of season. No moisture can be gained from any source this season." },
+      { name: 'Scorching Heat', badge: 'negative', desc: 'Spreading costs +1 extra for all tile types. Open-habitat mushrooms produce no symbiosis points (still produce resources).' },
+      { name: 'Mild Summer',    badge: 'neutral',  desc: 'No seasonal effect.' },
+    ]},
+    { name: 'Autumn', turns: 'Turns 11–15', effects: [
+      { name: 'Mushroom Festival', badge: 'positive', desc: 'At season end, each player scores +1 per mushroom on the board.' },
+      { name: 'Spore Wind',        badge: 'positive', desc: 'Start of season: all players gain 4 spores. Each network expands 1 tile for free.' },
+      { name: 'Decay Bloom',       badge: 'risk',     desc: 'Decay mushrooms produce +2. But decay mushrooms score 0 this season.' },
+      { name: 'Blight',            badge: 'negative', desc: '3–5 random unoccupied tiles become permanently blighted (unusable).' },
+      { name: 'Long Summer',       badge: 'mirror',   desc: "Summer's effect applies again for all autumn turns." },
+    ]},
+    { name: 'Winter', turns: 'Turns 16–20', effects: [
+      { name: 'Deep Freeze',       badge: 'negative', desc: 'No spreading allowed for the entire season. All spread-related mushroom effects are also disabled.' },
+      { name: 'Mycelium Harmony',  badge: 'positive', desc: 'Each turn, players score symbiosis equal to the length of their single longest connected chain of identical mushroom types.' },
+      { name: 'Mild Winter',       badge: 'neutral',  desc: 'No seasonal effect. The final 5 turns play as normal.' },
+      { name: 'Winter Stores',     badge: 'positive', desc: 'At the start of the season, all players gain +2 of each resource (spores, moisture, sunlight).' },
+      { name: 'Final Harvest',     badge: 'risk',     desc: 'Mushrooms score but produce no resources this season. At end of final turn, score +1 symbiosis for every 3 unspent resources (any type combined).' },
+    ]},
+  ];
+
+  const tableRow = (cols: [string, string, string], isHeader?: boolean, lastRow?: boolean) => (
+    <div style={{
+      display: 'grid', gridTemplateColumns: '2fr 3fr 1fr', gap: 14,
+      padding: '14px 22px',
+      borderBottom: lastRow ? 'none' : '1px solid rgba(24,18,13,0.05)',
+      background: isHeader ? 'linear-gradient(135deg, #5C7338, #2E3A1B)' : undefined,
+      color: isHeader ? PALETTE.paper : undefined,
+    }}>
+      <div style={isHeader ? { fontWeight: 600, fontSize: 12, letterSpacing: 1, textTransform: 'uppercase' } : { ...txt.sans, fontWeight: 600, color: PALETTE.inkSoft }}>{cols[0]}</div>
+      <div style={isHeader ? { fontSize: 12 } : { ...txt.sans, fontSize: 13, color: 'rgba(24,18,13,0.75)' }}>{cols[1]}</div>
+      <div style={isHeader ? { fontSize: 12, textAlign: 'right' } : { ...txt.sans, textAlign: 'right', fontWeight: 700, color: PALETTE.amberDeep }}>{cols[2]}</div>
+    </div>
+  );
+
+  return (
+    <section id="rules" style={{
+      background: PALETTE.paper, color: PALETTE.inkSoft,
+      padding: isNarrow ? '72px 20px' : '100px 56px',
+      borderTop: `1px solid ${PALETTE.ink}1a`,
+    }}>
+      <div style={{ maxWidth: 920, margin: '0 auto' }}>
+
+        {/* Rulebook header */}
+        <header style={{ textAlign: 'center', marginBottom: 64, paddingBottom: 48, borderBottom: '2px solid rgba(24,18,13,0.15)' }}>
+          <div style={{ ...txt.mono, fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: PALETTE.amberDeep, marginBottom: 16, fontWeight: 600 }}>Official Rulebook</div>
+          <h2 style={{
+            ...txt.serif, fontSize: isNarrow ? 48 : 72, fontWeight: 700, letterSpacing: -1.5, marginBottom: 20, margin: '0 0 20px',
+            background: `linear-gradient(135deg, ${PALETTE.inkSoft} 0%, ${PALETTE.moss} 100%)`,
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+          }}>Mycelium</h2>
+          <p style={{ ...txt.serif, fontSize: isNarrow ? 16 : 19, fontStyle: 'italic', color: 'rgba(24,18,13,0.55)', maxWidth: 560, margin: '0 auto' }}>
+            A strategic game of fungal supremacy, seasonal turmoil, and the hidden war beneath the forest floor.
+          </p>
+        </header>
+
+        {/* § 01 Introduction */}
+        <div style={sec}>
+          <div style={secNum}>§ 01 — Introduction</div>
+          <h3 style={secTitle}>Welcome to the Network</h3>
+          <p style={secIntro}>Beneath the autumn canopy, an ancient competition unfolds. You are mycelium—the vast, unseen intelligence of the forest floor—and your goal is simple: spread your network, cultivate your mushrooms, and claim dominion over the woodland.</p>
+          <div style={cardStyle}>
+            <div style={cardTitle}>Game Overview</div>
+            <p style={{ ...txt.sans, fontSize: 15, lineHeight: 1.7, marginBottom: 10 }}><strong>Players:</strong> 2–4 mycelia (each controlling one fungal network)</p>
+            <p style={{ ...txt.sans, fontSize: 15, lineHeight: 1.7, marginBottom: 10 }}><strong>Duration:</strong> 20 turns across 4 seasons (approximately 60–90 minutes)</p>
+            <p style={{ ...txt.sans, fontSize: 15, lineHeight: 1.7, margin: 0 }}><strong>Objective:</strong> Score the most <strong>symbiosis points</strong> by planting mushrooms on compatible habitat tiles, managing resources wisely, and adapting to the whims of nature. Highest score at the end of Winter wins.</p>
+          </div>
+          <div style={calloutStyle}>
+            <div style={calloutTitle}>The Heart of the Game</div>
+            <p style={{ ...txt.sans, fontSize: 15, color: PALETTE.inkSoft, margin: 0, lineHeight: 1.65 }}>
+              Mycelium is a game about <strong>patience, timing, and opportunism</strong>. The forest rewards those who read the seasonal winds, claim the right territories, and play their mushrooms when the moment is ripe. Your invisible mycelium network spreads tile by tile—once claimed, a tile is yours alone. Every card has a cost. Every tile has a story. Every season changes everything.
+            </p>
+          </div>
+        </div>
+
+        {/* § 02 Components */}
+        <div style={sec}>
+          <div style={secNum}>§ 02 — Components</div>
+          <h3 style={secTitle}>What's in the Box</h3>
+          <div style={cardStyle}>
+            <ul style={{ ...txt.sans, lineHeight: 2, fontSize: 15, margin: 0, paddingLeft: 22 }}>
+              <li><strong>50 Mushroom Cards</strong> — Each depicts a unique species with abilities, habitats, costs, and symbiosis point values</li>
+              <li><strong>35 Hex Tiles</strong> — Tree groves, decay piles, shaded hollows, wet bogs, and open clearings (24–35 tiles used depending on player count)</li>
+              <li><strong>4 Player Mats</strong> — Track your resources (spores, moisture, sunlight) and display your hand</li>
+              <li><strong>Resource Tokens</strong> — Wooden tokens for spores, moisture, and sunlight</li>
+              <li><strong>Season Tracker</strong> — A reference card showing the current season and its active effect (the full forecast is visible from game start)</li>
+              <li><strong>Network Tokens</strong> — Player-colored markers to claim tiles as part of your mycelium network</li>
+              <li><strong>Mushroom Tokens</strong> — Player-colored markers to place on tiles when you plant a mushroom</li>
+            </ul>
+          </div>
+          <div style={{ display: 'flex', gap: 16, margin: '20px 0', flexWrap: 'wrap' }}>
+            {[{ icon: '🍄', name: 'Spores', bg: '#8B6F47' }, { icon: '💧', name: 'Moisture', bg: '#3A6EA8' }, { icon: '☀️', name: 'Sunlight', bg: '#D4A843' }].map(r => (
+              <div key={r.name} style={{ display: 'flex', alignItems: 'center', gap: 12, background: '#fff', padding: '13px 18px', borderRadius: 6, border: '1px solid rgba(24,18,13,0.1)' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>{r.icon}</div>
+                <span style={{ ...txt.sans, fontSize: 15, fontWeight: 600, color: PALETTE.inkSoft }}>{r.name}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 12, margin: '20px 0' }}>
+            {[
+              { icon: '🌲', name: 'Tree',  bg: '#4A6741', fg: PALETTE.paper },
+              { icon: '🍂', name: 'Decay', bg: '#9E5A40', fg: PALETTE.paper },
+              { icon: '🌑', name: 'Shade', bg: '#6B4E8B', fg: PALETTE.paper },
+              { icon: '💧', name: 'Wet',   bg: '#2D7D7B', fg: PALETTE.paper },
+              { icon: '☀️', name: 'Open',  bg: '#D4A843', fg: PALETTE.inkSoft },
+            ].map(h => (
+              <div key={h.name} style={{ background: '#fff', border: '1px solid rgba(24,18,13,0.1)', padding: '14px 10px', borderRadius: 6, textAlign: 'center' }}>
+                <div style={{ width: 42, height: 42, margin: '0 auto 10px', borderRadius: '50%', background: h.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: h.fg }}>{h.icon}</div>
+                <div style={{ ...txt.sans, fontSize: 13, fontWeight: 600, color: PALETTE.inkSoft }}>{h.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* § 03 Setup */}
+        <div style={sec}>
+          <div style={secNum}>§ 03 — Setup</div>
+          <h3 style={secTitle}>Preparing the Forest</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, margin: '28px 0' }}>
+            {setupSteps.map(s => (
+              <div key={s.n} style={{ background: '#fff', border: '1px solid rgba(24,18,13,0.1)', padding: 22, borderRadius: 8, boxShadow: '0 4px 16px -6px rgba(14,9,7,0.1)' }}>
+                <div style={{ width: 38, height: 38, background: 'linear-gradient(135deg, #E89A3A, #C04A1E)', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, fontWeight: 700, marginBottom: 14 }}>{s.n}</div>
+                <div style={{ ...txt.sans, fontSize: 16, fontWeight: 600, marginBottom: 9, color: PALETTE.inkSoft }}>{s.title}</div>
+                <div style={{ ...txt.sans, fontSize: 13, color: 'rgba(24,18,13,0.78)', lineHeight: 1.6 }}>{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* § 04 Turn Structure */}
+        <div style={sec}>
+          <div style={secNum}>§ 04 — Turn Structure</div>
+          <h3 style={secTitle}>How to Play</h3>
+          <p style={secIntro}>The game unfolds over 20 turns (5 per season). Each turn, the active player takes actions, then the Collect phase triggers for all players.</p>
+          <div style={{ display: 'flex', gap: 16, margin: '24px 0', flexWrap: 'wrap' }}>
+            {[
+              { n: 'Step 1', title: 'Choose Action Type', desc: 'Pick one action type and repeat it as many times as you can afford' },
+              { n: 'Step 2', title: 'Collect', desc: 'All players harvest resources from their mushrooms' },
+            ].map(s => (
+              <div key={s.n} style={{ flex: 1, minWidth: 190, background: 'linear-gradient(135deg, #5C7338 0%, #2E3A1B 100%)', color: PALETTE.paper, padding: 22, borderRadius: 8, boxShadow: '0 8px 16px -6px rgba(14,9,7,0.25)' }}>
+                <div style={{ ...txt.mono, fontSize: 11, letterSpacing: 2, opacity: 0.7, marginBottom: 8, textTransform: 'uppercase' }}>{s.n}</div>
+                <div style={{ ...txt.serif, fontSize: 19, fontWeight: 600, marginBottom: 7 }}>{s.title}</div>
+                <div style={{ ...txt.sans, fontSize: 13, opacity: 0.9, lineHeight: 1.5 }}>{s.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div style={calloutStyle}>
+            <div style={calloutTitle}>Important Rule</div>
+            <p style={{ ...txt.sans, fontSize: 15, color: PALETTE.inkSoft, margin: 0, lineHeight: 1.65 }}>
+              On your turn, choose <strong>one action type</strong> and repeat it as many times as you can afford. You <strong>cannot mix</strong> action types in a single turn. Choose wisely!
+            </p>
+          </div>
+          <h4 style={{ ...txt.serif, fontSize: 24, fontWeight: 600, margin: '36px 0 18px', color: PALETTE.inkSoft }}>Available Actions</h4>
+          <div style={{ display: 'grid', gap: 12, margin: '18px 0' }}>
+            {[
+              { name: '🎴 Draw',   cost: 'sunlight (scaling)', desc: 'Draw mushroom cards into your hand. Cost scales per card drawn this turn: 1st = 1 sunlight, 2nd = 2, 3rd = 3, etc. Can repeat multiple times.' },
+              { name: '🔀 Spread', cost: 'moisture (scaling)', desc: 'Expand your network to adjacent unoccupied tiles. Cost depends on current network size (1–5 tiles = 1, 6–7 = 2, 8–9 = 3, 10–11 = 4, 12+ = 5). Wet and Shade tiles cost +1 extra moisture.' },
+              { name: '🌱 Plant',  cost: 'spores (per card)',  desc: "Play mushroom cards from your hand onto tiles in your network. The tile must match at least one of the card's required habitats OR be an Open tile. Pay the card's spore cost. Symbiosis points score immediately." },
+              { name: '💤 Rest',   cost: 'free (once only)',   desc: 'Gain 1 moisture + 1 spore + 1 sunlight. Cannot be repeated—this ends your turn immediately.' },
+            ].map(a => (
+              <div key={a.name} style={{ background: '#fff', border: '1px solid rgba(24,18,13,0.1)', borderLeft: `4px solid ${PALETTE.amber}`, padding: 18, borderRadius: 4 }}>
+                <div style={{ ...txt.serif, fontSize: 17, fontWeight: 600, color: PALETTE.inkSoft, marginBottom: 7 }}>
+                  {a.name}<span style={costPill}>{a.cost}</span>
+                </div>
+                <p style={{ ...txt.sans, fontSize: 14, color: 'rgba(24,18,13,0.78)', lineHeight: 1.6, margin: 0 }}>{a.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ ...cardStyle, marginTop: 32 }}>
+            <div style={cardTitle}>Action Cost Scaling</div>
+            <div style={{ ...txt.sans, fontSize: 16, fontWeight: 600, margin: '18px 0 9px', color: PALETTE.inkSoft }}>Draw Cost Scaling</div>
+            <div style={{ background: '#fff', border: '1px solid rgba(24,18,13,0.1)', borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
+              {tableRow(['Card Number', 'Cost', 'Total'], true)}
+              {tableRow(['1st card', '1 sunlight', '1'])}
+              {tableRow(['2nd card', '2 sunlight', '3'])}
+              {tableRow(['3rd card', '3 sunlight', '6'])}
+              {tableRow(['4th card', '4 sunlight', '10'], false, true)}
+            </div>
+            <div style={{ ...txt.sans, fontSize: 16, fontWeight: 600, margin: '18px 0 9px', color: PALETTE.inkSoft }}>Spread Cost Scaling</div>
+            <div style={{ background: '#fff', border: '1px solid rgba(24,18,13,0.1)', borderRadius: 8, overflow: 'hidden' }}>
+              {tableRow(['Network Size', 'Base Cost', 'Wet/Shade'], true)}
+              {tableRow(['1–5 tiles', '1 moisture', '2'])}
+              {tableRow(['6–7 tiles', '2 moisture', '3'])}
+              {tableRow(['8–9 tiles', '3 moisture', '4'])}
+              {tableRow(['10–11 tiles', '4 moisture', '5'])}
+              {tableRow(['12+ tiles', '5 moisture', '6'], false, true)}
+            </div>
+            <p style={{ ...txt.serif, fontSize: 14, fontStyle: 'italic', color: 'rgba(24,18,13,0.65)', marginTop: 14 }}>Example: A 7-tile network spreading to a Shade tile costs 2 (base) + 1 (Shade premium) = 3 moisture.</p>
+          </div>
+          <div style={calloutStyle}>
+            <div style={calloutTitle}>Strategic Tip</div>
+            <p style={{ ...txt.sans, fontSize: 15, color: PALETTE.inkSoft, margin: 0, lineHeight: 1.65 }}>
+              Both Draw and Spread actions have scaling costs. Drawing 4 cards costs 10 sunlight total! Spread costs scale with your <strong>total network size</strong>. Wet and Shade tiles offer powerful mushrooms but cost extra to reach—plan accordingly.
+            </p>
+          </div>
+        </div>
+
+        {/* § 05 Collect Phase */}
+        <div style={sec}>
+          <div style={secNum}>§ 05 — The Collect Phase</div>
+          <h3 style={secTitle}>Harvesting the Network</h3>
+          <p style={secIntro}>After the active player completes their actions, <strong>all players simultaneously</strong> collect resources from their mushrooms.</p>
+          <div style={cardStyle}>
+            <div style={cardTitle}>How Collecting Works</div>
+            <ol style={{ ...txt.sans, lineHeight: 2, fontSize: 15, margin: 0, paddingLeft: 22 }}>
+              <li>Look at each mushroom card you've planted on the board.</li>
+              <li>Each card generates resources shown on the card (Spore, Moisture, or Sunlight).</li>
+              <li>Apply any <strong>(Ongoing)</strong> card abilities that trigger during Collect.</li>
+              <li>Apply season effects that modify collection (e.g., "All mushrooms produce +1 spore").</li>
+              <li>Take the appropriate tokens and add them to your supply.</li>
+            </ol>
+          </div>
+          <div style={calloutStyle}>
+            <div style={calloutTitle}>When Effects Trigger</div>
+            <p style={{ ...txt.sans, fontSize: 15, color: PALETTE.inkSoft, margin: 0, lineHeight: 1.65 }}>
+              <strong>[When Planted]</strong> effects trigger once, immediately when you play the card. <strong>(Ongoing)</strong> effects trigger every Collect phase. Mushrooms generate resources <strong>every turn</strong> during Collect—not just on your turn. Plant early and harvest often!
+            </p>
+          </div>
+        </div>
+
+        {/* § 06 Seasons & Effects */}
+        <div style={sec}>
+          <div style={secNum}>§ 06 — Seasons & Effects</div>
+          <h3 style={secTitle}>The Turning Year</h3>
+          <p style={secIntro}>Every 5 turns, the season advances. Each season brings one random effect from its pool—revealed during setup so you can plan ahead.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'repeat(2, 1fr)', gap: 18, margin: '24px 0' }}>
+            {seasons.map(s => (
+              <div key={s.name} style={{ background: '#fff', border: '2px solid rgba(24,18,13,0.1)', borderRadius: 8, overflow: 'hidden', boxShadow: '0 8px 24px -8px rgba(14,9,7,0.15)' }}>
+                <div style={{ padding: '18px 20px', background: 'linear-gradient(135deg, #5C7338 0%, #2E3A1B 100%)', color: PALETTE.paper }}>
+                  <div style={{ ...txt.serif, fontSize: 22, fontWeight: 700, marginBottom: 3 }}>{s.name}</div>
+                  <div style={{ ...txt.mono, fontSize: 11, opacity: 0.8, letterSpacing: 1, textTransform: 'uppercase' }}>{s.turns}</div>
+                </div>
+                <div style={{ padding: 20 }}>
+                  {s.effects.map((e, ei) => (
+                    <div key={e.name} style={{ marginBottom: ei < s.effects.length - 1 ? 13 : 0, paddingBottom: ei < s.effects.length - 1 ? 13 : 0, borderBottom: ei < s.effects.length - 1 ? '1px solid rgba(24,18,13,0.06)' : 'none' }}>
+                      <div style={{ ...txt.sans, fontSize: 14, fontWeight: 600, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+                        {e.name}<span style={badges[e.badge]}>{e.badge}</span>
+                      </div>
+                      <div style={{ ...txt.sans, fontSize: 13, color: 'rgba(24,18,13,0.72)', lineHeight: 1.5 }}>{e.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={calloutStyle}>
+            <div style={calloutTitle}>Adaptation is Key</div>
+            <p style={{ ...txt.sans, fontSize: 15, color: PALETTE.inkSoft, margin: 0, lineHeight: 1.65 }}>
+              The revealed forecast allows you to <strong>plan several turns ahead</strong>. If you see "Drought" coming in Summer, stockpile moisture in Spring. If "Deep Freeze" locks down spreading in Winter, expand aggressively in Autumn. The forest favors the prepared.
+            </p>
+          </div>
+        </div>
+
+        {/* § 07 Scoring & Victory */}
+        <div style={sec}>
+          <div style={secNum}>§ 07 — Scoring & Victory</div>
+          <h3 style={secTitle}>Claiming the Crown</h3>
+          <p style={secIntro}>After turn 20 (the end of Winter), the game ends. Tally your points and crown the champion mycelium.</p>
+          <div style={{ background: '#fff', border: '1px solid rgba(24,18,13,0.1)', borderRadius: 8, overflow: 'hidden', margin: '24px 0' }}>
+            {tableRow(['Source', 'Description', 'Points'], true)}
+            {tableRow(['Mushroom Cards', 'Each planted mushroom scores symbiosis points when planted (one-time, unless marked Ongoing).', 'Varies'])}
+            {tableRow(['(Ongoing) Abilities', 'Cards marked (Ongoing) score points each Collect phase while on the board.', 'Varies'])}
+            {tableRow(['Season Effects', "Some season effects award symbiosis points at season's end or game end.", 'Varies'])}
+            {tableRow(['Leftover Resources', 'Only with "Final Harvest": +1 symbiosis per 3 unspent resources (any type, combined).', '+1 / 3'], false, true)}
+          </div>
+          <div style={cardStyle}>
+            <div style={cardTitle}>Tiebreaker</div>
+            <p style={{ ...txt.sans, fontSize: 15, marginBottom: 12, lineHeight: 1.6 }}>If two players are tied, the winner is determined by:</p>
+            <ol style={{ ...txt.sans, lineHeight: 2, fontSize: 15, margin: 0, paddingLeft: 22 }}>
+              <li><strong>Largest network</strong> (most tiles)</li>
+              <li><strong>Most mushrooms</strong> on the board</li>
+              <li><strong>First in turn order</strong> (the player who went first wins)</li>
+            </ol>
+          </div>
+        </div>
+
+        {/* § 08 Quick Reference */}
+        <div style={{ marginBottom: 0 }}>
+          <div style={secNum}>§ 08 — Quick Reference</div>
+          <h3 style={secTitle}>At-a-Glance Guide</h3>
+          <div style={cardStyle}>
+            <div style={cardTitle}>Turn Sequence</div>
+            <ol style={{ ...txt.sans, lineHeight: 2, fontSize: 15, margin: 0, paddingLeft: 22 }}>
+              <li><strong>Choose Action Type:</strong> Pick one action (Draw, Spread, Plant, or Rest)</li>
+              <li><strong>Repeat It:</strong> Repeat that action as many times as you can afford (except Rest)</li>
+              <li><strong>Collect Phase:</strong> All players collect resources from their mushrooms</li>
+              <li><strong>Pass:</strong> Next player becomes active</li>
+              <li><strong>Season Change:</strong> Every 5 turns, advance to the next season</li>
+            </ol>
+          </div>
+          <div style={cardStyle}>
+            <div style={cardTitle}>Key Rules</div>
+            <ul style={{ ...txt.sans, lineHeight: 2, fontSize: 15, margin: 0, paddingLeft: 22 }}>
+              <li>You can only plant mushrooms on tiles <strong>in your network</strong>.</li>
+              <li>A tile must match <strong>at least one</strong> of the card's required habitats, <strong>OR be an Open tile</strong>.</li>
+              <li>Once claimed, a tile belongs to that player—<strong>no shared tiles</strong>.</li>
+              <li>Spread costs scale with <strong>network size</strong>. Wet and Shade tiles cost +1 extra moisture.</li>
+              <li>Resources are collected <strong>every turn</strong> by all players during Collect.</li>
+              <li>Season effects are <strong>revealed at setup</strong>—use the forecast to plan your year!</li>
+            </ul>
+          </div>
+          <div style={{ ...cardStyle, marginBottom: 0 }}>
+            <div style={cardTitle}>Winning Strategy</div>
+            <ul style={{ ...txt.sans, lineHeight: 2, fontSize: 15, margin: 0, paddingLeft: 22 }}>
+              <li><strong>Plant early:</strong> Mushrooms generate resources every turn—the earlier you plant, the more you harvest.</li>
+              <li><strong>Read the forecast:</strong> Adapt your strategy to upcoming season effects visible from game start.</li>
+              <li><strong>Claim premium habitats:</strong> Wet and Shade tiles cost extra but host powerful mushrooms.</li>
+              <li><strong>Manage network size:</strong> Larger networks cost more to expand—balance growth with resource generation.</li>
+              <li><strong>High-cost cards are high-reward:</strong> Cards like Black Truffle (8 pts) and Amanita Caesar (10 pts) are worth the investment.</li>
+              <li><strong>Commit to one action type:</strong> Strategic focus beats scattered play every time.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Rulebook footer */}
+        <div style={{ textAlign: 'center', padding: '48px 0 0', borderTop: '2px solid rgba(24,18,13,0.15)', marginTop: 56 }}>
+          <p style={{ ...txt.serif, fontStyle: 'italic', color: 'rgba(24,18,13,0.55)', fontSize: 16, margin: 0 }}>
+            May your spores spread wide, your networks thrive, and your mushrooms reign supreme beneath the autumn canopy.{' '}
+            <span style={{ display: 'inline-block', width: 6, height: 6, background: PALETTE.amber, borderRadius: '50%', opacity: 0.5, verticalAlign: 'middle', margin: '0 8px' }}/>
+            <strong>Good luck, mycelia.</strong>
+          </p>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
 function News({ vp }: { vp: ReturnType<typeof useViewport> }) {
   const { isNarrow } = vp;
   const base = import.meta.env.BASE_URL;
@@ -986,6 +1365,7 @@ export function LandingPage({ onPlay }: { onPlay: () => void }) {
       <Hero vp={vp} onPlay={onPlay}/>
       <Features vp={vp}/>
       <HowToPlay vp={vp}/>
+      <Rulebook vp={vp}/>
       <News vp={vp}/>
       <BigCTA vp={vp} onPlay={onPlay}/>
       <Footer vp={vp}/>
