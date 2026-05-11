@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { HowToPlayVideo } from './HowToPlayVideo';
 
 const PALETTE = {
   ink:       '#0B0705',
@@ -431,7 +432,7 @@ function Hero({ vp, onPlay }: { vp: ReturnType<typeof useViewport>; onPlay: () =
             </div>
             <span style={{ fontSize: 22, flexShrink: 0 }}>→</span>
           </button>
-          <a href="#trailer" style={{
+          <a href="#how-to-play" style={{
             display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px',
             border: `1px solid ${PALETTE.paper}33`, color: PALETTE.paper, textDecoration: 'none',
             background: 'rgba(242,234,216,0.04)', transition: 'background 160ms',
@@ -445,13 +446,36 @@ function Hero({ vp, onPlay }: { vp: ReturnType<typeof useViewport>; onPlay: () =
               <div style={{ width: 0, height: 0, borderLeft: `10px solid ${PALETTE.paper}`, borderTop: '6px solid transparent', borderBottom: '6px solid transparent', marginLeft: 3 }}/>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ ...txt.serif, fontSize: 16, fontWeight: 600, lineHeight: 1.15 }}>Watch the Trailer</div>
-              <div style={{ ...txt.mono, fontSize: 8.5, letterSpacing: 1.6, opacity: 0.6, marginTop: 3, textTransform: 'uppercase' }}>2:14 · Announcement</div>
+              <div style={{ ...txt.serif, fontSize: 16, fontWeight: 600, lineHeight: 1.15 }}>How to Play</div>
+              <div style={{ ...txt.mono, fontSize: 8.5, letterSpacing: 1.6, opacity: 0.6, marginTop: 3, textTransform: 'uppercase' }}>2:00 · Interactive</div>
             </div>
           </a>
         </div>
       </div>
     </header>
+  );
+}
+
+function VideoSection({ vp }: { vp: ReturnType<typeof useViewport> }) {
+  const { isNarrow } = vp;
+  return (
+    <section id="how-to-play" style={{ background: '#0a0a0a', borderTop: `1px solid ${PALETTE.amber}22` }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto', padding: isNarrow ? '48px 20px 56px' : '64px 56px 72px' }}>
+        <div style={{ ...txt.eyebrow, color: PALETTE.amber, marginBottom: 12 }}>◈ How to Play</div>
+        <h2 style={{ ...txt.display, fontSize: isNarrow ? 34 : 52, margin: '0 0 28px', color: PALETTE.paper }}>
+          Learn in two minutes.
+        </h2>
+        {/* 16:9 letterbox container — Stage fills it via position:absolute,inset:0 */}
+        <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: 8, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}>
+          <div style={{ position: 'absolute', inset: 0 }}>
+            <HowToPlayVideo />
+          </div>
+        </div>
+        <p style={{ ...txt.serif, fontStyle: 'italic', fontSize: isNarrow ? 14 : 16, color: 'rgba(242,234,216,0.45)', marginTop: 16, textAlign: 'center' }}>
+          Space to pause · ← → to scrub · Click the timeline to seek
+        </p>
+      </div>
+    </section>
   );
 }
 
@@ -1363,6 +1387,7 @@ export function LandingPage({ onPlay }: { onPlay: () => void }) {
     <div style={{ background: PALETTE.ink, minHeight: '100vh', color: PALETTE.paper, fontFamily: "'Inter', -apple-system, sans-serif" }}>
       <Nav isNarrow={vp.isNarrow} menuOpen={menuOpen} setMenuOpen={setMenuOpen} onPlay={onPlay}/>
       <Hero vp={vp} onPlay={onPlay}/>
+      <VideoSection vp={vp}/>
       <Features vp={vp}/>
       <HowToPlay vp={vp}/>
       <Rulebook vp={vp}/>
