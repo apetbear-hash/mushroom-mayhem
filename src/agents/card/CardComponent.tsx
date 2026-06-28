@@ -8,7 +8,10 @@ const CARD_ART: Record<number, string> = {
   1:  `${BASE}cards/chanterelle.jpg`,
   2:  `${BASE}cards/oyster-mushroom.png`,
   3:  `${BASE}cards/shiitake.png`,
+  4:  `${BASE}cards/maitake.png`,
   5:  `${BASE}cards/turkey-tail.png`,
+  6:  `${BASE}cards/reishi.png`,
+  7:  `${BASE}cards/honey-mushroom.png`,
   8:  `${BASE}cards/chaga.jpg`,
   9:  `${BASE}cards/lions-mane.png`,
   10: `${BASE}cards/saffron-milk-cap.jpg`,
@@ -17,6 +20,7 @@ const CARD_ART: Record<number, string> = {
   13: `${BASE}cards/black-truffle.jpg`,
   14: `${BASE}cards/matsutake.jpg`,
   15: `${BASE}cards/golden-chanterelle.jpg`,
+  16: `${BASE}cards/lobster-mushroom.png`,
   17: `${BASE}cards/hedgehog-mushroom.jpg`,
   19: `${BASE}cards/wood-ear.png`,
   20: `${BASE}cards/coral-mushroom.jpg`,
@@ -24,8 +28,10 @@ const CARD_ART: Record<number, string> = {
   32: `${BASE}cards/inky-cap.png`,
   33: `${BASE}cards/dryads-saddle.png`,
   34: `${BASE}cards/chicken-of-the-woods.png`,
+  35: `${BASE}cards/enoki.png`,
   37: `${BASE}cards/shaggy-mane.png`,
   38: `${BASE}cards/indigo-milky-cap.jpg`,
+  39: `${BASE}cards/candy-cap.png`,
   40: `${BASE}cards/velvets-foot.png`,
   41: `${BASE}cards/amanita-caesar.jpg`,
   43: `${BASE}cards/old-man-of-the-woods.jpg`,
@@ -33,6 +39,7 @@ const CARD_ART: Record<number, string> = {
   45: `${BASE}cards/hen-egg-bolete.jpg`,
   47: `${BASE}cards/angel-wings.png`,
   48: `${BASE}cards/gemmed-puffball.png`,
+  49: `${BASE}cards/scarlet-waxy-cap.png`,
 };
 
 interface CardProps {
