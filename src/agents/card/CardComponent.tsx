@@ -6,7 +6,11 @@ const BASE = import.meta.env.BASE_URL;
 // Card IDs that have photo art in public/cards/
 const CARD_ART: Record<number, string> = {
   1:  `${BASE}cards/chanterelle.jpg`,
+  2:  `${BASE}cards/oyster-mushroom.png`,
+  3:  `${BASE}cards/shiitake.png`,
+  5:  `${BASE}cards/turkey-tail.png`,
   8:  `${BASE}cards/chaga.jpg`,
+  9:  `${BASE}cards/lions-mane.png`,
   10: `${BASE}cards/saffron-milk-cap.jpg`,
   11: `${BASE}cards/morel.jpg`,
   12: `${BASE}cards/king-bolete.jpg`,
@@ -14,11 +18,21 @@ const CARD_ART: Record<number, string> = {
   14: `${BASE}cards/matsutake.jpg`,
   15: `${BASE}cards/golden-chanterelle.jpg`,
   17: `${BASE}cards/hedgehog-mushroom.jpg`,
+  19: `${BASE}cards/wood-ear.png`,
   20: `${BASE}cards/coral-mushroom.jpg`,
+  31: `${BASE}cards/puffball.png`,
+  32: `${BASE}cards/inky-cap.png`,
+  33: `${BASE}cards/dryads-saddle.png`,
+  34: `${BASE}cards/chicken-of-the-woods.png`,
+  37: `${BASE}cards/shaggy-mane.png`,
   38: `${BASE}cards/indigo-milky-cap.jpg`,
+  40: `${BASE}cards/velvets-foot.png`,
   41: `${BASE}cards/amanita-caesar.jpg`,
   43: `${BASE}cards/old-man-of-the-woods.jpg`,
+  44: `${BASE}cards/bears-head-tooth.png`,
   45: `${BASE}cards/hen-egg-bolete.jpg`,
+  47: `${BASE}cards/angel-wings.png`,
+  48: `${BASE}cards/gemmed-puffball.png`,
 };
 
 interface CardProps {
